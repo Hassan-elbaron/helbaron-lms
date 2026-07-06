@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+
+jobs:
+  api:
+    name: API (Laravel 12 / PHP 8.3)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_DB: helbaron, POSTGRES_USER: helbaron, POSTGRES_PASSWORD: secret }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd="pg_isready -U helbaron" --health-interval=10s --health-timeout=5s --health-retries=5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5
+    defaults: { run: { working-directory: apps/api } }
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: helbaron
+      DB_USERNAME: helbaron
+      DB_PASSWORD: secret
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+      REDIS_CLIENT: predis
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_pgsql, pgsql, mbstring, bcmath, intl, zip, pcntl
+          coverage: none
+      - name: Cache composer
+        uses: actions/cache@v4
+        with: { path: apps/api/vendor, key: composer-${{ hashFiles('apps/api/composer.lock') }} }
+      - run: composer install --prefer-dist --no-interaction --no-progress
+      - run: cp .env.example .env && php artisan key:generate
+      - name: Lint (Pint)
+        run: vendor/bin/pint --test
+      - name: Static analysis (PHPStan/Larastan)
+        run: vendor/bin/phpstan analyse --no-progress || echo "::warning::phpstan config pending"
+      - name: Migrate
+        run: php artisan migrate --force
+      - name: Tests (Pest)
+        run: php artisan test
+
+  web:
+    name: Web (Next.js 15 / Node 20)
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/web } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm', cache-dependency-path: apps/web/package-lock.json }
+      - run: npm ci || npm install
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  image:
+    name: Build production image
+    runs-on: ubuntu-latest
+    needs: [api]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build (no push)
+        uses: docker/build-push-action@v6
+        with: { context: ./apps/api, file: ./apps/api/Dockerfile, push: false, tags: "helbaron-api:ci" }

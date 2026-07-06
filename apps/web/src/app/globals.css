@@ -1,0 +1,238 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+/*
+  HElbaron design tokens — "Premium MENA academy" identity.
+  Direction: deep dark teal primary, warm cream background, burnt copper / terracotta
+  accent, muted gold accent, soft warm borders, serif headings + clean sans body.
+  Light/Dark via the `.dark` class (next-themes). RTL/LTR via the `dir` attribute; components
+  use logical properties (ms-/me-/ps-/pe-/start/end) so they mirror automatically.
+*/
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --radius: 0.75rem;
+
+  /* Light theme */
+  --background: oklch(0.962 0.017 88);
+  --foreground: oklch(0.30 0.017 190);
+  --card: oklch(0.99 0.008 88);
+  --card-foreground: oklch(0.30 0.017 190);
+  --popover: oklch(0.99 0.008 88);
+  --popover-foreground: oklch(0.30 0.017 190);
+
+  --primary: oklch(0.36 0.045 185);
+  --primary-foreground: oklch(0.97 0.015 88);
+  --secondary: oklch(0.91 0.03 86);
+  --secondary-foreground: oklch(0.32 0.02 190);
+  --muted: oklch(0.93 0.02 86);
+  --muted-foreground: oklch(0.48 0.018 188);
+  --accent: oklch(0.90 0.035 70);
+  --accent-foreground: oklch(0.32 0.02 190);
+
+  --copper: oklch(0.57 0.12 47);
+  --copper-foreground: oklch(0.98 0.01 88);
+  --gold: oklch(0.74 0.10 88);
+  --gold-foreground: oklch(0.30 0.02 190);
+
+  --destructive: oklch(0.55 0.19 30);
+  --destructive-foreground: oklch(0.98 0.01 88);
+  --success: oklch(0.55 0.11 165);
+  --success-foreground: oklch(0.98 0.01 88);
+  --warning: oklch(0.74 0.12 82);
+  --warning-foreground: oklch(0.30 0.02 190);
+
+  --border: oklch(0.88 0.02 86);
+  --input: oklch(0.88 0.02 86);
+  --ring: oklch(0.36 0.045 185);
+}
+
+.dark {
+  /* Dark theme — deep teal night */
+  --background: oklch(0.21 0.022 190);
+  --foreground: oklch(0.94 0.015 88);
+  --card: oklch(0.25 0.026 190);
+  --card-foreground: oklch(0.94 0.015 88);
+  --popover: oklch(0.25 0.026 190);
+  --popover-foreground: oklch(0.94 0.015 88);
+
+  --primary: oklch(0.62 0.07 183);
+  --primary-foreground: oklch(0.17 0.02 190);
+  --secondary: oklch(0.30 0.03 190);
+  --secondary-foreground: oklch(0.94 0.015 88);
+  --muted: oklch(0.29 0.025 190);
+  --muted-foreground: oklch(0.74 0.02 90);
+  --accent: oklch(0.33 0.035 60);
+  --accent-foreground: oklch(0.94 0.015 88);
+
+  --copper: oklch(0.64 0.12 47);
+  --copper-foreground: oklch(0.16 0.02 190);
+  --gold: oklch(0.78 0.10 88);
+  --gold-foreground: oklch(0.17 0.02 190);
+
+  --destructive: oklch(0.62 0.18 28);
+  --destructive-foreground: oklch(0.98 0.01 88);
+  --success: oklch(0.68 0.12 165);
+  --success-foreground: oklch(0.16 0.02 190);
+  --warning: oklch(0.80 0.13 84);
+  --warning-foreground: oklch(0.17 0.02 190);
+
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.62 0.07 183);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-copper: var(--copper);
+  --color-copper-foreground: var(--copper-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 12px);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, "Iowan Old Style", Georgia, serif;
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.01em;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ── Motion system (no JS dependency; respects reduced-motion) ─────────── */
+@keyframes hb-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes hb-float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes hb-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes hb-shine {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(220%); }
+}
+@keyframes hb-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(2%, -3%) scale(1.05); }
+  66% { transform: translate(-2%, 2%) scale(0.97); }
+}
+@keyframes hb-pop {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@layer utilities {
+  .animate-float { animation: hb-float 6s ease-in-out infinite; }
+  .animate-float-slow { animation: hb-float-slow 8s ease-in-out infinite; }
+  .animate-blob { animation: hb-blob 18s ease-in-out infinite; }
+
+  /* Scroll-reveal (toggled by IntersectionObserver adding .is-visible) */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  /* Marquee row (duplicate children so -50% loops seamlessly) */
+  .marquee-mask { -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .marquee-track { display: flex; width: max-content; animation: hb-marquee 34s linear infinite; }
+  .marquee-track:hover { animation-play-state: paused; }
+
+  /* Sweeping shine on hover (place inside a relative, overflow-hidden element) */
+  .shine::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 30%, color-mix(in oklab, white 28%, transparent) 50%, transparent 70%);
+    transform: translateX(-120%);
+  }
+  .shine:hover::after { animation: hb-shine 0.9s ease; }
+
+  .card-hover { transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease, border-color 0.35s ease; }
+  .card-hover:hover { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .animate-float-slow, .animate-blob, .marquee-track { animation: none !important; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .card-hover:hover { transform: none; }
+}
+
+/* ── Page + list entrance motion ──────────────────────────────────────── */
+@keyframes hb-page-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hb-stagger-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@layer utilities {
+  .page-enter { animation: hb-page-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .stagger-in > * { animation: hb-stagger-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .stagger-in > *:nth-child(1) { animation-delay: 0.03s; }
+  .stagger-in > *:nth-child(2) { animation-delay: 0.08s; }
+  .stagger-in > *:nth-child(3) { animation-delay: 0.13s; }
+  .stagger-in > *:nth-child(4) { animation-delay: 0.18s; }
+  .stagger-in > *:nth-child(5) { animation-delay: 0.23s; }
+  .stagger-in > *:nth-child(6) { animation-delay: 0.28s; }
+  .stagger-in > *:nth-child(7) { animation-delay: 0.33s; }
+  .stagger-in > *:nth-child(8) { animation-delay: 0.38s; }
+  .stagger-in > *:nth-child(9) { animation-delay: 0.43s; }
+  .stagger-in > *:nth-child(n+10) { animation-delay: 0.48s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-enter, .stagger-in > * { animation: none !important; }
+}
+
+/* slow rotation used by hero art dashed ring */
+@keyframes hb-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  [class*="hb-spin"] { animation: none !important; }
+}

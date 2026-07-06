@@ -1,0 +1,14 @@
+export const locales = ["en", "ar"] as const;
+export type Locale = (typeof locales)[number];
+
+export const defaultLocale: Locale = "en";
+
+/** Text direction per locale. */
+export const localeDirection: Record<Locale, "ltr" | "rtl"> = {
+  en: "ltr",
+  ar: "rtl",
+};
+
+export function isRtl(locale: Locale): boolean {
+  return localeDirection[locale] === "rtl";
+}

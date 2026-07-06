@@ -1,0 +1,60 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — Notifications API
+  version: "1.0"
+  description: >
+    Notification-center endpoints (Step 12). A consumer domain: it reacts to producer events and
+    delivers via Fake channel/provider abstractions only (no SES/Mailgun/Twilio/Firebase/WhatsApp)
+    — nothing is sent for real. All delivery is queued with retry, dead-lettering, and idempotency.
+    Entities use public_id.
+servers:
+  - url: /api/v1
+security:
+  - sanctum: []
+tags: [{ name: Notifications }, { name: Preferences }]
+
+components:
+  securitySchemes:
+    sanctum: { type: http, scheme: bearer }
+
+paths:
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: List the user's notifications (unread first, active only)
+      parameters: [{ name: per_page, in: query, schema: { type: integer } }]
+      responses: { "200": { description: Paginated notifications } }
+  /notifications/{notification}:
+    get:
+      tags: [Notifications]
+      summary: Show a notification with its delivery ledger
+      parameters: [{ name: notification, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: OK }, "403": { description: Forbidden } }
+  /notifications/{notification}/read:
+    post:
+      tags: [Notifications]
+      summary: Mark a notification as read (idempotent)
+      parameters: [{ name: notification, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: Marked read } }
+  /notifications/preferences:
+    post:
+      tags: [Preferences]
+      summary: Update notification settings (locale, digest) and per-category/channel preferences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locale: { type: string, enum: [en, ar] }
+                digest_frequency: { type: string, enum: [none, daily, weekly] }
+                timezone: { type: string }
+                preferences:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      category: { type: string, enum: [account, learning, commerce, certification, live, crm, system] }
+                      channel: { type: string, enum: [in_app, email, sms, push, whatsapp] }
+                      enabled: { type: boolean }
+      responses: { "200": { description: Updated } }

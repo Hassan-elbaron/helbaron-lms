@@ -1,0 +1,13 @@
+# Dependencies / build output are ignored per-app; keep root clean.
+.DS_Store
+*.log
+.env
+.idea/
+.vscode/
+
+# Local docker env sample (contains dev DB password); use .env.example instead
+apps/api/.env.docker
+.env.docker
+*.pem
+*.key
+auth.json

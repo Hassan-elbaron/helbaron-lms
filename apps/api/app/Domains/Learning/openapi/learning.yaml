@@ -1,0 +1,100 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — Learning API
+  version: "1.0"
+  description: >
+    Learner endpoints (Step 6): enrollment, learning player, curriculum, progress, bookmarks,
+    notes, and continue-learning. Media is exposed ONLY as a signed playback object — never
+    s3_key or mux_asset_id. Entities use public_id.
+servers:
+  - url: /api/v1
+security:
+  - sanctum: []
+tags: [{ name: MyLearning }, { name: Player }, { name: Progress }, { name: Engagement }]
+
+components:
+  securitySchemes:
+    sanctum: { type: http, scheme: bearer }
+  schemas:
+    Playback:
+      type: object
+      description: Signed, expiring media reference. Contains NO raw storage identifiers.
+      properties:
+        url: { type: string, format: uri }
+        kind: { type: string, enum: [video, file] }
+        expires_at: { type: string, format: date-time }
+
+paths:
+  /my-learning:
+    get:
+      tags: [MyLearning]
+      summary: List the learner's enrollments with progress
+      responses: { "200": { description: OK } }
+  /continue-learning:
+    get:
+      tags: [MyLearning]
+      summary: Active courses with the next lesson to resume
+      responses: { "200": { description: OK } }
+  /courses/{course}/enroll:
+    post:
+      tags: [MyLearning]
+      summary: Self-enroll into a published course (payment-free)
+      parameters: [{ name: course, in: path, required: true, schema: { type: string } }]
+      responses:
+        "201": { description: Enrolled }
+        "422": { description: Course not enrollable }
+  /courses/{course}/learn:
+    get:
+      tags: [Player]
+      summary: Learner curriculum tree with per-lesson completed/locked flags
+      parameters: [{ name: course, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200": { description: OK }
+        "403": { description: Not enrolled (LEARNING_NOT_ENROLLED) }
+  /lessons/{lesson}:
+    get:
+      tags: [Player]
+      summary: Lesson player payload (signed playback + prev/next navigation)
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      playback: { $ref: '#/components/schemas/Playback' }
+        "403": { description: Not enrolled / locked (LEARNING_LESSON_LOCKED) }
+  /lessons/{lesson}/progress:
+    post:
+      tags: [Progress]
+      summary: Record lesson progress (idempotent per lesson)
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [not_started, in_progress, completed] }
+                position_seconds: { type: integer, minimum: 0 }
+      responses: { "200": { description: Recorded }, "403": { description: Locked/not enrolled } }
+  /lessons/{lesson}/bookmark:
+    post:
+      tags: [Engagement]
+      summary: Toggle a lesson bookmark
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: Toggled } }
+  /lessons/{lesson}/notes:
+    post:
+      tags: [Engagement]
+      summary: Create/update the learner's note on a lesson
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [body], properties: { body: { type: string, maxLength: 5000 } } } } } }
+      responses: { "200": { description: Saved } }

@@ -1,0 +1,16 @@
+# HElbaron API — local development image (PHP 8.3 CLI).
+# Uses mlocati's extension installer for reliable PDO PostgreSQL + friends.
+FROM php:8.3-cli
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && install-php-extensions pdo_pgsql pgsql mbstring bcmath intl zip pcntl
+
+# Composer (copied from the official image)
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# Redis is used via the pure-PHP predis client, so no php-redis extension is needed.
+EXPOSE 8000
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

@@ -1,0 +1,70 @@
+# HElbaron — local development stack.
+# The API runs in a container (PHP 8.3) so no PHP install is needed on Windows.
+# Host ports are offset (Postgres 55432, Redis 6380) to avoid clashing with the
+# user's other running projects; inside the network, services use default ports.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: helbaron-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: helbaron
+      POSTGRES_USER: helbaron
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "55432:5432"
+    volumes:
+      - helbaron-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U helbaron -d helbaron"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: helbaron-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6380:6379"
+    volumes:
+      - helbaron-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    container_name: helbaron-api
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./apps/api:/var/www/html
+    environment:
+      # Inside the compose network, reach the backing services by name on their
+      # default ports (these override the host-oriented values in .env).
+      DB_HOST: postgres
+      DB_PORT: 5432
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_CLIENT: predis
+      # `php artisan serve` uses PHP's single-threaded built-in server. The Filament admin panel
+      # loads ~12 assets in parallel, which a single worker 503s. Spawn worker processes so
+      # concurrent requests (assets, Livewire) are served. Requires the pcntl extension (installed).
+      PHP_CLI_SERVER_WORKERS: 12
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  helbaron-postgres-data:
+  helbaron-redis-data:

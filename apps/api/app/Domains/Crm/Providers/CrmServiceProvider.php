@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Domains\Crm\Providers;
+
+use App\Domains\Crm\Events\ConsultingRequestCreated;
+use App\Domains\Crm\Events\LeadCreated;
+use App\Domains\Crm\Listeners\LogConsultingRequestActivity;
+use App\Domains\Crm\Listeners\LogLeadCreatedActivity;
+use App\Domains\Crm\Models\ConsultingRequest;
+use App\Domains\Crm\Models\Lead;
+use App\Domains\Crm\Models\Organization;
+use App\Domains\Crm\Policies\ConsultingRequestPolicy;
+use App\Domains\Crm\Policies\LeadPolicy;
+use App\Domains\Crm\Policies\OrganizationPolicy;
+use App\Shared\Providers\BaseDomainServiceProvider;
+use Illuminate\Support\Facades\Event;
+
+/**
+ * Wires the CRM module: config, migrations, routes, policies, and activity-logging listeners.
+ * CRM depends only on Identity — never Learning or Commerce.
+ */
+class CrmServiceProvider extends BaseDomainServiceProvider
+{
+    protected array $routeFiles = ['routes/crm.php'];
+
+    /** @var array<class-string, class-string> */
+    protected array $policies = [
+        Organization::class => OrganizationPolicy::class,
+        Lead::class => LeadPolicy::class,
+        ConsultingRequest::class => ConsultingRequestPolicy::class,
+    ];
+
+    protected function domainPath(): string
+    {
+        return dirname(__DIR__);
+    }
+
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../../../../config/crm.php', 'crm');
+    }
+
+    protected function bootDomain(): void
+    {
+        Event::listen(LeadCreated::class, LogLeadCreatedActivity::class);
+        Event::listen(ConsultingRequestCreated::class, LogConsultingRequestActivity::class);
+    }
+}

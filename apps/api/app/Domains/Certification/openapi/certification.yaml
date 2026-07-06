@@ -1,0 +1,75 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — Certification API
+  version: "1.0"
+  description: >
+    Certification endpoints (Step 8). Certificates are generated automatically on course
+    completion. Verification is public (no auth). PDFs are served only via short-lived signed
+    URLs — storage paths are never exposed. Entities use public_id.
+servers:
+  - url: /api/v1
+tags: [{ name: Verification }, { name: Certificates }]
+
+components:
+  securitySchemes:
+    sanctum: { type: http, scheme: bearer }
+  schemas:
+    Verification:
+      type: object
+      properties:
+        valid: { type: boolean }
+        status: { type: string, enum: [issued, revoked] }
+        number: { type: string }
+        holder_name: { type: string }
+        course_title: { type: string }
+        issued_at: { type: string, format: date-time, nullable: true }
+        revoked_at: { type: string, format: date-time, nullable: true }
+
+paths:
+  /certificates/verify/{code}:
+    get:
+      tags: [Verification]
+      summary: Public certificate verification (NO authentication)
+      parameters: [{ name: code, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200":
+          description: Verification result (issuance facts only; no storage paths)
+          content: { application/json: { schema: { type: object, properties: { data: { $ref: '#/components/schemas/Verification' } } } } }
+        "404": { description: Not found }
+  /my-certificates:
+    get:
+      tags: [Certificates]
+      security: [{ sanctum: [] }]
+      summary: List the current user's certificates
+      responses: { "200": { description: OK } }
+  /certificates/{certificate}:
+    get:
+      tags: [Certificates]
+      security: [{ sanctum: [] }]
+      summary: Show a certificate (owner or manager)
+      parameters: [{ name: certificate, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: OK }, "403": { description: Forbidden } }
+  /certificates/{certificate}/download:
+    post:
+      tags: [Certificates]
+      security: [{ sanctum: [] }]
+      summary: Get a short-lived signed download URL (PDF ensured on demand)
+      parameters: [{ name: certificate, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200":
+          description: Signed download URL (never a storage path)
+          content: { application/json: { schema: { type: object, properties: { data: { type: object, properties: { download_url: { type: string, format: uri } } } } } } }
+        "410": { description: Certificate revoked }
+  /certificates/{certificate}/share:
+    post:
+      tags: [Certificates]
+      security: [{ sanctum: [] }]
+      summary: Get the public verification URL for sharing
+      parameters: [{ name: certificate, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: OK } }
+  /certificates/{certificate}/file:
+    get:
+      tags: [Certificates]
+      summary: Stream the certificate PDF (reached only via a signed URL; no auth guard)
+      parameters: [{ name: certificate, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: PDF stream }, "403": { description: Invalid/expired signature } }

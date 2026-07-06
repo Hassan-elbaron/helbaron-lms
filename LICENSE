@@ -1,0 +1,13 @@
+HElbaron — Proprietary License
+Copyright (c) 2026 HElbaron. All rights reserved.
+
+This software and its source code (the "Software") are the confidential and proprietary
+property of HElbaron. No part of the Software may be copied, modified, distributed, sublicensed,
+or used except under a written agreement with HElbaron.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY.
+
+Third-party dependencies retain their own licenses (predominantly MIT / BSD-3-Clause / Apache-2.0);
+see composer.lock and package-lock.json for the authoritative list. Run `composer licenses` and
+`npx license-checker` during release to confirm no copyleft obligations were introduced.

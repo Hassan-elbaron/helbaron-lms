@@ -1,0 +1,82 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — Catalog API
+  version: "1.0"
+  description: >
+    Public catalog endpoints (Step 4): course discovery, detail with related courses, the
+    category tree, and trainers. Read-only and unauthenticated. Entities use public_id.
+servers:
+  - url: /api/v1
+tags: [{ name: Courses }, { name: Categories }, { name: Trainers }]
+
+components:
+  schemas:
+    CourseListItem:
+      type: object
+      properties:
+        id: { type: string, description: public_id }
+        title: { type: string }
+        slug: { type: string }
+        subtitle: { type: string, nullable: true }
+        thumbnail_path: { type: string, nullable: true }
+        is_featured: { type: boolean }
+        level: { type: string, nullable: true }
+        language: { type: string, nullable: true }
+        published_at: { type: string, format: date-time, nullable: true }
+    Paginated:
+      type: object
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/CourseListItem' } }
+        meta:
+          type: object
+          properties:
+            current_page: { type: integer }
+            per_page: { type: integer }
+            total: { type: integer }
+            last_page: { type: integer }
+        links:
+          type: object
+          properties:
+            first: { type: string, nullable: true }
+            last: { type: string, nullable: true }
+            prev: { type: string, nullable: true }
+            next: { type: string, nullable: true }
+
+paths:
+  /courses:
+    get:
+      tags: [Courses]
+      summary: List published, public courses (search + filters)
+      parameters:
+        - { name: q, in: query, schema: { type: string }, description: Search title/subtitle }
+        - { name: category, in: query, schema: { type: string }, description: Category public_id }
+        - { name: level, in: query, schema: { type: string }, description: Level public_id }
+        - { name: language, in: query, schema: { type: string }, description: Language public_id }
+        - { name: tag, in: query, schema: { type: string }, description: Tag public_id }
+        - { name: featured, in: query, schema: { type: boolean } }
+        - { name: per_page, in: query, schema: { type: integer, minimum: 1, maximum: 60 } }
+      responses:
+        "200":
+          description: Paginated course list
+          content: { application/json: { schema: { $ref: '#/components/schemas/Paginated' } } }
+  /courses/{public_id}:
+    get:
+      tags: [Courses]
+      summary: Get a published course by public_id (includes related courses)
+      parameters:
+        - { name: public_id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Course detail }
+        "404": { description: Not found (draft/archived/private/unknown) }
+  /categories:
+    get:
+      tags: [Categories]
+      summary: Active category tree (roots with nested children)
+      responses:
+        "200": { description: Category tree }
+  /trainers:
+    get:
+      tags: [Trainers]
+      summary: Active instructors surfaced by the catalog
+      responses:
+        "200": { description: Trainer list }

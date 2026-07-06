@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Domains\Crm\Actions\Organization;
+
+use App\Domains\Crm\Enums\MemberStatus;
+use App\Domains\Crm\Events\MemberInvited;
+use App\Domains\Crm\Models\Organization;
+use App\Domains\Crm\Models\OrganizationMember;
+use App\Domains\Identity\Models\User;
+use App\Shared\Actions\BaseAction;
+
+/**
+ * Invites a member to an organization (idempotent per organization+email). Links an existing
+ * user account if the email matches one.
+ */
+class InviteMemberAction extends BaseAction
+{
+    /** @param array<string, mixed> $data email, role? */
+    public function execute(Organization $organization, array $data): OrganizationMember
+    {
+        [$member, $created] = $this->transaction(function () use ($organization, $data): array {
+            $existing = OrganizationMember::where('organization_id', $organization->id)
+                ->where('email', $data['email'])
+                ->first();
+
+            if ($existing !== null) {
+                return [$existing, false];
+            }
+
+            $user = User::where('email', $data['email'])->first();
+
+            $member = OrganizationMember::create([
+                'organization_id' => $organization->id,
+                'user_id' => $user?->id,
+                'email' => $data['email'],
+                'role' => $data['role'] ?? 'member',
+                'status' => MemberStatus::Invited->value,
+                'invited_at' => now(),
+            ]);
+
+            return [$member, true];
+        });
+
+        if ($created) {
+            MemberInvited::dispatch($member);
+        }
+
+        return $member;
+    }
+}

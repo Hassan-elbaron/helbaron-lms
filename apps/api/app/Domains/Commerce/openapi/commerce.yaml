@@ -1,0 +1,89 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — Commerce API
+  version: "1.0"
+  description: >
+    Commerce endpoints (Step 7): products, cart, checkout, orders, contracts, and the payment
+    webhook. Payment goes through the PaymentGateway abstraction (never Stripe directly).
+    Enrollment is granted ONLY after successful payment AND accepted contract. Entities use
+    public_id.
+servers:
+  - url: /api/v1
+tags: [{ name: Products }, { name: Cart }, { name: Checkout }, { name: Orders }, { name: Contracts }, { name: Webhooks }]
+
+components:
+  securitySchemes:
+    sanctum: { type: http, scheme: bearer }
+
+paths:
+  /products:
+    get:
+      tags: [Products]
+      summary: List active products with prices (public)
+      parameters: [{ name: per_page, in: query, schema: { type: integer } }]
+      responses: { "200": { description: Paginated products } }
+  /cart:
+    get:
+      tags: [Cart]
+      security: [{ sanctum: [] }]
+      summary: Show the current cart with totals
+      responses: { "200": { description: OK } }
+    post:
+      tags: [Cart]
+      security: [{ sanctum: [] }]
+      summary: Add a product (optionally apply a coupon)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [product]
+              properties:
+                product: { type: string, description: product public_id }
+                coupon_code: { type: string }
+      responses: { "200": { description: Cart updated }, "422": { description: Product/coupon error } }
+    delete:
+      tags: [Cart]
+      security: [{ sanctum: [] }]
+      summary: Clear the cart
+      responses: { "200": { description: Cleared } }
+  /checkout:
+    post:
+      tags: [Checkout]
+      security: [{ sanctum: [] }]
+      summary: Place an order + issue invoice + pending contract, and initiate payment
+      responses:
+        "201": { description: Order placed (pending payment) }
+        "422": { description: Cart empty }
+  /payment/webhook:
+    post:
+      tags: [Webhooks]
+      summary: Provider payment webhook (public; signature verified by the gateway)
+      description: >
+        Advances the order exactly once (dedup by event id). On payment.succeeded the order is
+        marked paid and fulfillment is attempted (granted only if the contract is also accepted).
+      responses:
+        "200": { description: Acknowledged }
+        "400": { description: Invalid signature (COMMERCE_WEBHOOK_SIGNATURE) }
+  /orders:
+    get:
+      tags: [Orders]
+      security: [{ sanctum: [] }]
+      summary: List the current user's orders
+      responses: { "200": { description: Paginated orders } }
+  /contracts:
+    get:
+      tags: [Contracts]
+      security: [{ sanctum: [] }]
+      summary: List the user's contracts
+      responses: { "200": { description: OK } }
+  /contracts/{contract}/accept:
+    post:
+      tags: [Contracts]
+      security: [{ sanctum: [] }]
+      summary: Accept a contract (records an immutable audit; may unblock fulfillment)
+      parameters: [{ name: contract, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200": { description: Accepted }
+        "409": { description: Already accepted (COMMERCE_CONTRACT_ALREADY_ACCEPTED) }

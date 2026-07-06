@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Domains\Identity\Http\Requests;
+
+use App\Shared\Requests\BaseFormRequest;
+
+class LoginRequest extends BaseFormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'mfa_code' => ['nullable', 'string'],
+            'device_name' => ['nullable', 'string', 'max:255'],
+        ];
+    }
+}

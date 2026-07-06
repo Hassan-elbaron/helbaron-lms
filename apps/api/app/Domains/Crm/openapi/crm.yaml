@@ -1,0 +1,93 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — CRM API
+  version: "1.0"
+  description: >
+    CRM endpoints (Step 10): organizations + members, leads, and consulting requests. This
+    domain is independent of Learning and Commerce. No marketing/email/WhatsApp/AI/reports.
+    Entities use public_id.
+servers:
+  - url: /api/v1
+security:
+  - sanctum: []
+tags: [{ name: Organizations }, { name: Leads }, { name: Consulting }]
+
+components:
+  securitySchemes:
+    sanctum: { type: http, scheme: bearer }
+
+paths:
+  /organizations:
+    get:
+      tags: [Organizations]
+      summary: List CRM organizations
+      responses: { "200": { description: Paginated organizations } }
+  /organizations/{organization}:
+    get:
+      tags: [Organizations]
+      summary: Show an organization with members
+      parameters: [{ name: organization, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: OK }, "403": { description: Forbidden } }
+  /organizations/{organization}/members:
+    post:
+      tags: [Organizations]
+      summary: Invite a member (idempotent per organization+email)
+      parameters: [{ name: organization, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+                role: { type: string, enum: [owner, admin, manager, member] }
+      responses: { "201": { description: Invited } }
+  /leads:
+    get:
+      tags: [Leads]
+      summary: List/search leads (filters q, status)
+      parameters:
+        - { name: q, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string, enum: [new, working, qualified, converted, lost] } }
+      responses: { "200": { description: Paginated leads } }
+    post:
+      tags: [Leads]
+      summary: Create a lead (placed on the default pipeline's first stage)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+                phone: { type: string }
+                source: { type: string }
+                value_minor: { type: integer }
+                currency: { type: string }
+      responses: { "201": { description: Created } }
+  /consulting:
+    get:
+      tags: [Consulting]
+      summary: List the current user's consulting requests
+      responses: { "200": { description: OK } }
+  /consulting/request:
+    post:
+      tags: [Consulting]
+      summary: Submit a consulting request (SLA due time is computed)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [subject]
+              properties:
+                subject: { type: string }
+                description: { type: string }
+                organization: { type: string, description: organization public_id }
+      responses: { "201": { description: Submitted } }

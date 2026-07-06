@@ -1,0 +1,190 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — Identity API
+  version: "1.0"
+  description: >
+    Identity domain endpoints (Step 3). Authentication, verification, MFA, profile, and device
+    management. All responses use the standard envelope; entities are addressed by public_id.
+servers:
+  - url: /api/v1
+tags:
+  - name: Auth
+  - name: MFA
+  - name: Profile
+  - name: Devices
+
+components:
+  securitySchemes:
+    sanctum:
+      type: http
+      scheme: bearer
+  schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          required: [code, message, correlation_id, timestamp]
+          properties:
+            code: { type: string, example: AUTH_INVALID_CREDENTIALS }
+            message: { type: string }
+            details: { type: object }
+            correlation_id: { type: string }
+            timestamp: { type: string, format: date-time }
+    User:
+      type: object
+      properties:
+        id: { type: string, description: public_id (UUIDv7) }
+        name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string, nullable: true }
+        locale: { type: string, enum: [en, ar] }
+        is_active: { type: boolean }
+        email_verified: { type: boolean }
+        phone_verified: { type: boolean }
+        mfa_enabled: { type: boolean }
+        roles: { type: array, items: { type: string } }
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new account (issues an email OTP)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password, password_confirmation]
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+                phone: { type: string }
+                password: { type: string, minLength: 8 }
+                password_confirmation: { type: string }
+                locale: { type: string, enum: [en, ar] }
+      responses:
+        "201": { description: Created }
+        "422": { description: Validation error, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorEnvelope' } } } }
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate and receive a Sanctum token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+                mfa_code: { type: string, description: Required when MFA is enabled }
+                device_name: { type: string }
+      responses:
+        "200": { description: Token issued }
+        "401": { description: Invalid credentials }
+        "403": { description: MFA required (AUTH_MFA_REQUIRED) }
+        "423": { description: Account locked }
+  /auth/logout:
+    post:
+      tags: [Auth]
+      security: [{ sanctum: [] }]
+      summary: Revoke the current token/device
+      responses: { "200": { description: OK } }
+  /auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Send a password reset link
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [email], properties: { email: { type: string, format: email } } } } } }
+      responses: { "200": { description: OK (no account enumeration) } }
+  /auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Reset the password with a token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, email, password, password_confirmation]
+              properties:
+                token: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+                password_confirmation: { type: string }
+      responses: { "200": { description: OK }, "422": { description: Invalid/expired token } }
+  /auth/verify-email:
+    post:
+      tags: [Auth]
+      security: [{ sanctum: [] }]
+      summary: Verify email with an OTP
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [code], properties: { code: { type: string } } } } } }
+      responses: { "200": { description: Verified }, "422": { description: Invalid code }, "410": { description: Expired } }
+  /auth/verify-phone:
+    post:
+      tags: [Auth]
+      security: [{ sanctum: [] }]
+      summary: Verify phone with an OTP
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [code], properties: { code: { type: string } } } } } }
+      responses: { "200": { description: Verified }, "422": { description: Invalid code } }
+  /auth/mfa/enable:
+    post:
+      tags: [MFA]
+      security: [{ sanctum: [] }]
+      summary: Begin MFA enrollment (returns secret, otpauth_url, recovery_codes)
+      responses: { "200": { description: OK }, "409": { description: Already enabled } }
+  /auth/mfa/verify:
+    post:
+      tags: [MFA]
+      security: [{ sanctum: [] }]
+      summary: Confirm MFA enrollment with a TOTP code
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [code], properties: { code: { type: string } } } } } }
+      responses: { "200": { description: MFA enabled }, "422": { description: Invalid code } }
+  /auth/mfa/disable:
+    post:
+      tags: [MFA]
+      security: [{ sanctum: [] }]
+      summary: Disable MFA with a TOTP or recovery code
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [code], properties: { code: { type: string } } } } } }
+      responses: { "200": { description: MFA disabled }, "409": { description: Not enabled } }
+  /profile:
+    get:
+      tags: [Profile]
+      security: [{ sanctum: [] }]
+      summary: Get the authenticated profile
+      responses: { "200": { description: OK } }
+    put:
+      tags: [Profile]
+      security: [{ sanctum: [] }]
+      summary: Update the authenticated profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                locale: { type: string, enum: [en, ar] }
+                first_name: { type: string }
+                last_name: { type: string }
+                bio: { type: string }
+                gender: { type: string, enum: [male, female, unspecified] }
+                date_of_birth: { type: string, format: date }
+      responses: { "200": { description: Updated } }
+  /devices:
+    get:
+      tags: [Devices]
+      security: [{ sanctum: [] }]
+      summary: List the authenticated user's devices
+      responses: { "200": { description: OK } }
+  /devices/{device}:
+    delete:
+      tags: [Devices]
+      security: [{ sanctum: [] }]
+      summary: Revoke a device (by public_id)
+      parameters: [{ name: device, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: Revoked }, "403": { description: Not owner } }

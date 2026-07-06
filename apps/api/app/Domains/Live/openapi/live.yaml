@@ -1,0 +1,71 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — Live Learning API
+  version: "1.0"
+  description: >
+    Live Learning endpoints (Step 9): session discovery, registration (with capacity/waitlist),
+    join (waiting room + single-use token), and attendance. Meeting/calendar/reminder access is
+    behind abstractions (Fake meeting provider only). The raw meeting URL is exposed only via
+    /join with a token. Entities use public_id.
+servers:
+  - url: /api/v1
+tags: [{ name: Sessions }, { name: Participation }]
+
+components:
+  securitySchemes:
+    sanctum: { type: http, scheme: bearer }
+
+paths:
+  /live-sessions:
+    get:
+      tags: [Sessions]
+      summary: List upcoming scheduled sessions (public)
+      parameters: [{ name: per_page, in: query, schema: { type: integer } }]
+      responses: { "200": { description: Paginated sessions } }
+  /live-sessions/{session}:
+    get:
+      tags: [Sessions]
+      summary: Session detail (times in UTC + session timezone; no raw join URL)
+      parameters: [{ name: session, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: OK } }
+  /live-sessions/{session}/register:
+    post:
+      tags: [Participation]
+      security: [{ sanctum: [] }]
+      summary: Register for a session (registered or waitlisted by capacity)
+      parameters: [{ name: session, in: path, required: true, schema: { type: string } }]
+      responses:
+        "201": { description: Registered/Waitlisted }
+        "409": { description: Full }
+        "410": { description: Cancelled (LIVE_SESSION_CANCELLED) }
+  /live-sessions/{session}/join:
+    post:
+      tags: [Participation]
+      security: [{ sanctum: [] }]
+      summary: Join — returns a waiting-room state or a single-use token + join URL
+      parameters: [{ name: session, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200":
+          description: Waiting room or ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      state: { type: string, enum: [waiting_room, ready] }
+                      join_url: { type: string, nullable: true }
+                      token: { type: string, nullable: true }
+                      expires_at: { type: string, format: date-time, nullable: true }
+        "403": { description: Not registered (LIVE_NOT_REGISTERED) }
+  /live-sessions/{session}/attendance:
+    post:
+      tags: [Participation]
+      security: [{ sanctum: [] }]
+      summary: Record attendance (registered participants only)
+      parameters: [{ name: session, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        content: { application/json: { schema: { type: object, properties: { left_at: { type: string, format: date-time } } } } }
+      responses: { "200": { description: Recorded }, "403": { description: Not registered } }

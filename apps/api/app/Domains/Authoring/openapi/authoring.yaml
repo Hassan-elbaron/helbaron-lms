@@ -1,0 +1,159 @@
+openapi: 3.1.0
+info:
+  title: HElbaron — Authoring API (Admin)
+  version: "1.0"
+  description: >
+    Authoring admin endpoints (Step 5): curriculum tree, sections, lessons, ordering,
+    prerequisites, preview, and media METADATA (Mux/S3 identifiers only — no upload/playback).
+    All endpoints require authentication and authoring management permission. Entities use
+    public_id.
+servers:
+  - url: /api/v1
+security:
+  - sanctum: []
+tags: [{ name: Curriculum }, { name: Sections }, { name: Lessons }]
+
+components:
+  securitySchemes:
+    sanctum: { type: http, scheme: bearer }
+  schemas:
+    LessonMedia:
+      type: object
+      properties:
+        mux_asset_id: { type: string, nullable: true }
+        mux_playback_id: { type: string, nullable: true }
+        s3_key: { type: string, nullable: true }
+        mime_type: { type: string, nullable: true }
+        duration: { type: integer, nullable: true, description: seconds }
+        filesize: { type: integer, nullable: true, description: bytes }
+    LessonType:
+      type: string
+      enum: [video, article, pdf, download, external_link, quiz_placeholder]
+
+paths:
+  /admin/courses/{course}/curriculum:
+    get:
+      tags: [Curriculum]
+      summary: Get the full curriculum tree (sections with nested lessons)
+      parameters: [{ name: course, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: OK }, "403": { description: Forbidden } }
+  /admin/courses/{course}/curriculum/order:
+    put:
+      tags: [Curriculum]
+      summary: Drag-and-drop reorder of the whole tree (section + lesson order/re-parent)
+      parameters: [{ name: course, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tree]
+              properties:
+                tree:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id: { type: string, description: section public_id }
+                      lessons: { type: array, items: { type: string, description: lesson public_id } }
+      responses: { "200": { description: Reordered } }
+  /admin/courses/{course}/sections:
+    post:
+      tags: [Sections]
+      summary: Create a section
+      parameters: [{ name: course, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [title], properties: { title: { type: string }, summary: { type: string } } } } }
+      responses: { "201": { description: Created } }
+  /admin/courses/{course}/sections/order:
+    put:
+      tags: [Sections]
+      summary: Reorder sections
+      parameters: [{ name: course, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [order], properties: { order: { type: array, items: { type: string } } } } } } }
+      responses: { "200": { description: Reordered } }
+  /admin/sections/{section}:
+    put:
+      tags: [Sections]
+      summary: Update a section
+      parameters: [{ name: section, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: Updated } }
+    delete:
+      tags: [Sections]
+      summary: Delete a section (soft delete)
+      parameters: [{ name: section, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: Deleted } }
+  /admin/sections/{section}/publish:
+    post:
+      tags: [Sections]
+      summary: Set section publish state (draft|published)
+      parameters: [{ name: section, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { type: string, enum: [draft, published] } } } } } }
+      responses: { "200": { description: Updated } }
+  /admin/sections/{section}/lessons:
+    post:
+      tags: [Lessons]
+      summary: Create a lesson
+      parameters: [{ name: section, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, type]
+              properties:
+                title: { type: string }
+                type: { $ref: '#/components/schemas/LessonType' }
+                content: { type: object }
+                is_preview: { type: boolean }
+      responses: { "201": { description: Created } }
+  /admin/sections/{section}/lessons/order:
+    put:
+      tags: [Lessons]
+      summary: Reorder lessons within a section
+      parameters: [{ name: section, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [order], properties: { order: { type: array, items: { type: string } } } } } } }
+      responses: { "200": { description: Reordered } }
+  /admin/lessons/{lesson}:
+    put:
+      tags: [Lessons]
+      summary: Update a lesson
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: Updated } }
+    delete:
+      tags: [Lessons]
+      summary: Delete a lesson (soft delete)
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: Deleted } }
+  /admin/lessons/{lesson}/publish:
+    post:
+      tags: [Lessons]
+      summary: Set lesson publish state (draft|published)
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [state], properties: { state: { type: string, enum: [draft, published] } } } } } }
+      responses: { "200": { description: Updated } }
+  /admin/lessons/{lesson}/preview:
+    post:
+      tags: [Lessons]
+      summary: Toggle the preview flag
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: Toggled } }
+  /admin/lessons/{lesson}/prerequisites:
+    put:
+      tags: [Lessons]
+      summary: Set lesson prerequisites (same-course, acyclic)
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [prerequisites], properties: { prerequisites: { type: array, items: { type: string, description: lesson public_id } } } } } } }
+      responses:
+        "200": { description: Updated }
+        "422": { description: Cycle or cross-course reference }
+  /admin/lessons/{lesson}/media:
+    put:
+      tags: [Lessons]
+      summary: Upsert lesson media METADATA (Mux/S3 identifiers; no upload/playback)
+      parameters: [{ name: lesson, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/LessonMedia' } } } }
+      responses: { "200": { description: Stored } }

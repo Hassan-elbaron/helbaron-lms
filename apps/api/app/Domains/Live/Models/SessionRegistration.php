@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Domains\Live\Models;
+
+use App\Domains\Identity\Models\User;
+use App\Domains\Live\Enums\RegistrationStatus;
+use App\Shared\Traits\HasPublicId;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class SessionRegistration extends Model
+{
+    use HasPublicId;
+
+    protected $fillable = ['session_id', 'user_id', 'status', 'registered_at'];
+
+    protected function casts(): array
+    {
+        return ['status' => RegistrationStatus::class, 'registered_at' => 'datetime'];
+    }
+
+    public function session(): BelongsTo
+    {
+        return $this->belongsTo(LiveSession::class, 'session_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}
