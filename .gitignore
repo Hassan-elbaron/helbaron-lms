@@ -11,3 +11,11 @@ apps/api/.env.docker
 *.pem
 *.key
 auth.json
+
+# Runtime-generated artifacts (should not be committed)
+apps/api/storage/app/private/certificates/
+apps/api/storage/framework/views/*.php
+apps/api/storage/framework/views/*.blade.php
+apps/api/storage/framework/testing/disks/
+apps/api/bootstrap/cache/packages.php
+apps/api/bootstrap/cache/services.php
