@@ -9,7 +9,7 @@ use App\Domains\Authoring\Policies\SectionPolicy;
 use App\Domains\Authoring\Services\CurriculumPublishGuard;
 use App\Domains\Catalog\Contracts\CoursePublishGuard;
 use App\Domains\Catalog\Models\Course;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Gate;
 

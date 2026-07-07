@@ -6,7 +6,7 @@ use App\Domains\Commerce\Exceptions\ProductUnavailableException;
 use App\Domains\Commerce\Models\Cart;
 use App\Domains\Commerce\Models\CartItem;
 use App\Domains\Commerce\Models\Product;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Services\BaseService;
 
 /**

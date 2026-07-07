@@ -2,7 +2,7 @@
 
 namespace App\Domains\Notifications\Models;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Notifications\Database\Factories\NotificationFactory;
 use App\Domains\Notifications\Enums\NotificationCategory;
 use App\Platform\Shared\Traits\HasPublicId;

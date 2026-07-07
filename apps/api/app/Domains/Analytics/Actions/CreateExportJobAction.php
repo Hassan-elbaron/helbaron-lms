@@ -5,7 +5,7 @@ namespace App\Domains\Analytics\Actions;
 use App\Domains\Analytics\Enums\ExportStatus;
 use App\Domains\Analytics\Jobs\ProcessExportJob;
 use App\Domains\Analytics\Models\ExportJob;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Actions\BaseAction;
 
 /**

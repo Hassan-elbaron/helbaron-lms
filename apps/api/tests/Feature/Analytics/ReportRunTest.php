@@ -2,7 +2,7 @@
 
 use App\Domains\Analytics\Models\MetricSnapshot;
 use App\Domains\Analytics\Models\ReportDefinition;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 

@@ -3,7 +3,7 @@
 namespace App\Domains\Certification\Models;
 
 use App\Domains\Certification\Enums\BadgeSource;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -1,8 +1,8 @@
 <?php
 
-use App\Domains\Identity\Database\Seeders\RolePermissionSeeder;
-use App\Domains\Identity\Enums\Role;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Database\Seeders\RolePermissionSeeder;
+use App\Platform\Identity\Enums\Role;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

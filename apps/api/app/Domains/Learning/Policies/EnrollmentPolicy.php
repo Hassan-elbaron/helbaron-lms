@@ -2,7 +2,7 @@
 
 namespace App\Domains\Learning\Policies;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Models\Enrollment;
 use App\Platform\Shared\Policies\BasePolicy;
 

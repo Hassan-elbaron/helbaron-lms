@@ -8,7 +8,7 @@ use App\Domains\Catalog\Database\Seeders\CatalogSeeder;
 use App\Domains\Certification\Database\Seeders\CertificationSeeder;
 use App\Domains\Commerce\Database\Seeders\CommerceSeeder;
 use App\Domains\Crm\Database\Seeders\CrmSeeder;
-use App\Domains\Identity\Database\Seeders\IdentitySeeder;
+use App\Platform\Identity\Database\Seeders\IdentitySeeder;
 use App\Domains\Learning\Database\Seeders\LearningSeeder;
 use App\Domains\Live\Database\Seeders\LiveSeeder;
 use App\Domains\Notifications\Database\Seeders\NotificationsSeeder;

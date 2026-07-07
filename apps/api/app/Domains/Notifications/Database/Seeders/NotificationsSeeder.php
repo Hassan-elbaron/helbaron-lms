@@ -2,7 +2,7 @@
 
 namespace App\Domains\Notifications\Database\Seeders;
 
-use App\Domains\Identity\Enums\Role;
+use App\Platform\Identity\Enums\Role;
 use App\Domains\Notifications\Enums\NotificationsPermission;
 use App\Domains\Notifications\Models\NotificationTemplate;
 use Illuminate\Database\Seeder;

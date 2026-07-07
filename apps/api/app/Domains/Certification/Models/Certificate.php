@@ -5,7 +5,7 @@ namespace App\Domains\Certification\Models;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Certification\Database\Factories\CertificateFactory;
 use App\Domains\Certification\Enums\CertificateStatus;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

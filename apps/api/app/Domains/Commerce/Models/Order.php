@@ -4,7 +4,7 @@ namespace App\Domains\Commerce\Models;
 
 use App\Domains\Commerce\Database\Factories\OrderFactory;
 use App\Domains\Commerce\Enums\OrderStatus;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

@@ -3,7 +3,7 @@
 namespace App\Domains\Analytics\Policies;
 
 use App\Domains\Analytics\Models\ReportDefinition;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Policies\BasePolicy;
 
 class ReportDefinitionPolicy extends BasePolicy

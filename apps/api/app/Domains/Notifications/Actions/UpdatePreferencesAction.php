@@ -2,7 +2,7 @@
 
 namespace App\Domains\Notifications\Actions;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Notifications\Models\NotificationPreference;
 use App\Domains\Notifications\Models\UserNotificationSetting;
 use App\Platform\Shared\Actions\BaseAction;

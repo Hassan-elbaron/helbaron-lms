@@ -3,7 +3,7 @@
 namespace App\Domains\Learning\Actions\Progress;
 
 use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Enums\LessonProgressStatus;
 use App\Domains\Learning\Events\CourseCompleted;
 use App\Domains\Learning\Events\LessonCompleted;

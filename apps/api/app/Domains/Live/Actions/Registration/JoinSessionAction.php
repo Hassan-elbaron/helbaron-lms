@@ -2,7 +2,7 @@
 
 namespace App\Domains\Live\Actions\Registration;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Live\Enums\RegistrationStatus;
 use App\Domains\Live\Exceptions\JoinWindowClosedException;
 use App\Domains\Live\Exceptions\NotRegisteredException;

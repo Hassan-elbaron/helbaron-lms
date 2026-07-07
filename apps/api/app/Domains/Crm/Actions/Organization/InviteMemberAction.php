@@ -6,7 +6,7 @@ use App\Domains\Crm\Enums\MemberStatus;
 use App\Domains\Crm\Events\MemberInvited;
 use App\Domains\Crm\Models\Organization;
 use App\Domains\Crm\Models\OrganizationMember;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Actions\BaseAction;
 
 /**

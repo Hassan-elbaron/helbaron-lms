@@ -11,7 +11,7 @@ use App\Domains\Certification\Models\CertificateTemplate;
 use App\Domains\Certification\Services\CertificateNumberService;
 use App\Domains\Certification\Services\SignatureService;
 use App\Domains\Certification\Services\VerificationCodeService;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Actions\BaseAction;
 
 /**

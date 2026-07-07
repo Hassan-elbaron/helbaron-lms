@@ -16,8 +16,8 @@ class SharedServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../../../config/shared.php', 'shared');
-        $this->mergeConfigFrom(__DIR__.'/../../../config/features.php', 'features');
+        $this->mergeConfigFrom(base_path('config/shared.php'), 'shared');
+        $this->mergeConfigFrom(base_path('config/features.php'), 'features');
     }
 
     public function boot(): void

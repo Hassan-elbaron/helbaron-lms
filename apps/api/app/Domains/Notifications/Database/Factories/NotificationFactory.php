@@ -2,7 +2,7 @@
 
 namespace App\Domains\Notifications\Database\Factories;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Notifications\Enums\NotificationCategory;
 use App\Domains\Notifications\Models\Notification;
 use Illuminate\Database\Eloquent\Factories\Factory;

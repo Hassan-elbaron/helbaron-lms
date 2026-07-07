@@ -2,7 +2,7 @@
 
 namespace App\Domains\Live\Database\Seeders;
 
-use App\Domains\Identity\Enums\Role;
+use App\Platform\Identity\Enums\Role;
 use App\Domains\Live\Actions\Session\ScheduleSessionAction;
 use App\Domains\Live\Enums\LivePermission;
 use App\Domains\Live\Models\LiveCourse;

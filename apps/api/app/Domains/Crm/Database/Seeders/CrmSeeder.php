@@ -6,7 +6,7 @@ use App\Domains\Crm\Enums\CrmPermission;
 use App\Domains\Crm\Enums\PipelineType;
 use App\Domains\Crm\Models\Organization;
 use App\Domains\Crm\Models\Pipeline;
-use App\Domains\Identity\Enums\Role;
+use App\Platform\Identity\Enums\Role;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;

@@ -3,7 +3,7 @@
 namespace App\Domains\Learning\Models;
 
 use App\Domains\Catalog\Models\Course;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Database\Factories\EnrollmentFactory;
 use App\Domains\Learning\Enums\EnrollmentSource;
 use App\Domains\Learning\Enums\EnrollmentStatus;

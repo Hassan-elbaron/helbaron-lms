@@ -571,13 +571,13 @@ parameters:
 			path: app/Domains/Catalog/Http/Resources/CourseResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Catalog/Http/Resources/TrainerResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Catalog/Http/Resources/TrainerResource.php
@@ -775,7 +775,7 @@ parameters:
 			path: app/Domains/Certification/Http/Resources/CertificateResource.php
 
 		-
-			message: '#^Parameter \#1 \$user of method App\\Domains\\Certification\\Actions\\GenerateCertificateAction\:\:execute\(\) expects App\\Domains\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#1 \$user of method App\\Domains\\Certification\\Actions\\GenerateCertificateAction\:\:execute\(\) expects App\\Platform\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Domains/Certification/Listeners/GenerateCertificateOnCourseCompleted.php
@@ -1021,7 +1021,7 @@ parameters:
 			path: app/Domains/Commerce/Actions/Payment/FulfillOrderAction.php
 
 		-
-			message: '#^Parameter \#1 \$user of method App\\Domains\\Learning\\Actions\\Enrollment\\GrantEnrollmentAction\:\:execute\(\) expects App\\Domains\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			message: '#^Parameter \#1 \$user of method App\\Domains\\Learning\\Actions\\Enrollment\\GrantEnrollmentAction\:\:execute\(\) expects App\\Platform\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Domains/Commerce/Actions/Payment/FulfillOrderAction.php
@@ -1795,43 +1795,43 @@ parameters:
 			path: app/Domains/Crm/Services/TimelineService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$failed_login_count\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$failed_login_count\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Actions/Auth/LoginAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$is_active\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$is_active\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Actions/Auth/LoginAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$mfa_enabled\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$mfa_enabled\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Actions/Auth/LoginAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$password\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$password\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Actions/Auth/LoginAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$email\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Actions/Auth/VerifyEmailAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$phone\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$phone\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Actions/Auth/VerifyPhoneAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Actions/Device/RevokeDeviceAction.php
@@ -1849,193 +1849,193 @@ parameters:
 			path: app/Domains/Identity/Http/Controllers/Api/V1/AuthController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$created_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$created_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/DeviceResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$ip\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$ip\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/DeviceResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$last_used_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$last_used_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/DeviceResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/DeviceResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/DeviceResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$user_agent\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$user_agent\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/DeviceResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserProfile\:\:\$avatar_path\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserProfile\:\:\$avatar_path\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/ProfileResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserProfile\:\:\$bio\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserProfile\:\:\$bio\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/ProfileResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserProfile\:\:\$date_of_birth\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserProfile\:\:\$date_of_birth\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/ProfileResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserProfile\:\:\$first_name\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserProfile\:\:\$first_name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/ProfileResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserProfile\:\:\$gender\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserProfile\:\:\$gender\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/ProfileResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserProfile\:\:\$last_name\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserProfile\:\:\$last_name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/ProfileResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserProfile\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserProfile\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/ProfileResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$created_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$created_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$email\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$email_verified_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$email_verified_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$is_active\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$is_active\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$locale\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$locale\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$mfa_enabled\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$mfa_enabled\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$phone\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$phone\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$phone_verified_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$phone_verified_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$email\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Listeners/SendEmailOtpOnRegistration.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$is_active\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$is_active\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Models/User.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$locked_until\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$locked_until\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Models/User.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Models/User.php
 
 		-
-			message: '#^The @use tag of class App\\Domains\\Identity\\Models\\User describes Illuminate\\Database\\Eloquent\\Factories\\HasFactory but the class uses Laravel\\Sanctum\\HasApiTokens\.$#'
+			message: '#^The @use tag of class App\\Platform\\Identity\\Models\\User describes Illuminate\\Database\\Eloquent\\Factories\\HasFactory but the class uses Laravel\\Sanctum\\HasApiTokens\.$#'
 			identifier: generics.wrongParent
 			count: 1
 			path: app/Domains/Identity/Models/User.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserOtp\:\:\$consumed_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserOtp\:\:\$consumed_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Models/UserOtp.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserOtp\:\:\$expires_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserOtp\:\:\$expires_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Models/UserOtp.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Policies/DevicePolicy.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserDevice\:\:\$token_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserDevice\:\:\$token_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Services/DeviceService.php
@@ -2047,19 +2047,19 @@ parameters:
 			path: app/Domains/Identity/Services/DeviceService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$email\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Services/MfaService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$mfa_enabled\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$mfa_enabled\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Identity/Services/MfaService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\UserOtp\:\:\$code_hash\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\UserOtp\:\:\$code_hash\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Identity/Services/OtpService.php
@@ -2917,7 +2917,7 @@ parameters:
 			path: app/Domains/Notifications/Listeners/NotificationEventSubscriber.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Identity\\Models\\User\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Identity\\Models\\User\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Listeners/NotificationEventSubscriber.php
@@ -2935,7 +2935,7 @@ parameters:
 			path: app/Domains/Notifications/Listeners/NotificationEventSubscriber.php
 
 		-
-			message: '#^Parameter \#1 \$user of method App\\Domains\\Notifications\\Services\\NotificationDispatcher\:\:dispatch\(\) expects App\\Domains\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#1 \$user of method App\\Domains\\Notifications\\Services\\NotificationDispatcher\:\:dispatch\(\) expects App\\Platform\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 5
 			path: app/Domains/Notifications/Listeners/NotificationEventSubscriber.php

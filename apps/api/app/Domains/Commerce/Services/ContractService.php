@@ -5,7 +5,7 @@ namespace App\Domains\Commerce\Services;
 use App\Domains\Commerce\Models\Contract;
 use App\Domains\Commerce\Models\ContractTemplate;
 use App\Domains\Commerce\Models\Order;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Services\BaseService;
 
 /**

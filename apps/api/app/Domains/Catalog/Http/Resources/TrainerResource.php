@@ -2,7 +2,7 @@
 
 namespace App\Domains\Catalog\Http\Resources;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 

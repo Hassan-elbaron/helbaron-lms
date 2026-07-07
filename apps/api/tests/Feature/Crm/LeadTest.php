@@ -1,8 +1,8 @@
 <?php
 
 use App\Domains\Crm\Models\Lead;
-use App\Domains\Identity\Database\Seeders\RolePermissionSeeder;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Database\Seeders\RolePermissionSeeder;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 

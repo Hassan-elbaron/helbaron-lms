@@ -1,6 +1,6 @@
 <?php
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Notifications\Models\Notification;
 use App\Domains\Notifications\Models\UserNotificationSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -2,8 +2,8 @@
 
 use App\Domains\Commerce\Events\OrderPaid;
 use App\Domains\Commerce\Models\Order;
-use App\Domains\Identity\Events\UserRegistered;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Events\UserRegistered;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 

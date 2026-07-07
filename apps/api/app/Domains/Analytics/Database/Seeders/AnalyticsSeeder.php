@@ -7,7 +7,7 @@ use App\Domains\Analytics\Enums\ReportType;
 use App\Domains\Analytics\Models\DashboardDefinition;
 use App\Domains\Analytics\Models\MetricDefinition;
 use App\Domains\Analytics\Models\ReportDefinition;
-use App\Domains\Identity\Enums\Role;
+use App\Platform\Identity\Enums\Role;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;

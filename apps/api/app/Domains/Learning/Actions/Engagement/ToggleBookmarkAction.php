@@ -3,7 +3,7 @@
 namespace App\Domains\Learning\Actions\Engagement;
 
 use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Models\LessonBookmark;
 use App\Platform\Shared\Actions\BaseAction;
 

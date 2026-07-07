@@ -4,7 +4,7 @@ namespace App\Domains\Learning\Services;
 
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Enums\LessonProgressStatus;
 use App\Domains\Learning\Models\Enrollment;
 use App\Domains\Learning\Models\LessonProgress;

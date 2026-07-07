@@ -1,8 +1,8 @@
 <?php
 
-use App\Domains\Identity\Database\Seeders\RolePermissionSeeder;
-use App\Domains\Identity\Models\User;
-use App\Domains\Identity\Notifications\EmailOtpNotification;
+use App\Platform\Identity\Database\Seeders\RolePermissionSeeder;
+use App\Platform\Identity\Models\User;
+use App\Platform\Identity\Notifications\EmailOtpNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;

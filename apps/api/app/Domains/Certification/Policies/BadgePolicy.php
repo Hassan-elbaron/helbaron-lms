@@ -2,7 +2,7 @@
 
 namespace App\Domains\Certification\Policies;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Policies\BasePolicy;
 
 class BadgePolicy extends BasePolicy

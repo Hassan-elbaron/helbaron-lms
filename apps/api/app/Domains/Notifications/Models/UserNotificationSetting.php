@@ -2,7 +2,7 @@
 
 namespace App\Domains\Notifications\Models;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Notifications\Enums\DigestFrequency;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;

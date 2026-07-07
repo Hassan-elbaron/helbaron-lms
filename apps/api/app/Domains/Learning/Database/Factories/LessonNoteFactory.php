@@ -3,7 +3,7 @@
 namespace App\Domains\Learning\Database\Factories;
 
 use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Models\LessonNote;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

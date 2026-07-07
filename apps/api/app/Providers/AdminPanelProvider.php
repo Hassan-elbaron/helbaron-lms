@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Domains\Identity\Http\Middleware\EnforceAdminMfa;
+use App\Platform\Identity\Http\Middleware\EnforceAdminMfa;
 use App\Filament\Widgets\PlatformOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -86,6 +86,13 @@ class AdminPanelProvider extends PanelProvider
             ]);
 
         foreach (self::DOMAINS as $domain) {
+            if ($domain === 'Identity') {
+                $panel->discoverResources(
+                    in: app_path('Platform/Identity/Filament/Resources'),
+                    for: 'App\Platform\Identity\Filament\Resources',
+                );
+                continue;
+            }
             $panel->discoverResources(
                 in: app_path("Domains/{$domain}/Filament/Resources"),
                 for: "App\\Domains\\{$domain}\\Filament\\Resources",

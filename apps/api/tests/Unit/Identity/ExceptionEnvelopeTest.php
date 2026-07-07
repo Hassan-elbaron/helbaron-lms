@@ -1,10 +1,10 @@
 <?php
 
-use App\Domains\Identity\Exceptions\AccountLockedException;
-use App\Domains\Identity\Exceptions\ExpiredOtpException;
-use App\Domains\Identity\Exceptions\InvalidCredentialsException;
-use App\Domains\Identity\Exceptions\InvalidOtpException;
-use App\Domains\Identity\Exceptions\OtpRateLimitedException;
+use App\Platform\Identity\Exceptions\AccountLockedException;
+use App\Platform\Identity\Exceptions\ExpiredOtpException;
+use App\Platform\Identity\Exceptions\InvalidCredentialsException;
+use App\Platform\Identity\Exceptions\InvalidOtpException;
+use App\Platform\Identity\Exceptions\OtpRateLimitedException;
 
 it('renders identity exceptions to the standard envelope', function () {
     $req = request();

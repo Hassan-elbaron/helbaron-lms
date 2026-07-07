@@ -2,7 +2,7 @@
 
 namespace App\Domains\Live\Services;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Models\SessionJoinToken;
 use App\Platform\Shared\Services\BaseService;

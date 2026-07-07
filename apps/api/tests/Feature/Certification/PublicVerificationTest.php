@@ -4,7 +4,7 @@ use App\Domains\Catalog\Models\Course;
 use App\Domains\Certification\Actions\GenerateCertificateAction;
 use App\Domains\Certification\Actions\RevokeCertificateAction;
 use App\Domains\Certification\Models\CertificateTemplate;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

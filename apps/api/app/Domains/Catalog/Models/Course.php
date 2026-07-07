@@ -4,7 +4,7 @@ namespace App\Domains\Catalog\Models;
 
 use App\Domains\Catalog\Database\Factories\CourseFactory;
 use App\Domains\Catalog\Enums\CourseStatus;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Enums\Visibility;
 use App\Platform\Shared\Traits\HasPublicId;
 use App\Platform\Shared\Traits\HasSeo;

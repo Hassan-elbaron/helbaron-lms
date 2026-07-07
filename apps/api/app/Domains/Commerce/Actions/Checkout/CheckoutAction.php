@@ -17,7 +17,7 @@ use App\Domains\Commerce\Payments\Data\ChargeRequest;
 use App\Domains\Commerce\Services\CartService;
 use App\Domains\Commerce\Services\ContractService;
 use App\Domains\Commerce\Services\InvoiceNumberService;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Actions\BaseAction;
 
 /**

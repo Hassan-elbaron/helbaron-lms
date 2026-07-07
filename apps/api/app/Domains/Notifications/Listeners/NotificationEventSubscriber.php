@@ -5,7 +5,7 @@ namespace App\Domains\Notifications\Listeners;
 use App\Domains\Certification\Events\CertificateIssued;
 use App\Domains\Commerce\Events\OrderPaid;
 use App\Domains\Crm\Events\ConsultingRequestCreated;
-use App\Domains\Identity\Events\UserRegistered;
+use App\Platform\Identity\Events\UserRegistered;
 use App\Domains\Learning\Events\CourseCompleted;
 use App\Domains\Learning\Events\UserEnrolled;
 use App\Domains\Live\Events\SessionScheduled;

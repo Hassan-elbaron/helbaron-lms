@@ -8,7 +8,7 @@ use App\Domains\Authoring\Enums\PublishState;
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Models\Course;
-use App\Domains\Identity\Enums\Role;
+use App\Platform\Identity\Enums\Role;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;

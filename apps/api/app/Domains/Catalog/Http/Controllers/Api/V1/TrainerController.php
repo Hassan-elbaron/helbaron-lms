@@ -3,7 +3,7 @@
 namespace App\Domains\Catalog\Http\Controllers\Api\V1;
 
 use App\Domains\Catalog\Http\Resources\TrainerResource;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;

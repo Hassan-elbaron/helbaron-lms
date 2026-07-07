@@ -2,7 +2,7 @@
 
 namespace App\Domains\Analytics\Policies;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Policies\BasePolicy;
 
 class DashboardDefinitionPolicy extends BasePolicy

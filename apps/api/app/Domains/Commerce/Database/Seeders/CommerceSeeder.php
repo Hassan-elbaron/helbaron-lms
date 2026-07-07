@@ -8,7 +8,7 @@ use App\Domains\Commerce\Enums\ProductStatus;
 use App\Domains\Commerce\Enums\ProductType;
 use App\Domains\Commerce\Models\ContractTemplate;
 use App\Domains\Commerce\Models\Product;
-use App\Domains\Identity\Enums\Role;
+use App\Platform\Identity\Enums\Role;
 use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;

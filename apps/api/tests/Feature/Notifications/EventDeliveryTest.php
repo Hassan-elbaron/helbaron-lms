@@ -1,7 +1,7 @@
 <?php
 
-use App\Domains\Identity\Events\UserRegistered;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Events\UserRegistered;
+use App\Platform\Identity\Models\User;
 use App\Domains\Notifications\Enums\DeliveryStatus;
 use App\Domains\Notifications\Jobs\DeliverNotificationJob;
 use App\Domains\Notifications\Models\Notification;

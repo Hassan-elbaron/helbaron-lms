@@ -5,7 +5,7 @@ namespace App\Domains\Analytics\Models;
 use App\Domains\Analytics\Database\Factories\ReportDefinitionFactory;
 use App\Domains\Analytics\Enums\ReportType;
 use App\Domains\Analytics\Enums\ReportVisibility;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

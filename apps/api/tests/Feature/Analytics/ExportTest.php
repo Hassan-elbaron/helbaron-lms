@@ -7,7 +7,7 @@ use App\Domains\Analytics\Models\ExportJob;
 use App\Domains\Analytics\Models\MetricSnapshot;
 use App\Domains\Analytics\Models\ReportDefinition;
 use App\Domains\Analytics\Services\ExportService;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;

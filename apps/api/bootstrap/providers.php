@@ -6,7 +6,7 @@ use App\Domains\Catalog\Providers\CatalogServiceProvider;
 use App\Domains\Certification\Providers\CertificationServiceProvider;
 use App\Domains\Commerce\Providers\CommerceServiceProvider;
 use App\Domains\Crm\Providers\CrmServiceProvider;
-use App\Domains\Identity\Providers\IdentityServiceProvider;
+use App\Platform\Identity\Providers\IdentityServiceProvider;
 use App\Domains\Learning\Providers\LearningServiceProvider;
 use App\Domains\Live\Providers\LiveServiceProvider;
 use App\Domains\Notifications\Providers\NotificationsServiceProvider;

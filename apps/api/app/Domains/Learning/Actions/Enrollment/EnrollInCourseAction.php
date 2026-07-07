@@ -4,7 +4,7 @@ namespace App\Domains\Learning\Actions\Enrollment;
 
 use App\Domains\Catalog\Enums\CourseStatus;
 use App\Domains\Catalog\Models\Course;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Enums\EnrollmentSource;
 use App\Domains\Learning\Exceptions\CourseNotEnrollableException;
 use App\Domains\Learning\Models\Enrollment;

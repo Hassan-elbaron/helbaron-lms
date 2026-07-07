@@ -5,7 +5,7 @@ namespace App\Domains\Certification\Database\Factories;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Certification\Enums\CertificateStatus;
 use App\Domains\Certification\Models\Certificate;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

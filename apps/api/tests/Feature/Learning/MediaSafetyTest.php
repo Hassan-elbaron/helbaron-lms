@@ -2,7 +2,7 @@
 
 use App\Domains\Authoring\Enums\LessonType;
 use App\Domains\Authoring\Models\LessonMedia;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Actions\Enrollment\GrantEnrollmentAction;
 use App\Domains\Learning\Enums\EnrollmentSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;

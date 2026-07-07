@@ -3,7 +3,7 @@
 namespace App\Domains\Crm\Policies;
 
 use App\Domains\Crm\Models\Organization;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Policies\BasePolicy;
 
 class OrganizationPolicy extends BasePolicy

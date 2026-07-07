@@ -2,7 +2,7 @@
 
 namespace App\Domains\Live\Actions\Registration;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Live\Enums\RegistrationStatus;
 use App\Domains\Live\Models\LiveSession;
 use App\Platform\Shared\Actions\BaseAction;

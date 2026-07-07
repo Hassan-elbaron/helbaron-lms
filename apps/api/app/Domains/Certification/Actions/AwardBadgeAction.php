@@ -6,7 +6,7 @@ use App\Domains\Certification\Enums\BadgeSource;
 use App\Domains\Certification\Events\BadgeAwarded;
 use App\Domains\Certification\Models\Badge;
 use App\Domains\Certification\Models\BadgeAward;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Actions\BaseAction;
 
 /**

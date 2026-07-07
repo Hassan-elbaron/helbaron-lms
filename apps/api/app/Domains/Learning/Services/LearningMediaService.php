@@ -3,7 +3,7 @@
 namespace App\Domains\Learning\Services;
 
 use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Contracts\PlaybackTokenProvider;
 use App\Domains\Learning\Exceptions\MediaUnavailableException;
 use App\Domains\Learning\Playback\Data\PlaybackToken;

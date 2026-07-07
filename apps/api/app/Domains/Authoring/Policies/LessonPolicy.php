@@ -3,7 +3,7 @@
 namespace App\Domains\Authoring\Policies;
 
 use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Policies\BasePolicy;
 
 class LessonPolicy extends BasePolicy

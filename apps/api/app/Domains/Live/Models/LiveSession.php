@@ -2,7 +2,7 @@
 
 namespace App\Domains\Live\Models;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Live\Database\Factories\LiveSessionFactory;
 use App\Domains\Live\Enums\LiveSessionStatus;
 use App\Platform\Shared\Traits\HasPublicId;

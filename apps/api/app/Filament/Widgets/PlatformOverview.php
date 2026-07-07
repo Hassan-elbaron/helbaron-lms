@@ -6,7 +6,7 @@ use App\Domains\Catalog\Models\Course;
 use App\Domains\Commerce\Enums\OrderStatus;
 use App\Domains\Commerce\Models\Order;
 use App\Domains\Crm\Models\Lead;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Models\Enrollment;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Notifications\Models\Notification;

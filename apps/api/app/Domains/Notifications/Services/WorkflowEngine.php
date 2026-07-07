@@ -2,7 +2,7 @@
 
 namespace App\Domains\Notifications\Services;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Notifications\Enums\Channel;
 use App\Domains\Notifications\Enums\NotificationCategory;
 use App\Domains\Notifications\Models\AutomationRule;

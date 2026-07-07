@@ -3,7 +3,7 @@
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Models\CertificateTemplate;
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Learning\Events\CourseCompleted;
 use App\Domains\Learning\Models\Enrollment;
 use Illuminate\Foundation\Testing\RefreshDatabase;

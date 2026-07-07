@@ -2,7 +2,7 @@
 
 namespace App\Domains\Notifications\Actions;
 
-use App\Domains\Identity\Models\User;
+use App\Platform\Identity\Models\User;
 use App\Domains\Notifications\Enums\NotificationCategory;
 use App\Domains\Notifications\Services\NotificationDispatcher;
 use App\Platform\Shared\Actions\BaseAction;
