@@ -2,6 +2,7 @@
 
 namespace App\Domains\Crm\Models;
 
+use App\Platform\Shared\Tenancy\Concerns\BelongsToTenant;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Team extends Model
 {
+    use BelongsToTenant;
     use HasPublicId;
 
     protected $table = 'crm_teams';
@@ -22,6 +24,4 @@ class Team extends Model
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(OrganizationMember::class, 'crm_team_members', 'team_id', 'member_id')->withPivot('role');
-    }
-}
+        return $this->belongsToMany(OrganizationMemb

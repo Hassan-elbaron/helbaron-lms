@@ -1,0 +1,23 @@
+name: ADR Validation
+
+# Architecture-sensitive PRs must reference an ADR (Sprint 0 / A1-S04).
+# See scripts/adr-link-check.sh and docs/adr/INDEX.md.
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  adr:
+    name: ADR reference check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ensure base ref is available
+        run: git fetch --no-tags origin "${{ github.event.pull_request.base.ref }}"
+      - name: Check ADR reference for architecture-sensitive PRs
+        env:
+          BASE_REF: origin/${{ github.event.pull_request.base.ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: bash scripts/adr-link-check.sh

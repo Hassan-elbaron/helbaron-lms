@@ -1,0 +1,14 @@
+# Deptrac baseline — EXISTING architectural violations at Sprint 0.
+#
+# This scaffold ships EMPTY. It MUST be populated ONCE, before the first CI run, by executing
+# (from apps/api, after `composer require --dev deptrac/deptrac:^2.0`):
+#
+#     vendor/bin/deptrac analyse --formatter=baseline --output=deptrac.baseline.yaml
+#
+# That command records every current cross-context dependency as a skipped violation, so the
+# gate passes on existing code and fails only on NEW violations. Commit the regenerated file.
+#
+# The baseline burns down (never grows) as Ports and published-event DTOs are introduced in
+# later sprints (redesign 04/05; backlog Phases A-D). Do not hand-edit; regenerate via Deptrac.
+deptrac:
+  skip_violations: {}

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Crm\Models;
 
+use App\Platform\Shared\Tenancy\Concerns\BelongsToTenant;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Department extends Model
 {
+    use BelongsToTenant;
     use HasPublicId;
 
     protected $table = 'crm_departments';
@@ -20,8 +22,4 @@ class Department extends Model
         return $this->belongsTo(Organization::class);
     }
 
-    public function teams(): HasMany
-    {
-        return $this->hasMany(Team::class);
-    }
-}
+    public f

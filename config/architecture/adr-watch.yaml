@@ -1,0 +1,25 @@
+# ADR watch configuration (Sprint 1 / A2-S01 refactor of A1-S04).
+#
+# Architecture-sensitive path/name patterns. A pull request that changes any file matching
+# one of these MUST reference an ADR (see scripts/adr-link-check.sh + docs/adr/INDEX.md).
+# Patterns are POSIX extended regular expressions matched against changed file paths.
+# Edit here only; the validation script loads this file and hardcodes nothing.
+patterns:
+  # Providers (service-provider wiring / composition).
+  - '(^|/)Providers/'
+  # Ports and Contracts (published interfaces / seams).
+  - '(^|/)Contracts/'
+  - '(^|/)Ports/'
+  - '[A-Za-z0-9]+Port\.php$'
+  # Adapters (port implementations).
+  - '(^|/)Adapters/'
+  # Deptrac boundary configuration.
+  - 'apps/api/deptrac\.yaml$'
+  - 'apps/api/deptrac\.baseline\.yaml$'
+  # PHPStan architecture rules.
+  - 'apps/api/phpstan-architecture\.neon$'
+  - 'apps/api/tests/Architecture/'
+  # Context-boundary / provider wiring.
+  - 'apps/api/bootstrap/providers\.php$'
+  # Tenancy foundation (platform multi-tenancy primitives).
+  - '(^|/)Tenancy/'

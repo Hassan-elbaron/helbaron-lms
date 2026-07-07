@@ -1,9 +1,10 @@
 includes:
     - vendor/larastan/larastan/extension.neon
     - phpstan-baseline.neon
+    - phpstan-architecture.neon
 
 parameters:
-    level: 5
+    level: 6
     parallel:
         maximumNumberOfProcesses: 4
     paths:
@@ -11,7 +12,10 @@ parameters:
         - config
         - database
         - routes
-    # Establish the RC baseline; raise the level as findings are triaged.
+    # Level raised 5 -> 6 in Sprint 0 / A1-S02. Existing findings (the level-6 delta plus the
+    # custom architecture rules) are captured in phpstan-baseline.neon; strictness only increases.
     ignoreErrors: []
     excludePaths:
         - app/Domains/*/openapi/*
+        - app/Contexts/*/openapi/*
+        - app/Platform/*/openapi/*

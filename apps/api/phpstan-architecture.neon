@@ -1,0 +1,9 @@
+# Custom architecture PHPStan rules (Sprint 0 / A1-S02). Tooling only.
+# These complement Deptrac at the type/AST level, enforcing 101_EXECUTION_RULES sections 3-5.
+# Existing violations are absorbed by phpstan-baseline.neon (regenerated when this is added);
+# only NEW violations fail. If any rule needs to be temporarily disabled, comment its line here.
+rules:
+    - Tests\Architecture\Rules\NoCrossContextModelUsageRule
+    - Tests\Architecture\Rules\NoCrossContextEloquentAccessRule
+    - Tests\Architecture\Rules\NoBusinessLogicInFilamentResourceRule
+    - Tests\Architecture\Rules\NoBusinessLogicInControllerRule

@@ -7,6 +7,7 @@ use App\Domains\Crm\Concerns\HasNotes;
 use App\Domains\Crm\Database\Factories\ConsultingRequestFactory;
 use App\Domains\Crm\Enums\ConsultingRequestStatus;
 use App\Platform\Identity\Models\User;
+use App\Platform\Shared\Tenancy\Concerns\BelongsToTenant;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ConsultingRequest extends Model
 {
+    use BelongsToTenant;
+
     /** @use HasFactory<ConsultingRequestFactory> */
     use HasActivities;
 
@@ -42,8 +45,4 @@ class ConsultingRequest extends Model
         return $this->belongsTo(User::class, 'requested_by');
     }
 
-    protected static function newFactory(): ConsultingRequestFactory
-    {
-        return ConsultingRequestFactory::new();
-    }
-}
+    protected static function newFactory(): Con

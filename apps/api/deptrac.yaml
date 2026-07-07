@@ -1,0 +1,188 @@
+# Deptrac — architectural boundary enforcement for the HElbaron LMS modular monolith.
+# Story A1-S01 (Sprint 0). Tooling only: enforces the bounded-context boundaries defined in
+# docs/redesign/05_ADMINISTRATION_ENTERPRISE_BLUEPRINT.md (Dependency Matrix) and governed by
+# docs/implementation/101_EXECUTION_RULES.md.
+#
+# Model:
+#   - Each bounded context / platform capability is a LAYER.
+#   - Layers may depend ONLY on the kernel primitives Shared and Identity.
+#   - ALL other cross-context coupling must go through Ports / published Events (introduced in
+#     later sprints). Until then, existing coupling is captured in deptrac.baseline.yaml so that
+#     only NEW violations fail. The baseline burns down as ports/event-DTOs land (Phases A-D).
+#   - Future contexts (Administration, Instructor, Organization) and platform capabilities
+#     (Media, AI, Integration, Search) are declared now as forward-compatible layers; their
+#     directories are currently empty and collect no classes until those chunks are executed.
+#
+# No allow-all rules. No temporary shortcuts. The composition-root and any widget/provider that
+# currently reaches into context models are treated as EXISTING violations (baseline), not
+# exempted, so the debt stays visible.
+
+imports:
+  - deptrac.baseline.yaml
+
+deptrac:
+  paths:
+    - ./app
+
+  layers:
+    # --- Platform kernel (framework/composition glue) ---
+    - name: Platform
+      collectors:
+        - { type: directory, value: app/Providers/.* }
+        - { type: directory, value: app/Http/.* }
+        - { type: directory, value: app/Console/.* }
+        - { type: directory, value: app/Filament/.* }
+        - { type: directory, value: app/Logging/.* }
+
+    # --- Platform primitives / shared kernel ---
+    - name: Shared
+      collectors:
+        - { type: directory, value: app/Platform/Shared/.* }
+    # Identity IMPLEMENTATION (models, services, http, ...). Contexts may NOT depend on this.
+    - name: Identity
+      collectors:
+        - { type: directory, value: app/Platform/Identity/Actions/.* }
+        - { type: directory, value: app/Platform/Identity/Database/.* }
+        - { type: directory, value: app/Platform/Identity/Enums/.* }
+        - { type: directory, value: app/Platform/Identity/Events/.* }
+        - { type: directory, value: app/Platform/Identity/Exceptions/.* }
+        - { type: directory, value: app/Platform/Identity/Filament/.* }
+        - { type: directory, value: app/Platform/Identity/Http/.* }
+        - { type: directory, value: app/Platform/Identity/Jobs/.* }
+        - { type: directory, value: app/Platform/Identity/Listeners/.* }
+        - { type: directory, value: app/Platform/Identity/Models/.* }
+        - { type: directory, value: app/Platform/Identity/Notifications/.* }
+        - { type: directory, value: app/Platform/Identity/Policies/.* }
+        - { type: directory, value: app/Platform/Identity/Providers/.* }
+        - { type: directory, value: app/Platform/Identity/Services/.* }
+        - { type: directory, value: app/Platform/Identity/Tenancy/.* }
+    # Identity CONTRACTS / PORTS. The ONLY Identity surface contexts may depend on.
+    - name: IdentityContracts
+      collectors:
+        - { type: directory, value: app/Platform/Identity/Contracts/.* }
+    - name: Notifications
+      collectors:
+        - { type: directory, value: app/Platform/Notifications/.* }
+    - name: Administration        # future (redesign 05) — currently empty
+      collectors:
+        - { type: directory, value: app/Platform/Administration/.* }
+
+    # --- Platform capabilities (future ports; redesign 05) — currently empty ---
+    - name: Media
+      collectors:
+        - { type: directory, value: app/Platform/Media/.* }
+    - name: AI
+      collectors:
+        - { type: directory, value: app/Platform/AI/.* }
+    - name: Integration
+      collectors:
+        - { type: directory, value: app/Platform/Integration/.* }
+    - name: Search
+      collectors:
+        - { type: directory, value: app/Platform/Search/.* }
+
+    # --- Domain contexts (currently under app/Domains) ---
+    - name: Catalog
+      collectors:
+        - { type: directory, value: app/Domains/Catalog/.* }
+    - name: Authoring
+      collectors:
+        - { type: directory, value: app/Domains/Authoring/.* }
+    - name: Certification
+      collectors:
+        - { type: directory, value: app/Domains/Certification/.* }
+    - name: Live
+      collectors:
+        - { type: directory, value: app/Domains/Live/.* }
+    - name: CRM
+      collectors:
+        - { type: directory, value: app/Domains/Crm/.* }
+
+    # --- Context-layer contexts (already relocated under app/Contexts) ---
+    - name: Learning
+      collectors:
+        - { type: directory, value: app/Contexts/Learning/.* }
+    - name: Commerce
+      collectors:
+        - { type: directory, value: app/Contexts/Commerce/.* }
+    - name: Analytics
+      collectors:
+        - { type: directory, value: app/Contexts/Analytics/.* }
+    - name: Instructor            # future (redesign 03) — currently empty
+      collectors:
+        - { type: directory, value: app/Contexts/Instructor/.* }
+    - name: Organization          # future (redesign 02) — currently empty
+      collectors:
+        - { type: directory, value: app/Contexts/Organization/.* }
+
+  ruleset:
+    # Kernel primitives.
+    Shared: ~                     # depends on nothing internal
+    IdentityContracts:            # pure contracts/ports; primitives only
+      - Shared
+    Identity:                     # the ONLY layer allowed to depend on Identity contracts + Shared
+      - Shared
+      - IdentityContracts
+
+    # Platform services & capabilities: Shared + Identity CONTRACTS only (never Identity impl).
+    Notifications:
+      - Shared
+      - IdentityContracts
+    Administration:
+      - Shared
+      - IdentityContracts
+    Media:
+      - Shared
+      - IdentityContracts
+    AI:
+      - Shared
+      - IdentityContracts
+    Integration:
+      - Shared
+      - IdentityContracts
+    Search:
+      - Shared
+      - IdentityContracts
+
+    # Composition root: Shared + Identity CONTRACTS only. Any current reach into Identity
+    # implementation or context models (e.g. dashboard widgets, provider wiring, the
+    # EnforceAdminMfa middleware import) is an EXISTING violation captured by the baseline and
+    # slated to move behind contracts/read models/ports.
+    Platform:
+      - Shared
+      - IdentityContracts
+
+    # Bounded contexts: Shared + Identity CONTRACTS only. NO direct dependency on the Identity
+    # implementation (models/services) and NO cross-context access except via Ports / published
+    # Events (later sprints). Present coupling (incl. App\Platform\Identity\Models\User usage) is
+    # baselined and burns down as Identity ports and context ports land.
+    Catalog:
+      - Shared
+      - IdentityContracts
+    Authoring:
+      - Shared
+      - IdentityContracts
+    Certification:
+      - Shared
+      - IdentityContracts
+    Live:
+      - Shared
+      - IdentityContracts
+    CRM:
+      - Shared
+      - IdentityContracts
+    Learning:
+      - Shared
+      - IdentityContracts
+    Commerce:
+      - Shared
+      - IdentityContracts
+    Analytics:
+      - Shared
+      - IdentityContracts
+    Instructor:
+      - Shared
+      - IdentityContracts
+    Organization:
+      - Shared
+      - IdentityContracts

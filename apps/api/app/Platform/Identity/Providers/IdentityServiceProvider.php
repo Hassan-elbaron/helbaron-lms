@@ -11,7 +11,9 @@ use App\Platform\Identity\Models\User;
 use App\Platform\Identity\Models\UserDevice;
 use App\Platform\Identity\Policies\DevicePolicy;
 use App\Platform\Identity\Policies\UserPolicy;
+use App\Platform\Identity\Tenancy\RoleBasedTenancyBypassPolicy;
 use App\Platform\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Tenancy\TenancyBypassPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
@@ -39,6 +41,10 @@ class IdentityServiceProvider extends BaseDomainServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../../../../config/identity.php', 'identity');
+
+        // Identity owns RBAC, so it provides the concrete tenancy-bypass policy (platform admins
+        // bypass tenant scoping). This overrides the Shared NullTenancyBypassPolicy default.
+        $this->app->bind(TenancyBypassPolicy::class, RoleBasedTenancyBypassPolicy::class);
     }
 
     protected function bootDomain(): void
@@ -58,14 +64,4 @@ class IdentityServiceProvider extends BaseDomainServiceProvider
 
         RateLimiter::for('identity-password', fn (Request $r) => Limit::perMinute(6)->by($r->ip()));
 
-        RateLimiter::for('identity-otp-verify', fn (Request $r) => Limit::perMinute(10)
-            ->by(optional($r->user())->getAuthIdentifier() ?? $r->ip()));
-    }
-
-    private function registerListeners(): void
-    {
-        Event::listen(UserRegistered::class, SendEmailOtpOnRegistration::class);
-        Event::listen(UserRegistered::class, SendPhoneOtpOnRegistration::class);
-        Event::listen(UserLoggedIn::class, UpdateLastLoginTimestamp::class);
-    }
-}
+        RateLimiter::for('identity-otp-verify', fn (Request $r) => L

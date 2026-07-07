@@ -9,7 +9,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "e2e:report": "playwright show-report"
   },
   "dependencies": {
     "next": "15.1.0",
@@ -48,6 +50,10 @@
     "typescript": "^5.6.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "15.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "@playwright/test": "^1.49.0",
+    "@axe-core/playwright": "^4.10.1",
     "vitest": "^2.1.8",
     "jsdom": "^25.0.1",
     "@vitejs/plugin-react": "^4.3.4",

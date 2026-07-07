@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AssignCorrelationId;
 use App\Http\Middleware\SecurityHeaders;
+use App\Platform\Shared\Http\Middleware\ResolveTenant;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -34,8 +35,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->prepend(AssignCorrelationId::class);
         $middleware->append(SecurityHeaders::class);
-    })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        // Domain exceptions render themselves to the standard envelope; defaults handle the rest.
-    })
-    ->create();
+
+        // Multi-tenancy (A2-S02): resolve the active tenant on the API surface. Applied to the
+        // 'api' group only (NOT globall

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Crm\Models;
 
+use App\Platform\Shared\Tenancy\Concerns\BelongsToTenant;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SeatPool extends Model
 {
+    use BelongsToTenant;
     use HasPublicId;
 
     protected $fillable = ['organization_id', 'name', 'total_seats', 'used_seats'];
@@ -28,8 +30,4 @@ class SeatPool extends Model
         return $this->hasMany(SeatAssignment::class);
     }
 
-    public function available(): int
-    {
-        return max(0, $this->total_seats - $this->used_seats);
-    }
-}
+    public function available()

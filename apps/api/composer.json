@@ -45,9 +45,12 @@
         "pint": "pint",
         "lint": "pint --test",
         "stan": "phpstan analyse --memory-limit=1G",
+        "arch": "deptrac analyse --no-progress",
+        "rector": "rector process --dry-run",
         "qa": [
             "@lint",
             "@stan",
+            "@arch",
             "@test"
         ]
     },

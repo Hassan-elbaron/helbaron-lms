@@ -7,3 +7,9 @@
 next-env.d.ts
 *.tsbuildinfo
 .DS_Store
+
+# Playwright (A1-S03)
+/test-results
+/playwright-report
+/playwright/.cache
+/blob-report
