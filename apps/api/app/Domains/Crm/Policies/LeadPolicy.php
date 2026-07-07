@@ -3,7 +3,7 @@
 namespace App\Domains\Crm\Policies;
 
 use App\Domains\Identity\Models\User;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 class LeadPolicy extends BasePolicy
 {

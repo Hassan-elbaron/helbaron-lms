@@ -3,7 +3,7 @@
 namespace App\Domains\Commerce\Http\Resources;
 
 use App\Domains\Commerce\Models\Product;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

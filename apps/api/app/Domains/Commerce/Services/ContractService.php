@@ -6,7 +6,7 @@ use App\Domains\Commerce\Models\Contract;
 use App\Domains\Commerce\Models\ContractTemplate;
 use App\Domains\Commerce\Models\Order;
 use App\Domains\Identity\Models\User;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Resolves the active contract template version and creates per-order contract instances.

@@ -3,7 +3,7 @@
 namespace App\Domains\Crm\Services;
 
 use App\Domains\Crm\Models\ConsultingRequest;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Carbon\CarbonImmutable;
 
 /**

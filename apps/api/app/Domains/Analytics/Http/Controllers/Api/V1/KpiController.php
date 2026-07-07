@@ -5,7 +5,7 @@ namespace App\Domains\Analytics\Http\Controllers\Api\V1;
 use App\Domains\Analytics\Http\Requests\KpiQueryRequest;
 use App\Domains\Analytics\Services\KpiEngine;
 use App\Domains\Analytics\Services\MetricsCatalog;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;

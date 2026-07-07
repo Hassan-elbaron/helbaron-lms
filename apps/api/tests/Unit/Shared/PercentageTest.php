@@ -1,6 +1,6 @@
 <?php
 
-use App\Shared\ValueObjects\Percentage;
+use App\Platform\Shared\ValueObjects\Percentage;
 
 it('converts between fraction and percent', function () {
     expect(Percentage::fromFraction(0.25)->value)->toBe(25.0)

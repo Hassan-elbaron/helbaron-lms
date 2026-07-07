@@ -3,7 +3,7 @@
 namespace App\Domains\Analytics\Http\Resources;
 
 use App\Domains\Analytics\Models\DashboardDefinition;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

@@ -5,7 +5,7 @@ namespace App\Domains\Notifications\Services;
 use App\Domains\Notifications\Data\RenderedMessage;
 use App\Domains\Notifications\Enums\Channel;
 use App\Domains\Notifications\Models\NotificationTemplate;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Renders a template for a channel + locale, falling back to the app fallback locale, then to a

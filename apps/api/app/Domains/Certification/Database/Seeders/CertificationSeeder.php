@@ -7,7 +7,7 @@ use App\Domains\Certification\Models\Badge;
 use App\Domains\Certification\Models\CertificateSetting;
 use App\Domains\Certification\Models\CertificateTemplate;
 use App\Domains\Identity\Enums\Role;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;

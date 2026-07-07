@@ -4,7 +4,7 @@ namespace App\Domains\Notifications\Policies;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Notifications\Models\Notification;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 class NotificationPolicy extends BasePolicy
 {

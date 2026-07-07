@@ -3,7 +3,7 @@
 namespace App\Domains\Authoring\Actions\Lesson;
 
 use App\Domains\Authoring\Models\Lesson;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class TogglePreviewAction extends BaseAction
 {

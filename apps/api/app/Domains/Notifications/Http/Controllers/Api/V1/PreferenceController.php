@@ -4,7 +4,7 @@ namespace App\Domains\Notifications\Http\Controllers\Api\V1;
 
 use App\Domains\Notifications\Actions\UpdatePreferencesAction;
 use App\Domains\Notifications\Http\Requests\UpdatePreferencesRequest;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

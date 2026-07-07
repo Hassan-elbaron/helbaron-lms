@@ -2,7 +2,7 @@
 
 namespace App\Domains\Notifications\Services;
 
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Facades\RateLimiter;
 
 /**

@@ -10,7 +10,7 @@ vi.mock("next/navigation", () => ({
 }));
 vi.mock("@/lib/auth/api", () => ({ resetPassword }));
 
-import ResetPasswordPage from "@/app/(auth)/reset-password/page";
+import ResetPasswordPage from "@/app/(marketing)/(auth)/reset-password/page";
 
 describe("ResetPasswordPage", () => {
   beforeEach(() => vi.clearAllMocks());

@@ -7,7 +7,7 @@ use App\Domains\Crm\Http\Requests\ConsultingRequestRequest;
 use App\Domains\Crm\Http\Resources\ConsultingRequestResource;
 use App\Domains\Crm\Models\ConsultingRequest;
 use App\Domains\Crm\Models\Organization;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

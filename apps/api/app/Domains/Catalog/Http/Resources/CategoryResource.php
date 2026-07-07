@@ -3,7 +3,7 @@
 namespace App\Domains\Catalog\Http\Resources;
 
 use App\Domains\Catalog\Models\Category;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

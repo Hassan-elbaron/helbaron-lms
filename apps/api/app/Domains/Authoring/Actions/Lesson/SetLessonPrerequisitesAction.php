@@ -6,7 +6,7 @@ use App\Domains\Authoring\Exceptions\CrossCourseReferenceException;
 use App\Domains\Authoring\Exceptions\PrerequisiteCycleException;
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Services\CurriculumValidator;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class SetLessonPrerequisitesAction extends BaseAction
 {

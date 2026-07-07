@@ -11,7 +11,7 @@ use App\Domains\Live\Http\Requests\RescheduleSessionRequest;
 use App\Domains\Live\Http\Requests\ScheduleSessionRequest;
 use App\Domains\Live\Http\Resources\LiveSessionResource;
 use App\Domains\Live\Models\LiveSession;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;

@@ -5,7 +5,7 @@ namespace App\Domains\Identity\Actions\Auth;
 use App\Domains\Identity\Events\PasswordReset as PasswordResetEvent;
 use App\Domains\Identity\Exceptions\PasswordResetFailedException;
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;

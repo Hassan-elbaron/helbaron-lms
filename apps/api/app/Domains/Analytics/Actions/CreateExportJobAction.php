@@ -6,7 +6,7 @@ use App\Domains\Analytics\Enums\ExportStatus;
 use App\Domains\Analytics\Jobs\ProcessExportJob;
 use App\Domains\Analytics\Models\ExportJob;
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Creates an export job and dispatches it asynchronously (after commit).

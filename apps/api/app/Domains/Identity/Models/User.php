@@ -4,7 +4,7 @@ namespace App\Domains\Identity\Models;
 
 use App\Domains\Identity\Database\Factories\UserFactory;
 use App\Domains\Identity\Notifications\ResetPasswordNotification;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;

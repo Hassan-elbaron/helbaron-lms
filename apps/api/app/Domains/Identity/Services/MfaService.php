@@ -6,7 +6,7 @@ use App\Domains\Identity\Exceptions\InvalidMfaCodeException;
 use App\Domains\Identity\Exceptions\MfaAlreadyEnabledException;
 use App\Domains\Identity\Exceptions\MfaNotEnabledException;
 use App\Domains\Identity\Models\User;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FA\Google2FA;
 

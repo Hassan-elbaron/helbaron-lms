@@ -3,7 +3,7 @@
 namespace App\Domains\Commerce\Services;
 
 use App\Domains\Commerce\Models\Invoice;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Allocates a unique, human-readable invoice number, e.g. INV-2025-000123.

@@ -2,7 +2,7 @@
 
 namespace App\Domains\Live\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 class RescheduleSessionRequest extends BaseFormRequest
 {

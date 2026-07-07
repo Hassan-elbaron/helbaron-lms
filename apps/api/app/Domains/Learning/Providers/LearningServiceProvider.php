@@ -8,7 +8,7 @@ use App\Domains\Learning\Listeners\UpdateLearningSession;
 use App\Domains\Learning\Models\Enrollment;
 use App\Domains\Learning\Playback\PlaybackTokenManager;
 use App\Domains\Learning\Policies\EnrollmentPolicy;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Event;
 
 /**

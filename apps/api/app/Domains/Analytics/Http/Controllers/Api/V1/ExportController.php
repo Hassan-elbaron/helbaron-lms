@@ -7,7 +7,7 @@ use App\Domains\Analytics\Http\Requests\CreateExportRequest;
 use App\Domains\Analytics\Http\Resources\ExportJobResource;
 use App\Domains\Analytics\Models\ExportJob;
 use App\Domains\Analytics\Models\ReportDefinition;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

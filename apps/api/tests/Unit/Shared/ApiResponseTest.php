@@ -1,6 +1,6 @@
 <?php
 
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 
 it('builds a success envelope', function () {
     $res = ApiResponse::success(['id' => 1], 'ok');

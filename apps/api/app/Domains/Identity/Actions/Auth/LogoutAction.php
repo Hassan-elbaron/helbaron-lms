@@ -4,7 +4,7 @@ namespace App\Domains\Identity\Actions\Auth;
 
 use App\Domains\Identity\Events\UserLoggedOut;
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class LogoutAction extends BaseAction
 {

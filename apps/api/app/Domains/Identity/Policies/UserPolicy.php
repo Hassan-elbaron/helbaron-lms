@@ -3,7 +3,7 @@
 namespace App\Domains\Identity\Policies;
 
 use App\Domains\Identity\Models\User;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 /**
  * Authorization for user records. A user may always act on their own account; broader

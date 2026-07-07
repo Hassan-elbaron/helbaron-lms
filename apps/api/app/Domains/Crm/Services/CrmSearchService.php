@@ -3,7 +3,7 @@
 namespace App\Domains\Crm\Services;
 
 use App\Domains\Crm\Models\Lead;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 

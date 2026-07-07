@@ -3,7 +3,7 @@
 namespace App\Domains\Certification\Services;
 
 use App\Domains\Certification\Models\Certificate;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Public verification: resolves a certificate by code and returns only non-sensitive issuance

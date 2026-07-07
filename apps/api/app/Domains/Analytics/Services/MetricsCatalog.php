@@ -3,7 +3,7 @@
 namespace App\Domains\Analytics\Services;
 
 use App\Domains\Analytics\Exceptions\UnknownMetricException;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Registry of known metrics (from config/analytics.php).

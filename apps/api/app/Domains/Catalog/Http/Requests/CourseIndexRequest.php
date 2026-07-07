@@ -2,7 +2,7 @@
 
 namespace App\Domains\Catalog\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 /**
  * Validates the public course listing query parameters (all filters keyed by public_id).

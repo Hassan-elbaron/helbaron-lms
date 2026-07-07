@@ -10,7 +10,7 @@ vi.mock("@/lib/org/hooks", () => ({
   useRequestConsulting: () => ({ mutate: requestMutate, isPending: false }),
 }));
 
-import ConsultingPage from "@/app/(org)/org/consulting/page";
+import ConsultingPage from "@/app/(organization)/org/consulting/page";
 
 const ok = (data: unknown) => ({ isPending: false, isError: false, refetch: vi.fn(), data });
 

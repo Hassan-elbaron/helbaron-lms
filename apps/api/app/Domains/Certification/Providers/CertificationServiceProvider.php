@@ -10,7 +10,7 @@ use App\Domains\Certification\Pdf\PdfGeneratorManager;
 use App\Domains\Certification\Policies\BadgePolicy;
 use App\Domains\Certification\Policies\CertificatePolicy;
 use App\Domains\Learning\Events\CourseCompleted;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Event;
 
 /**

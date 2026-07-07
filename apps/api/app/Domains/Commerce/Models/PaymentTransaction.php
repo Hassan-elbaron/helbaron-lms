@@ -4,7 +4,7 @@ namespace App\Domains\Commerce\Models;
 
 use App\Domains\Commerce\Enums\TransactionStatus;
 use App\Domains\Commerce\Enums\TransactionType;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

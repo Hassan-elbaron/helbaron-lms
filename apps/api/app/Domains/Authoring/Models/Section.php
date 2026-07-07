@@ -5,7 +5,7 @@ namespace App\Domains\Authoring\Models;
 use App\Domains\Authoring\Database\Factories\SectionFactory;
 use App\Domains\Authoring\Enums\PublishState;
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

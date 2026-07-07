@@ -15,7 +15,7 @@ use App\Domains\Authoring\Http\Requests\UpdateSectionRequest;
 use App\Domains\Authoring\Http\Resources\SectionResource;
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;

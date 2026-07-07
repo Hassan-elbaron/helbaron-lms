@@ -6,7 +6,7 @@ use App\Domains\Crm\Enums\ConsultingRequestStatus;
 use App\Domains\Crm\Events\ConsultingRequestCreated;
 use App\Domains\Crm\Models\ConsultingRequest;
 use App\Domains\Crm\Services\ConsultingSlaService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class CreateConsultingRequestAction extends BaseAction
 {

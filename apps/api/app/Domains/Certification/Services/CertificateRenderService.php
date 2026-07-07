@@ -6,7 +6,7 @@ use App\Domains\Certification\Contracts\PdfGenerator;
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Models\CertificateSetting;
 use App\Domains\Certification\Models\CertificateTemplate;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Builds certificate HTML from the template + data, then renders PDF bytes via the PdfGenerator

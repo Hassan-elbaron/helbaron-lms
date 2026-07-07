@@ -12,7 +12,7 @@ use App\Domains\Live\Providers\LiveServiceProvider;
 use App\Domains\Notifications\Providers\NotificationsServiceProvider;
 use App\Providers\AdminPanelProvider;
 use App\Providers\AppServiceProvider;
-use App\Shared\Providers\SharedServiceProvider;
+use App\Platform\Shared\Providers\SharedServiceProvider;
 
 /*
  | Provider registration order matters: the Shared foundation loads first, then Identity as

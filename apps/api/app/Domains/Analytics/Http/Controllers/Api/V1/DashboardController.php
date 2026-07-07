@@ -4,7 +4,7 @@ namespace App\Domains\Analytics\Http\Controllers\Api\V1;
 
 use App\Domains\Analytics\Http\Resources\DashboardResource;
 use App\Domains\Analytics\Models\DashboardDefinition;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

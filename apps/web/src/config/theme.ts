@@ -43,7 +43,6 @@ export const brandTheme = {
     { label: { en: "Workshops", ar: "الورش" }, href: "/workshops" },
     { label: { en: "B2B / B2G Training", ar: "تدريب المؤسسات" }, href: "/enterprise" },
     { label: { en: "Consulting", ar: "الاستشارات" }, href: "/advisory" },
-    { label: { en: "Brand", ar: "الهوية" }, href: "/settings/theme" },
   ] as LinkItem[],
 
   hero: {
@@ -162,7 +161,6 @@ export const brandTheme = {
       {
         title: { en: "Company", ar: "الشركة" } as Localized,
         links: [
-          { label: { en: "Brand identity", ar: "الهوية" }, href: "/settings/theme" },
           { label: { en: "Organizations", ar: "المؤسسات" }, href: "/org" },
           { label: { en: "Trainers", ar: "المدرّبون" }, href: "/trainers" },
           { label: { en: "Contact", ar: "تواصل" }, href: "/advisory" },

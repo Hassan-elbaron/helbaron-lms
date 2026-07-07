@@ -7,7 +7,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Learning\Contracts\PlaybackTokenProvider;
 use App\Domains\Learning\Exceptions\MediaUnavailableException;
 use App\Domains\Learning\Playback\Data\PlaybackToken;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * The ONLY way media is exposed to learners. Verifies access, then returns a signed, expiring

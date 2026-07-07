@@ -6,7 +6,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Notifications\Enums\Channel;
 use App\Domains\Notifications\Enums\NotificationCategory;
 use App\Domains\Notifications\Models\NotificationPreference;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Per-user, per-category, per-channel opt in/out. In-app is always on; other channels default

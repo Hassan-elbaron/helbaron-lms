@@ -3,7 +3,7 @@
 namespace App\Domains\Certification\Services;
 
 use App\Domains\Certification\Models\Certificate;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Builds the public verification URL for a certificate (frontend renders the result).

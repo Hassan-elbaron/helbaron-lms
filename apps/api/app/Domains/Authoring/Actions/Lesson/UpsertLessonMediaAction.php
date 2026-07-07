@@ -4,7 +4,7 @@ namespace App\Domains\Authoring\Actions\Lesson;
 
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\LessonMedia;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class UpsertLessonMediaAction extends BaseAction
 {

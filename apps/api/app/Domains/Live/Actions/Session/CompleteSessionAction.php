@@ -7,7 +7,7 @@ use App\Domains\Live\Enums\LiveSessionStatus;
 use App\Domains\Live\Events\SessionCompleted;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Models\SessionRecording;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Completes a session and stores any recording METADATA the provider exposes (no media

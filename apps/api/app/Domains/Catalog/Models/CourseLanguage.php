@@ -3,7 +3,7 @@
 namespace App\Domains\Catalog\Models;
 
 use App\Domains\Catalog\Database\Factories\CourseLanguageFactory;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

@@ -4,7 +4,7 @@ namespace App\Domains\Catalog\Http\Controllers\Api\V1;
 
 use App\Domains\Catalog\Http\Resources\CategoryResource;
 use App\Domains\Catalog\Models\Category;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

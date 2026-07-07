@@ -8,7 +8,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Learning\Enums\LessonProgressStatus;
 use App\Domains\Learning\Models\Enrollment;
 use App\Domains\Learning\Models\LessonProgress;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Collection;
 
 /**

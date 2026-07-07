@@ -8,7 +8,7 @@ use App\Domains\Crm\Exceptions\InvalidStageException;
 use App\Domains\Crm\Models\Lead;
 use App\Domains\Crm\Models\Stage;
 use App\Domains\Crm\Services\ActivityLogger;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class MoveLeadStageAction extends BaseAction
 {

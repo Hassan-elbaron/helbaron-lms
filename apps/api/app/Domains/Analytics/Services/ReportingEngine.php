@@ -3,7 +3,7 @@
 namespace App\Domains\Analytics\Services;
 
 use App\Domains\Analytics\Models\ReportDefinition;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Carbon\CarbonImmutable;
 
 /**

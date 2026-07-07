@@ -2,8 +2,8 @@
 
 namespace App\Domains\Crm\Models;
 
-use App\Shared\Traits\HasPublicId;
-use App\Shared\Traits\HasSlug;
+use App\Platform\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
 
 class CrmTag extends Model

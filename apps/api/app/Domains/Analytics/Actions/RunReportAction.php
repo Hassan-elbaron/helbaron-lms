@@ -6,7 +6,7 @@ use App\Domains\Analytics\Events\ReportGenerated;
 use App\Domains\Analytics\Models\ReportDefinition;
 use App\Domains\Analytics\Models\ReportRun;
 use App\Domains\Analytics\Services\ReportingEngine;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Runs a report definition against the read model and records a ReportRun.

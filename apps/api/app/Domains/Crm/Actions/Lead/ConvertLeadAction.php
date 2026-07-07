@@ -7,7 +7,7 @@ use App\Domains\Crm\Events\LeadConverted;
 use App\Domains\Crm\Exceptions\LeadAlreadyConvertedException;
 use App\Domains\Crm\Models\Contact;
 use App\Domains\Crm\Models\Lead;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Converts a qualified lead into a Contact and marks the lead converted. Guarded against

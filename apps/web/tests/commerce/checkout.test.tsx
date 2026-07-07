@@ -13,7 +13,7 @@ vi.mock("@/lib/commerce/hooks", () => ({
   useAcceptContract: () => ({ mutate: vi.fn(), isPending: false, variables: undefined }),
 }));
 
-import CheckoutPage from "@/app/(public)/checkout/page";
+import CheckoutPage from "@/app/(commerce)/checkout/page";
 
 describe("CheckoutPage", () => {
   beforeEach(() => vi.clearAllMocks());

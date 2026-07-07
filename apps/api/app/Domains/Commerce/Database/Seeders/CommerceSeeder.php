@@ -9,7 +9,7 @@ use App\Domains\Commerce\Enums\ProductType;
 use App\Domains\Commerce\Models\ContractTemplate;
 use App\Domains\Commerce\Models\Product;
 use App\Domains\Identity\Enums\Role;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;

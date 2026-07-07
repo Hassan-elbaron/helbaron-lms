@@ -9,7 +9,7 @@ use App\Domains\Learning\Exceptions\LessonLockedException;
 use App\Domains\Learning\Exceptions\NotEnrolledException;
 use App\Domains\Learning\Models\Enrollment;
 use App\Domains\Learning\Models\LessonProgress;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Central access rule for lessons: preview lessons are open; otherwise the user must have an

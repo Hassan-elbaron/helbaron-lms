@@ -4,8 +4,8 @@ namespace App\Domains\Catalog\Database\Factories;
 
 use App\Domains\Catalog\Enums\CourseStatus;
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Enums\Visibility;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Enums\Visibility;
+use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

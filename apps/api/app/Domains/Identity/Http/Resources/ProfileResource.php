@@ -3,7 +3,7 @@
 namespace App\Domains\Identity\Http\Resources;
 
 use App\Domains\Identity\Models\UserProfile;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

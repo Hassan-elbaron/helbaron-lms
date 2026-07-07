@@ -12,7 +12,7 @@ use App\Domains\Certification\Services\CertificateNumberService;
 use App\Domains\Certification\Services\SignatureService;
 use App\Domains\Certification\Services\VerificationCodeService;
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Issues a certificate for a completed course. Idempotent per (user, course): a repeated

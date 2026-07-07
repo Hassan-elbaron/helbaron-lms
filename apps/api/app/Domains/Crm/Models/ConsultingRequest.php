@@ -7,7 +7,7 @@ use App\Domains\Crm\Concerns\HasNotes;
 use App\Domains\Crm\Database\Factories\ConsultingRequestFactory;
 use App\Domains\Crm\Enums\ConsultingRequestStatus;
 use App\Domains\Identity\Models\User;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

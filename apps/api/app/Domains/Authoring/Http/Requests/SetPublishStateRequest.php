@@ -3,7 +3,7 @@
 namespace App\Domains\Authoring\Http\Requests;
 
 use App\Domains\Authoring\Enums\PublishState;
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
 class SetPublishStateRequest extends BaseFormRequest

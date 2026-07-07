@@ -5,7 +5,7 @@ namespace App\Domains\Crm\Models;
 use App\Domains\Crm\Concerns\HasActivities;
 use App\Domains\Crm\Concerns\HasNotes;
 use App\Domains\Crm\Concerns\HasTags;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;

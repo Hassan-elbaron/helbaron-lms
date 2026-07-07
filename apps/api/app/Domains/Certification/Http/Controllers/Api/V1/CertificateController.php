@@ -7,7 +7,7 @@ use App\Domains\Certification\Actions\ShareCertificateAction;
 use App\Domains\Certification\Exceptions\CertificateRevokedException;
 use App\Domains\Certification\Http\Resources\CertificateResource;
 use App\Domains\Certification\Models\Certificate;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;

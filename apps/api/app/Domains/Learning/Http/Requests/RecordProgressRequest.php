@@ -3,7 +3,7 @@
 namespace App\Domains\Learning\Http\Requests;
 
 use App\Domains\Learning\Enums\LessonProgressStatus;
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
 class RecordProgressRequest extends BaseFormRequest

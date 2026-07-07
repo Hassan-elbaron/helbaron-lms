@@ -4,7 +4,7 @@ namespace App\Domains\Crm\Actions\Organization;
 
 use App\Domains\Crm\Enums\MemberStatus;
 use App\Domains\Crm\Models\OrganizationMember;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class RemoveMemberAction extends BaseAction
 {

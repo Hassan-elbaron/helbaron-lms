@@ -4,7 +4,7 @@ namespace App\Domains\Live\Http\Resources;
 
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Services\TimezoneService;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

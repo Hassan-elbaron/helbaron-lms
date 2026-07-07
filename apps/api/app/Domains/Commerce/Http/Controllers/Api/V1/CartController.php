@@ -9,7 +9,7 @@ use App\Domains\Commerce\Http\Requests\AddToCartRequest;
 use App\Domains\Commerce\Http\Resources\CartResource;
 use App\Domains\Commerce\Models\Product;
 use App\Domains\Commerce\Services\CartService;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

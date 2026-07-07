@@ -2,7 +2,7 @@
 
 namespace App\Domains\Identity\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 /**
  * Shared request for MFA verify/disable (a single TOTP or recovery code).

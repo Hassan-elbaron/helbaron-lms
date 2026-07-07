@@ -1,8 +1,8 @@
 <?php
 
-use App\Shared\Enums\Locale;
-use App\Shared\Enums\Status;
-use App\Shared\Enums\Visibility;
+use App\Platform\Shared\Enums\Locale;
+use App\Platform\Shared\Enums\Status;
+use App\Platform\Shared\Enums\Visibility;
 
 it('exposes status helpers', function () {
     expect(Status::Active->isActive())->toBeTrue()

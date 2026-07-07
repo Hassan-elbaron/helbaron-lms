@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("@/lib/org/hooks", () => ({ useConsulting, useOrganizations }));
 
 import CrmConsultingPage from "@/app/(crm)/crm/consulting/page";
-import CrmOrganizationsPage from "@/app/(crm)/crm/organizations/page";
+import CrmOrganizationsPage from "@/app/(crm)/crm/accounts/page";
 
 const ok = (data: unknown) => ({ isPending: false, isError: false, refetch: vi.fn(), data });
 

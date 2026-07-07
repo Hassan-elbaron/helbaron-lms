@@ -8,7 +8,7 @@ use App\Domains\Learning\Enums\EnrollmentSource;
 use App\Domains\Learning\Enums\EnrollmentStatus;
 use App\Domains\Learning\Events\UserEnrolled;
 use App\Domains\Learning\Models\Enrollment;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Grants an enrollment idempotently. This is the entitlement seam other domains call (Commerce

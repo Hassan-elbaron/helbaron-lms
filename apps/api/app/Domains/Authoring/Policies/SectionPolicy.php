@@ -4,7 +4,7 @@ namespace App\Domains\Authoring\Policies;
 
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Identity\Models\User;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 class SectionPolicy extends BasePolicy
 {

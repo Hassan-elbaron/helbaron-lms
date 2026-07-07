@@ -1,7 +1,7 @@
 <?php
 
-use App\Shared\Helpers\Slug;
-use App\Shared\Helpers\Uuid;
+use App\Platform\Shared\Helpers\Slug;
+use App\Platform\Shared\Helpers\Uuid;
 
 it('generates and validates uuids', function () {
     $id = Uuid::v7();

@@ -6,7 +6,7 @@ use App\Domains\Live\Enums\LiveSessionStatus;
 use App\Domains\Live\Events\SessionStarted;
 use App\Domains\Live\Exceptions\InvalidSessionStateException;
 use App\Domains\Live\Models\LiveSession;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class StartSessionAction extends BaseAction
 {

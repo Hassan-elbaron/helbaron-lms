@@ -2,7 +2,7 @@
 
 namespace App\Domains\Analytics\Services;
 
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Carbon\CarbonInterface;
 
 /**

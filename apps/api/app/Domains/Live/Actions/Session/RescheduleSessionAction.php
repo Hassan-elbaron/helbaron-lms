@@ -5,7 +5,7 @@ namespace App\Domains\Live\Actions\Session;
 use App\Domains\Live\Events\SessionRescheduled;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Services\TimezoneService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class RescheduleSessionAction extends BaseAction
 {

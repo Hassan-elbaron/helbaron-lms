@@ -11,7 +11,7 @@ vi.mock("@/lib/student/hooks", () => ({
 }));
 vi.mock("@/lib/auth/auth-context", () => ({ useAuth: () => ({ user: { locale: "en" } }) }));
 
-import NotificationsPage from "@/app/(student)/notifications/page";
+import NotificationsPage from "@/app/(account)/notifications/page";
 
 describe("NotificationsPage", () => {
   beforeEach(() => vi.clearAllMocks());

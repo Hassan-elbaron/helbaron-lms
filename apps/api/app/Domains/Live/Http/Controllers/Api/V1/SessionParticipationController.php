@@ -8,7 +8,7 @@ use App\Domains\Live\Actions\Registration\RegisterForSessionAction;
 use App\Domains\Live\Http\Requests\RecordAttendanceRequest;
 use App\Domains\Live\Http\Resources\RegistrationResource;
 use App\Domains\Live\Models\LiveSession;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

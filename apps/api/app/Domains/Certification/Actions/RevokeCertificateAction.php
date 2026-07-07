@@ -5,7 +5,7 @@ namespace App\Domains\Certification\Actions;
 use App\Domains\Certification\Enums\CertificateStatus;
 use App\Domains\Certification\Events\CertificateRevoked;
 use App\Domains\Certification\Models\Certificate;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class RevokeCertificateAction extends BaseAction
 {

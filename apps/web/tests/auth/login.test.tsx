@@ -14,7 +14,7 @@ vi.mock("@/lib/auth/auth-context", () => ({
   useAuth: () => ({ login, user: null, status: "guest", logout: vi.fn(), refresh: vi.fn() }),
 }));
 
-import LoginPage from "@/app/(auth)/login/page";
+import LoginPage from "@/app/(marketing)/(auth)/login/page";
 
 describe("LoginPage", () => {
   beforeEach(() => vi.clearAllMocks());

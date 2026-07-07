@@ -9,7 +9,7 @@ use App\Domains\Crm\Concerns\HasTasks;
 use App\Domains\Crm\Database\Factories\LeadFactory;
 use App\Domains\Crm\Enums\LeadStatus;
 use App\Domains\Identity\Models\User;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

@@ -16,7 +16,7 @@ use App\Domains\Identity\Http\Requests\ResetPasswordRequest;
 use App\Domains\Identity\Http\Requests\VerifyEmailRequest;
 use App\Domains\Identity\Http\Requests\VerifyPhoneRequest;
 use App\Domains\Identity\Http\Resources\UserResource;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

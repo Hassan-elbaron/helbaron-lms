@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({ useParams: () => ({ public_id: "c1" }) }));
 vi.mock("@/lib/catalog/hooks", () => ({ useCourse, useEnroll: () => ({ mutate: vi.fn(), isPending: false }) }));
 vi.mock("@/lib/auth/auth-context", () => ({ useAuth: () => ({ status: "guest" }) }));
 
-import CourseDetailsPage from "@/app/(public)/courses/[public_id]/page";
+import CourseDetailsPage from "@/app/(marketing)/(site)/courses/[public_id]/page";
 
 describe("CourseDetailsPage", () => {
   beforeEach(() => vi.clearAllMocks());

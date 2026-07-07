@@ -5,7 +5,7 @@ namespace App\Domains\Authoring\Actions\Lesson;
 use App\Domains\Authoring\Enums\PublishState;
 use App\Domains\Authoring\Events\LessonPublished;
 use App\Domains\Authoring\Models\Lesson;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class SetLessonPublishStateAction extends BaseAction
 {

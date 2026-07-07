@@ -4,7 +4,7 @@ namespace App\Domains\Commerce\Services;
 
 use App\Domains\Commerce\Models\Product;
 use App\Domains\Commerce\Models\ProductPrice;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Resolves the effective (sale-aware) unit price of a product in a currency, in minor units.

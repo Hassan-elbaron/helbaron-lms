@@ -6,7 +6,7 @@ const { useCourses, useCategories } = vi.hoisted(() => ({ useCourses: vi.fn(), u
 vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams() }));
 vi.mock("@/lib/catalog/hooks", () => ({ useCourses, useCategories }));
 
-import CoursesPage from "@/app/(public)/courses/page";
+import CoursesPage from "@/app/(marketing)/(site)/courses/page";
 
 const paged = (items: unknown[]) => ({
   isPending: false,

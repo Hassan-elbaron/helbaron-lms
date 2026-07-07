@@ -5,7 +5,7 @@ namespace App\Domains\Catalog\Actions\Course;
 use App\Domains\Catalog\Enums\CourseStatus;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Catalog\Services\SlugService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class CreateCourseAction extends BaseAction
 {

@@ -5,7 +5,7 @@ namespace App\Domains\Learning\Actions\Engagement;
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Identity\Models\User;
 use App\Domains\Learning\Models\LessonNote;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class UpsertLessonNoteAction extends BaseAction
 {

@@ -1,6 +1,6 @@
 <?php
 
-use App\Shared\ValueObjects\EmailAddress;
+use App\Platform\Shared\ValueObjects\EmailAddress;
 
 it('normalizes and validates emails', function () {
     $e = new EmailAddress('  Test@Example.COM ');

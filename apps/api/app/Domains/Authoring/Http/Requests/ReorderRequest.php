@@ -2,7 +2,7 @@
 
 namespace App\Domains\Authoring\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 /**
  * Ordered list of public_ids (sections or lessons).

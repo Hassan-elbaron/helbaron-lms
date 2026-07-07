@@ -7,7 +7,7 @@ use App\Domains\Live\Enums\AttendanceSource;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Models\SessionAttendance;
 use App\Domains\Live\Services\AttendanceValidationService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Records attendance for a registered participant (idempotent per session+user). Updates

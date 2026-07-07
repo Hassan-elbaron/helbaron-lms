@@ -12,7 +12,7 @@ use App\Domains\Crm\Models\Organization;
 use App\Domains\Crm\Policies\ConsultingRequestPolicy;
 use App\Domains\Crm\Policies\LeadPolicy;
 use App\Domains\Crm\Policies\OrganizationPolicy;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Event;
 
 /**

@@ -7,7 +7,7 @@ const { forgotPassword } = vi.hoisted(() => ({ forgotPassword: vi.fn().mockResol
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn(), push: vi.fn() }) }));
 vi.mock("@/lib/auth/api", () => ({ forgotPassword }));
 
-import ForgotPasswordPage from "@/app/(auth)/forgot-password/page";
+import ForgotPasswordPage from "@/app/(marketing)/(auth)/forgot-password/page";
 
 describe("ForgotPasswordPage", () => {
   beforeEach(() => vi.clearAllMocks());

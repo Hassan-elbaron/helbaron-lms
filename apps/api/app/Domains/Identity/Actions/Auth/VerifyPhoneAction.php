@@ -6,7 +6,7 @@ use App\Domains\Identity\Enums\OtpChannel;
 use App\Domains\Identity\Events\PhoneVerified;
 use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Services\OtpService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class VerifyPhoneAction extends BaseAction
 {

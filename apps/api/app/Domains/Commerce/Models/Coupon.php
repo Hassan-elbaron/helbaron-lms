@@ -5,7 +5,7 @@ namespace App\Domains\Commerce\Models;
 use App\Domains\Commerce\Database\Factories\CouponFactory;
 use App\Domains\Commerce\Enums\CouponScope;
 use App\Domains\Commerce\Enums\CouponType;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

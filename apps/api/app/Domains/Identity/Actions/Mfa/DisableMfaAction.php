@@ -5,7 +5,7 @@ namespace App\Domains\Identity\Actions\Mfa;
 use App\Domains\Identity\Events\MfaDisabled;
 use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Services\MfaService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class DisableMfaAction extends BaseAction
 {

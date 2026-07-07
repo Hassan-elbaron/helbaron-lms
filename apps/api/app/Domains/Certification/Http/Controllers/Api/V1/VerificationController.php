@@ -4,7 +4,7 @@ namespace App\Domains\Certification\Http\Controllers\Api\V1;
 
 use App\Domains\Certification\Http\Resources\VerificationResource;
 use App\Domains\Certification\Services\CertificateVerificationService;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

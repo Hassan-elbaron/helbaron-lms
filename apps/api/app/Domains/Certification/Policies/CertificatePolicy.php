@@ -4,7 +4,7 @@ namespace App\Domains\Certification\Policies;
 
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Identity\Models\User;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 class CertificatePolicy extends BasePolicy
 {

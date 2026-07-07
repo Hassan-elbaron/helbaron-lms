@@ -4,7 +4,7 @@ namespace App\Domains\Certification\Http\Controllers\Api\V1;
 
 use App\Domains\Certification\Http\Resources\CertificateListItemResource;
 use App\Domains\Certification\Models\Certificate;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

@@ -4,7 +4,7 @@ namespace App\Domains\Notifications\Services;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Notifications\Models\Notification;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Collection;
 
 /**

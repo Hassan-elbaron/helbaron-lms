@@ -6,7 +6,7 @@ use App\Domains\Live\Enums\LiveSessionStatus;
 use App\Domains\Live\Exceptions\SessionCancelledException;
 use App\Domains\Live\Exceptions\SessionNotOpenException;
 use App\Domains\Live\Models\LiveSession;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Validates whether a session accepts registrations and decides registered vs waitlisted based

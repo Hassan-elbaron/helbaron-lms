@@ -9,7 +9,7 @@ use App\Domains\Live\Exceptions\NotRegisteredException;
 use App\Domains\Live\Exceptions\SessionCancelledException;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Services\JoinTokenService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Issues a single-use join token + join URL when the window is open, or returns a waiting-room

@@ -10,7 +10,7 @@ vi.mock("@/lib/org/hooks", () => ({
   useInviteMember: () => ({ mutate: inviteMutate, isPending: false }),
 }));
 
-import OrganizationDetailsPage from "@/app/(org)/org/organizations/[public_id]/page";
+import OrganizationDetailsPage from "@/app/(organization)/org/organizations/[public_id]/page";
 
 describe("OrganizationDetailsPage", () => {
   beforeEach(() => vi.clearAllMocks());

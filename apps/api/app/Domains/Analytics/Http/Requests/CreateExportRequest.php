@@ -3,7 +3,7 @@
 namespace App\Domains\Analytics\Http\Requests;
 
 use App\Domains\Analytics\Enums\ExportFormat;
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
 class CreateExportRequest extends BaseFormRequest

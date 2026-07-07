@@ -10,7 +10,7 @@ vi.mock("@/lib/student/hooks", () => ({
   useCertificateShare: () => ({ mutate: vi.fn(), isPending: false, variables: undefined }),
 }));
 
-import CertificatesPage from "@/app/(student)/certificates/page";
+import CertificatesPage from "@/app/(learning)/(app)/certificates/page";
 
 describe("CertificatesPage", () => {
   beforeEach(() => vi.clearAllMocks());

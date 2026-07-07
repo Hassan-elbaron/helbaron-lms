@@ -6,7 +6,7 @@ use App\Domains\Crm\Enums\LeadStatus;
 use App\Domains\Crm\Events\LeadCreated;
 use App\Domains\Crm\Models\Lead;
 use App\Domains\Crm\Models\Pipeline;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class CreateLeadAction extends BaseAction
 {

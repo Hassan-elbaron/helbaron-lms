@@ -10,7 +10,7 @@ use App\Domains\Notifications\Jobs\DeliverNotificationJob;
 use App\Domains\Notifications\Models\Notification;
 use App\Domains\Notifications\Models\NotificationDelivery;
 use App\Domains\Notifications\Models\UserNotificationSetting;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Creates a notification + per-channel delivery rows (idempotent by dedup key) and queues each

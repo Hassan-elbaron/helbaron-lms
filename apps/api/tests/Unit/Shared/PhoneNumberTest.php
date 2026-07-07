@@ -1,6 +1,6 @@
 <?php
 
-use App\Shared\ValueObjects\PhoneNumber;
+use App\Platform\Shared\ValueObjects\PhoneNumber;
 
 it('normalizes to E.164', function () {
     expect((new PhoneNumber('+966 50 123 4567'))->e164())->toBe('+966501234567')

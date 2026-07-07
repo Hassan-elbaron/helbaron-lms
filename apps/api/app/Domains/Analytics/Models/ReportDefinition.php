@@ -6,7 +6,7 @@ use App\Domains\Analytics\Database\Factories\ReportDefinitionFactory;
 use App\Domains\Analytics\Enums\ReportType;
 use App\Domains\Analytics\Enums\ReportVisibility;
 use App\Domains\Identity\Models\User;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

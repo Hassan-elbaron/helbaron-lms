@@ -4,8 +4,8 @@ namespace App\Domains\Crm\Actions\Organization;
 
 use App\Domains\Crm\Events\OrganizationCreated;
 use App\Domains\Crm\Models\Organization;
-use App\Shared\Actions\BaseAction;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Actions\BaseAction;
+use App\Platform\Shared\Helpers\Slug;
 
 class CreateOrganizationAction extends BaseAction
 {

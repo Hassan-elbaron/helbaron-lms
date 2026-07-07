@@ -1,6 +1,6 @@
 <?php
 
-use App\Shared\Support\CloudFrontUrlSigner;
+use App\Platform\Shared\Support\CloudFrontUrlSigner;
 
 it('produces a CloudFront signed URL whose signature verifies with the public key', function () {
     $keypair = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);

@@ -5,7 +5,7 @@ namespace App\Domains\Authoring\Actions\Section;
 use App\Domains\Authoring\Enums\PublishState;
 use App\Domains\Authoring\Events\SectionPublished;
 use App\Domains\Authoring\Models\Section;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class SetSectionPublishStateAction extends BaseAction
 {

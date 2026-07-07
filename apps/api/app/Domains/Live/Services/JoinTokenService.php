@@ -5,7 +5,7 @@ namespace App\Domains\Live\Services;
 use App\Domains\Identity\Models\User;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Models\SessionJoinToken;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Str;
 
 /**

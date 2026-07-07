@@ -2,7 +2,7 @@
 
 namespace App\Domains\Certification\Services;
 
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use chillerlan\QRCode\Output\QRMarkupSVG;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;

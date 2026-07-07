@@ -4,7 +4,7 @@ namespace App\Domains\Identity\Policies;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Models\UserDevice;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 /**
  * A user may only view/revoke their own devices.

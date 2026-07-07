@@ -11,7 +11,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Models\UserDevice;
 use App\Domains\Identity\Policies\DevicePolicy;
 use App\Domains\Identity\Policies\UserPolicy;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;

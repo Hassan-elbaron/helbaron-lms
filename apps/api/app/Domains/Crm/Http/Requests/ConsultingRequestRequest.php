@@ -2,7 +2,7 @@
 
 namespace App\Domains\Crm\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 class ConsultingRequestRequest extends BaseFormRequest
 {

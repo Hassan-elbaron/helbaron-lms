@@ -11,7 +11,7 @@ use App\Domains\Identity\Exceptions\MfaRequiredException;
 use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Services\DeviceService;
 use App\Domains\Identity\Services\MfaService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 use Illuminate\Support\Facades\Hash;
 
 class LoginAction extends BaseAction

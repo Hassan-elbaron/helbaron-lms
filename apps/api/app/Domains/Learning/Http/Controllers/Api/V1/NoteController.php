@@ -6,7 +6,7 @@ use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Learning\Actions\Engagement\UpsertLessonNoteAction;
 use App\Domains\Learning\Http\Requests\UpsertNoteRequest;
 use App\Domains\Learning\Services\LessonAccessService;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

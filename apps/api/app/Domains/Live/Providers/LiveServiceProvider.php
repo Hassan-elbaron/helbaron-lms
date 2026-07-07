@@ -16,7 +16,7 @@ use App\Domains\Live\Meeting\MeetingProviderManager;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Policies\LiveSessionPolicy;
 use App\Domains\Live\Reminders\ReminderSchedulerManager;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Event;
 
 /**

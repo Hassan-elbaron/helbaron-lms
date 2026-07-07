@@ -5,7 +5,7 @@ namespace App\Domains\Authoring\Services;
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Facades\DB;
 
 /**

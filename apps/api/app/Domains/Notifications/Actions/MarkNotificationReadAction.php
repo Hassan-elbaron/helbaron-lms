@@ -3,7 +3,7 @@
 namespace App\Domains\Notifications\Actions;
 
 use App\Domains\Notifications\Models\Notification;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class MarkNotificationReadAction extends BaseAction
 {

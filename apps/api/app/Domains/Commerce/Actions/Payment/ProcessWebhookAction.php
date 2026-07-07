@@ -9,7 +9,7 @@ use App\Domains\Commerce\Events\OrderPaid;
 use App\Domains\Commerce\Events\PaymentFailed;
 use App\Domains\Commerce\Models\Order;
 use App\Domains\Commerce\Models\PaymentWebhookEvent;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Verifies + parses a provider webhook and advances the order state exactly once (dedup by

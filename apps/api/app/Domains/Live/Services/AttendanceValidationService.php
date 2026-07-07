@@ -6,7 +6,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Live\Enums\RegistrationStatus;
 use App\Domains\Live\Exceptions\NotRegisteredException;
 use App\Domains\Live\Models\LiveSession;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Validates that attendance can be recorded: the user must hold an active registration.

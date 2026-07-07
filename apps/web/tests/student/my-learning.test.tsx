@@ -5,7 +5,7 @@ import { renderWithI18n } from "../render";
 const { useMyLearning } = vi.hoisted(() => ({ useMyLearning: vi.fn() }));
 vi.mock("@/lib/student/hooks", () => ({ useMyLearning }));
 
-import MyLearningPage from "@/app/(student)/my-learning/page";
+import MyLearningPage from "@/app/(learning)/(app)/my-learning/page";
 
 const q = (over: Record<string, unknown>) => ({ isPending: false, isError: false, refetch: vi.fn(), ...over });
 

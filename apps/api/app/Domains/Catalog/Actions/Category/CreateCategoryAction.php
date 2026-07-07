@@ -5,7 +5,7 @@ namespace App\Domains\Catalog\Actions\Category;
 use App\Domains\Catalog\Events\CategoryCreated;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Services\SlugService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class CreateCategoryAction extends BaseAction
 {

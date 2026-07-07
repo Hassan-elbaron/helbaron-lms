@@ -4,7 +4,7 @@ namespace App\Domains\Catalog\Policies;
 
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Identity\Models\User;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 /**
  * Course authorization. Reading published courses is public (no policy needed); mutations

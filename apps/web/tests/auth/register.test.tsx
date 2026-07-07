@@ -13,7 +13,7 @@ vi.mock("@/lib/auth/auth-context", () => ({
   useAuth: () => ({ login, user: null, status: "guest", logout: vi.fn(), refresh: vi.fn() }),
 }));
 
-import RegisterPage from "@/app/(auth)/register/page";
+import RegisterPage from "@/app/(marketing)/(auth)/register/page";
 
 describe("RegisterPage", () => {
   beforeEach(() => {

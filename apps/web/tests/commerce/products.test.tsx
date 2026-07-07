@@ -8,7 +8,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: 
 vi.mock("@/lib/auth/auth-context", () => ({ useAuth: () => ({ status: "authenticated" }) }));
 vi.mock("@/lib/commerce/hooks", () => ({ useProducts, useAddToCart: () => ({ mutate: addMutate, isPending: false, variables: undefined }) }));
 
-import ProductsPage from "@/app/(public)/products/page";
+import ProductsPage from "@/app/(marketing)/(site)/products/page";
 
 describe("ProductsPage", () => {
   beforeEach(() => vi.clearAllMocks());

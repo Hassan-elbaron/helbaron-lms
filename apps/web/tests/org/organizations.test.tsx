@@ -6,7 +6,7 @@ const { useOrganizations } = vi.hoisted(() => ({ useOrganizations: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("@/lib/org/hooks", () => ({ useOrganizations }));
 
-import OrganizationsPage from "@/app/(org)/org/organizations/page";
+import OrganizationsPage from "@/app/(organization)/org/organizations/page";
 
 const paginated = (items: unknown[]) => ({
   isPending: false, isError: false, refetch: vi.fn(),

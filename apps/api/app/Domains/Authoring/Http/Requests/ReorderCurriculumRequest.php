@@ -2,7 +2,7 @@
 
 namespace App\Domains\Authoring\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 /**
  * Full drag-and-drop tree: ordered sections, each with an ordered list of lesson public_ids.

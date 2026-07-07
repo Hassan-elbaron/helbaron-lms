@@ -6,7 +6,7 @@ use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Learning\Actions\Progress\RecordLessonProgressAction;
 use App\Domains\Learning\Enums\LessonProgressStatus;
 use App\Domains\Learning\Http\Requests\RecordProgressRequest;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

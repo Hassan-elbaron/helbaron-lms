@@ -4,7 +4,7 @@ namespace App\Domains\Commerce\Http\Controllers\Api\V1;
 
 use App\Domains\Commerce\Actions\Checkout\CheckoutAction;
 use App\Domains\Commerce\Http\Resources\OrderResource;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

@@ -3,7 +3,7 @@
 namespace App\Domains\Crm\Models;
 
 use App\Domains\Crm\Enums\OpportunityStatus;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;

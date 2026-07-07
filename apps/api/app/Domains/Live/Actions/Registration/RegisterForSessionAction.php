@@ -8,7 +8,7 @@ use App\Domains\Live\Events\UserRegisteredForSession;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Models\SessionRegistration;
 use App\Domains\Live\Services\RegistrationValidationService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Registers a user for a session under a capacity lock: within capacity => registered, otherwise

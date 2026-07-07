@@ -2,7 +2,7 @@
 
 namespace App\Domains\Learning\Http\Resources;
 
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

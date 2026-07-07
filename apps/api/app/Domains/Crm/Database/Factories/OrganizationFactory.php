@@ -4,7 +4,7 @@ namespace App\Domains\Crm\Database\Factories;
 
 use App\Domains\Crm\Enums\OrganizationStatus;
 use App\Domains\Crm\Models\Organization;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

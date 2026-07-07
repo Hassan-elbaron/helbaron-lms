@@ -3,7 +3,7 @@
 namespace App\Domains\Learning\Http\Resources;
 
 use App\Domains\Authoring\Models\Section;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

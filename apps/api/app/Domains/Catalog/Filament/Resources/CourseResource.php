@@ -5,7 +5,7 @@ namespace App\Domains\Catalog\Filament\Resources;
 use App\Domains\Catalog\Enums\CourseStatus;
 use App\Domains\Catalog\Filament\Resources\CourseResource\Pages;
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Enums\Visibility;
+use App\Platform\Shared\Enums\Visibility;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;

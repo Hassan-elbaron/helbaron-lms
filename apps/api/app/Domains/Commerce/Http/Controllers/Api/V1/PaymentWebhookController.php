@@ -3,7 +3,7 @@
 namespace App\Domains\Commerce\Http\Controllers\Api\V1;
 
 use App\Domains\Commerce\Actions\Payment\ProcessWebhookAction;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

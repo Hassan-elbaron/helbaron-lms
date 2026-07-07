@@ -5,7 +5,7 @@ namespace App\Domains\Live\Models;
 use App\Domains\Identity\Models\User;
 use App\Domains\Live\Database\Factories\LiveSessionFactory;
 use App\Domains\Live\Enums\LiveSessionStatus;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

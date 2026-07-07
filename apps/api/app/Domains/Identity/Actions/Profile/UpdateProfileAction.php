@@ -3,7 +3,7 @@
 namespace App\Domains\Identity\Actions\Profile;
 
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class UpdateProfileAction extends BaseAction
 {

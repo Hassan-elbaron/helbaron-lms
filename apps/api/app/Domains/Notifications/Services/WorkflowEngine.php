@@ -6,7 +6,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Notifications\Enums\Channel;
 use App\Domains\Notifications\Enums\NotificationCategory;
 use App\Domains\Notifications\Models\AutomationRule;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Evaluates active event-triggered automation rules for a given trigger key and executes their

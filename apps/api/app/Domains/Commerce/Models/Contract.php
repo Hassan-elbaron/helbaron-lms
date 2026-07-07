@@ -4,7 +4,7 @@ namespace App\Domains\Commerce\Models;
 
 use App\Domains\Commerce\Enums\ContractStatus;
 use App\Domains\Identity\Models\User;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

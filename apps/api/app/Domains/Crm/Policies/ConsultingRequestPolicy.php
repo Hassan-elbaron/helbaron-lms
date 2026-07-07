@@ -4,7 +4,7 @@ namespace App\Domains\Crm\Policies;
 
 use App\Domains\Crm\Models\ConsultingRequest;
 use App\Domains\Identity\Models\User;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 class ConsultingRequestPolicy extends BasePolicy
 {

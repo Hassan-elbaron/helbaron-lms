@@ -5,7 +5,7 @@ namespace App\Domains\Notifications\Http\Requests;
 use App\Domains\Notifications\Enums\Channel;
 use App\Domains\Notifications\Enums\DigestFrequency;
 use App\Domains\Notifications\Enums\NotificationCategory;
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdatePreferencesRequest extends BaseFormRequest

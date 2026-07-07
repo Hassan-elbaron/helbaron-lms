@@ -3,7 +3,7 @@
 namespace App\Domains\Catalog\Services;
 
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

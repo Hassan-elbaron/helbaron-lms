@@ -3,7 +3,7 @@
 namespace App\Domains\Certification\Database\Factories;
 
 use App\Domains\Certification\Models\Badge;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

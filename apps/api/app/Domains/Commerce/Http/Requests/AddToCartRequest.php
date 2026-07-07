@@ -2,7 +2,7 @@
 
 namespace App\Domains\Commerce\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 class AddToCartRequest extends BaseFormRequest
 {

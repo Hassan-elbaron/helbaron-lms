@@ -7,7 +7,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Learning\Database\Factories\EnrollmentFactory;
 use App\Domains\Learning\Enums\EnrollmentSource;
 use App\Domains\Learning\Enums\EnrollmentStatus;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

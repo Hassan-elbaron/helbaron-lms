@@ -11,7 +11,7 @@ use App\Domains\Commerce\Models\Order;
 use App\Domains\Commerce\Models\PaymentTransaction;
 use App\Domains\Commerce\Payments\Data\ChargeRequest;
 use App\Domains\Commerce\Payments\Data\ChargeResult;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * (Re)initiates payment for a pending order via the gateway abstraction.

@@ -6,7 +6,7 @@ use App\Domains\Authoring\Events\CurriculumReordered;
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Applies a full drag-and-drop reorder of a course's curriculum in one transaction:

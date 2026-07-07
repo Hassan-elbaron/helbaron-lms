@@ -4,7 +4,7 @@ namespace App\Domains\Live\Policies;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Live\Models\LiveSession;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 class LiveSessionPolicy extends BasePolicy
 {

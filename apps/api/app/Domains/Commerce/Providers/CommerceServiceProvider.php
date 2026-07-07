@@ -16,7 +16,7 @@ use App\Domains\Commerce\Payments\GatewayManager;
 use App\Domains\Commerce\Policies\ContractPolicy;
 use App\Domains\Commerce\Policies\OrderPolicy;
 use App\Domains\Commerce\Policies\ProductPolicy;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Event;
 
 /**

@@ -7,7 +7,7 @@ use App\Domains\Commerce\Models\Cart;
 use App\Domains\Commerce\Models\CartItem;
 use App\Domains\Commerce\Models\Product;
 use App\Domains\Identity\Models\User;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Manages the per-user cart and computes totals (subtotal, discount, total) in minor units.

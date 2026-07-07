@@ -9,7 +9,7 @@ use App\Domains\Notifications\Contracts\Providers\SmsProvider;
 use App\Domains\Notifications\Listeners\NotificationEventSubscriber;
 use App\Domains\Notifications\Models\Notification;
 use App\Domains\Notifications\Policies\NotificationPolicy;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Event;
 
 /**

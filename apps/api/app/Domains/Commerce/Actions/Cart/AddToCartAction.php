@@ -6,7 +6,7 @@ use App\Domains\Commerce\Models\Cart;
 use App\Domains\Commerce\Models\Product;
 use App\Domains\Commerce\Services\CartService;
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class AddToCartAction extends BaseAction
 {

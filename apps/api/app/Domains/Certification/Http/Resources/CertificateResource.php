@@ -3,7 +3,7 @@
 namespace App\Domains\Certification\Http\Resources;
 
 use App\Domains\Certification\Models\Certificate;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

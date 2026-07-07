@@ -7,7 +7,7 @@ use App\Domains\Crm\Events\MemberInvited;
 use App\Domains\Crm\Models\Organization;
 use App\Domains\Crm\Models\OrganizationMember;
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Invites a member to an organization (idempotent per organization+email). Links an existing

@@ -4,7 +4,7 @@ namespace App\Domains\Commerce\Policies;
 
 use App\Domains\Commerce\Models\Order;
 use App\Domains\Identity\Models\User;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 class OrderPolicy extends BasePolicy
 {

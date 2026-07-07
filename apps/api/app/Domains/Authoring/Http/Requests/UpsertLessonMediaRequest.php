@@ -2,7 +2,7 @@
 
 namespace App\Domains\Authoring\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 /**
  * Media METADATA only (no upload/playback). All fields optional; store what is known.

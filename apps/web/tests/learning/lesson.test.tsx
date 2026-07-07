@@ -21,7 +21,7 @@ vi.mock("@/lib/learning/hooks", () => ({
   useUpsertNote: () => ({ mutate: noteMutate, isPending: false }),
 }));
 
-import LessonPage from "@/app/(public)/lessons/[public_id]/page";
+import LessonPage from "@/app/(learning)/(player)/lessons/[public_id]/page";
 
 const lesson = (over: Record<string, unknown> = {}) => ({
   isPending: false,

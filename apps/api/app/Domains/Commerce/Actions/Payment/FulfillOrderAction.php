@@ -7,7 +7,7 @@ use App\Domains\Commerce\Models\Order;
 use App\Domains\Commerce\Models\OrderCourseGrant;
 use App\Domains\Learning\Actions\Enrollment\GrantEnrollmentAction;
 use App\Domains\Learning\Enums\EnrollmentSource;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Grants course enrollments for a paid order — ONLY when the order is paid AND its contract is

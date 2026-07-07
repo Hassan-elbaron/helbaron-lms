@@ -2,6 +2,6 @@
 
 namespace App\Domains\Live\Exceptions;
 
-use App\Shared\Exceptions\BaseDomainException;
+use App\Platform\Shared\Exceptions\BaseDomainException;
 
 abstract class LiveException extends BaseDomainException {}

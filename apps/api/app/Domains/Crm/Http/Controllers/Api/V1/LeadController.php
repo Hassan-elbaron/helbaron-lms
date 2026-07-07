@@ -7,7 +7,7 @@ use App\Domains\Crm\Http\Requests\CreateLeadRequest;
 use App\Domains\Crm\Http\Resources\LeadResource;
 use App\Domains\Crm\Models\Lead;
 use App\Domains\Crm\Services\CrmSearchService;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

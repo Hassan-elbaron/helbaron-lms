@@ -3,7 +3,7 @@
 namespace App\Domains\Notifications\Http\Resources;
 
 use App\Domains\Notifications\Models\NotificationDelivery;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

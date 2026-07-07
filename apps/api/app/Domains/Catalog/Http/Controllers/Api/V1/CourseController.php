@@ -8,7 +8,7 @@ use App\Domains\Catalog\Http\Resources\CourseResource;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Catalog\Services\CourseSearchService;
 use App\Domains\Catalog\Services\RelatedCoursesService;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;

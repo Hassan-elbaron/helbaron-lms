@@ -18,7 +18,7 @@ use App\Domains\Commerce\Services\CartService;
 use App\Domains\Commerce\Services\ContractService;
 use App\Domains\Commerce\Services\InvoiceNumberService;
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Converts the cart into an order + invoice + a pending contract, records coupon redemption

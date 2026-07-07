@@ -5,7 +5,7 @@ namespace App\Domains\Authoring\Actions\Section;
 use App\Domains\Authoring\Enums\PublishState;
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class CreateSectionAction extends BaseAction
 {

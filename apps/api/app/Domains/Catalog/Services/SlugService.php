@@ -2,8 +2,8 @@
 
 namespace App\Domains\Catalog\Services;
 
-use App\Shared\Helpers\Slug;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Helpers\Slug;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Database\Eloquent\Model;
 
 /**

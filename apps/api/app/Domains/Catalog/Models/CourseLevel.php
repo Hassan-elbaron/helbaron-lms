@@ -3,8 +3,8 @@
 namespace App\Domains\Catalog\Models;
 
 use App\Domains\Catalog\Database\Factories\CourseLevelFactory;
-use App\Shared\Traits\HasPublicId;
-use App\Shared\Traits\HasSlug;
+use App\Platform\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

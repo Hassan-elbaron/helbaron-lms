@@ -4,7 +4,7 @@ namespace App\Domains\Learning\Actions\Enrollment;
 
 use App\Domains\Learning\Enums\EnrollmentStatus;
 use App\Domains\Learning\Models\Enrollment;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Cancels an enrollment (used by Commerce on refund later). Progress is preserved.

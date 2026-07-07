@@ -4,7 +4,7 @@ namespace App\Domains\Live\Models;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Live\Enums\AttendanceSource;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

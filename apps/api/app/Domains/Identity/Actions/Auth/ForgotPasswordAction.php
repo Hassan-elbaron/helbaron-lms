@@ -2,7 +2,7 @@
 
 namespace App\Domains\Identity\Actions\Auth;
 
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordAction extends BaseAction

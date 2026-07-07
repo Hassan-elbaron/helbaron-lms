@@ -10,7 +10,7 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/lib/auth/auth-context", () => ({ useAuth: () => ({ status: "authenticated", user: { id: "u1" } }) }));
 vi.mock("@/lib/learning/hooks", () => ({ useLearnCourse }));
 
-import CourseLearnPage from "@/app/(public)/courses/[public_id]/learn/page";
+import CourseLearnPage from "@/app/(learning)/(player)/learn/[public_id]/page";
 
 describe("CourseLearnPage", () => {
   beforeEach(() => vi.clearAllMocks());

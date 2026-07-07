@@ -2,7 +2,7 @@
 
 namespace App\Domains\Analytics\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 class RunReportRequest extends BaseFormRequest
 {

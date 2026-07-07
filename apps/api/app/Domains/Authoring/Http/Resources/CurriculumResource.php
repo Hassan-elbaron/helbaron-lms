@@ -2,7 +2,7 @@
 
 namespace App\Domains\Authoring\Http\Resources;
 
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

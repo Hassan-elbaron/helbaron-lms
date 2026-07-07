@@ -6,7 +6,7 @@ use App\Domains\Certification\Actions\ReissueCertificateAction;
 use App\Domains\Certification\Actions\RevokeCertificateAction;
 use App\Domains\Certification\Http\Resources\CertificateResource;
 use App\Domains\Certification\Models\Certificate;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;

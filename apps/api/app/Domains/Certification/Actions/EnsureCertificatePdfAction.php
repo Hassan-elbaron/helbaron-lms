@@ -4,7 +4,7 @@ namespace App\Domains\Certification\Actions;
 
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Services\CertificateRenderService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 use Illuminate\Support\Facades\Storage;
 
 /**

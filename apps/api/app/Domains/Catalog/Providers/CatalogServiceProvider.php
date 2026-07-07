@@ -8,7 +8,7 @@ use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Catalog\Policies\CategoryPolicy;
 use App\Domains\Catalog\Policies\CoursePolicy;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 
 /**
  * Wires the Catalog module: config, migrations, public routes, policies, and the default

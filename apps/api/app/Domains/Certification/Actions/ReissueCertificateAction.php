@@ -6,7 +6,7 @@ use App\Domains\Certification\Enums\CertificateStatus;
 use App\Domains\Certification\Events\CertificateIssued;
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Services\SignatureService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 use Illuminate\Support\Facades\Storage;
 
 /**

@@ -4,7 +4,7 @@ namespace App\Domains\Commerce\Http\Controllers\Api\V1;
 
 use App\Domains\Commerce\Http\Resources\ProductResource;
 use App\Domains\Commerce\Models\Product;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

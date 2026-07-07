@@ -5,7 +5,7 @@ namespace App\Domains\Notifications\Actions;
 use App\Domains\Identity\Models\User;
 use App\Domains\Notifications\Models\NotificationPreference;
 use App\Domains\Notifications\Models\UserNotificationSetting;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Updates a user's notification settings (locale, digest) and per-category/channel preferences.

@@ -7,7 +7,7 @@ use App\Domains\Crm\Http\Requests\InviteMemberRequest;
 use App\Domains\Crm\Http\Resources\OrganizationMemberResource;
 use App\Domains\Crm\Http\Resources\OrganizationResource;
 use App\Domains\Crm\Models\Organization;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;

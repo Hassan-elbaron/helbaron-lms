@@ -12,7 +12,7 @@ use App\Domains\Analytics\Models\ExportJob;
 use App\Domains\Analytics\Models\ReportDefinition;
 use App\Domains\Analytics\Policies\ExportJobPolicy;
 use App\Domains\Analytics\Policies\ReportDefinitionPolicy;
-use App\Shared\Providers\BaseDomainServiceProvider;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Event;
 
 /**

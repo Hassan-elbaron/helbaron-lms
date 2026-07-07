@@ -7,7 +7,7 @@ use App\Domains\Notifications\Enums\Channel;
 use App\Domains\Notifications\Enums\NotificationCategory;
 use App\Domains\Notifications\Models\Notification;
 use App\Domains\Notifications\Services\NotificationDispatcher;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Sends a single notification to a user (queued delivery via the dispatcher).

@@ -2,7 +2,7 @@
 
 namespace App\Domains\Learning\Http\Requests;
 
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 
 class UpsertNoteRequest extends BaseFormRequest
 {

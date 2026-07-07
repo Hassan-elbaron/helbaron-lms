@@ -6,7 +6,7 @@ use App\Domains\Authoring\Models\LessonMedia;
 use App\Domains\Learning\Contracts\PlaybackTokenProvider;
 use App\Domains\Learning\Exceptions\MediaUnavailableException;
 use App\Domains\Learning\Playback\Data\PlaybackToken;
-use App\Shared\Support\CloudFrontUrlSigner;
+use App\Platform\Shared\Support\CloudFrontUrlSigner;
 
 /**
  * Issues a short-lived CloudFront signed URL from the media s3_key. The key is used only to

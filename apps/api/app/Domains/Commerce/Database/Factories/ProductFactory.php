@@ -5,7 +5,7 @@ namespace App\Domains\Commerce\Database\Factories;
 use App\Domains\Commerce\Enums\ProductStatus;
 use App\Domains\Commerce\Enums\ProductType;
 use App\Domains\Commerce\Models\Product;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

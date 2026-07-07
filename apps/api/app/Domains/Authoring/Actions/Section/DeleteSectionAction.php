@@ -3,7 +3,7 @@
 namespace App\Domains\Authoring\Actions\Section;
 
 use App\Domains\Authoring\Models\Section;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class DeleteSectionAction extends BaseAction
 {

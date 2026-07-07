@@ -2,7 +2,7 @@
 
 namespace App\Domains\Identity\Exceptions;
 
-use App\Shared\Exceptions\BaseDomainException;
+use App\Platform\Shared\Exceptions\BaseDomainException;
 
 /**
  * Base for all Identity exceptions. Extends the shared renderable exception so every error

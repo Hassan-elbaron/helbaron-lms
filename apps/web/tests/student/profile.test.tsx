@@ -9,7 +9,7 @@ vi.mock("@/lib/student/hooks", () => ({
   useUpdateProfile: () => ({ mutate, isPending: false }),
 }));
 
-import ProfilePage from "@/app/(student)/profile/page";
+import ProfilePage from "@/app/(account)/profile/page";
 
 describe("ProfilePage", () => {
   beforeEach(() => vi.clearAllMocks());

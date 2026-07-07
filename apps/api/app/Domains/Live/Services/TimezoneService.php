@@ -3,7 +3,7 @@
 namespace App\Domains\Live\Services;
 
 use App\Domains\Live\Exceptions\InvalidTimezoneException;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 

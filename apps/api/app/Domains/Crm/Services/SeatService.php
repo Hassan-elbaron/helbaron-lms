@@ -7,7 +7,7 @@ use App\Domains\Crm\Exceptions\SeatPoolExhaustedException;
 use App\Domains\Crm\Models\OrganizationMember;
 use App\Domains\Crm\Models\SeatAssignment;
 use App\Domains\Crm\Models\SeatPool;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 
 /**
  * Seat allocation with pool locking to prevent over-allocation. Assign, revoke, and transfer

@@ -5,7 +5,7 @@ namespace App\Domains\Identity\Http\Controllers\Api\V1;
 use App\Domains\Identity\Actions\Profile\UpdateProfileAction;
 use App\Domains\Identity\Http\Requests\UpdateProfileRequest;
 use App\Domains\Identity\Http\Resources\UserResource;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

@@ -7,7 +7,7 @@ use App\Domains\Authoring\Http\Requests\ReorderCurriculumRequest;
 use App\Domains\Authoring\Http\Resources\CurriculumResource;
 use App\Domains\Authoring\Services\CurriculumTreeService;
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;

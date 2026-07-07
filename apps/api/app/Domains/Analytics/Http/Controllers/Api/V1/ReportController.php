@@ -6,7 +6,7 @@ use App\Domains\Analytics\Actions\RunReportAction;
 use App\Domains\Analytics\Http\Requests\RunReportRequest;
 use App\Domains\Analytics\Http\Resources\ReportDefinitionResource;
 use App\Domains\Analytics\Models\ReportDefinition;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

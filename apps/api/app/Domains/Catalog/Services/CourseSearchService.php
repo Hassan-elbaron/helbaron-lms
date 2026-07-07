@@ -7,7 +7,7 @@ use App\Domains\Catalog\Models\Course;
 use App\Domains\Catalog\Models\CourseLanguage;
 use App\Domains\Catalog\Models\CourseLevel;
 use App\Domains\Catalog\Models\CourseTag;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 

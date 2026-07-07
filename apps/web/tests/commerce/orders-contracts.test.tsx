@@ -11,8 +11,8 @@ vi.mock("@/lib/commerce/hooks", () => ({
   useAcceptContract: () => ({ mutate: acceptMutate, isPending: false, variables: undefined }),
 }));
 
-import OrdersPage from "@/app/(public)/orders/page";
-import ContractsPage from "@/app/(public)/contracts/page";
+import OrdersPage from "@/app/(commerce)/orders/page";
+import ContractsPage from "@/app/(commerce)/contracts/page";
 
 const ok = (data: unknown) => ({ isPending: false, isError: false, refetch: vi.fn(), data });
 

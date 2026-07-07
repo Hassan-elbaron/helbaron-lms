@@ -3,7 +3,7 @@
 namespace App\Domains\Commerce\Models;
 
 use App\Domains\Commerce\Database\Factories\ContractTemplateFactory;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

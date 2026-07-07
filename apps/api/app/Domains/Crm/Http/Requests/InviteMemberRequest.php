@@ -3,7 +3,7 @@
 namespace App\Domains\Crm\Http\Requests;
 
 use App\Domains\Crm\Enums\MemberRole;
-use App\Shared\Requests\BaseFormRequest;
+use App\Platform\Shared\Requests\BaseFormRequest;
 use Illuminate\Validation\Rule;
 
 class InviteMemberRequest extends BaseFormRequest

@@ -6,7 +6,7 @@ use App\Domains\Identity\Actions\Mfa\DisableMfaAction;
 use App\Domains\Identity\Actions\Mfa\EnableMfaAction;
 use App\Domains\Identity\Actions\Mfa\VerifyMfaAction;
 use App\Domains\Identity\Http\Requests\MfaCodeRequest;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

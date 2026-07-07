@@ -7,7 +7,7 @@ use App\Domains\Learning\Playback\Providers\CloudFrontPlaybackTokenProvider;
 use App\Domains\Learning\Playback\Providers\FakePlaybackTokenProvider;
 use App\Domains\Learning\Playback\Providers\MuxPlaybackTokenProvider;
 use App\Domains\Learning\Playback\Providers\S3PlaybackTokenProvider;
-use App\Shared\Support\CloudFrontUrlSigner;
+use App\Platform\Shared\Support\CloudFrontUrlSigner;
 use Illuminate\Contracts\Container\Container;
 
 /**

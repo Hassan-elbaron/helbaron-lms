@@ -8,7 +8,7 @@ use App\Domains\Commerce\Exceptions\CouponExhaustedException;
 use App\Domains\Commerce\Exceptions\CouponExpiredException;
 use App\Domains\Commerce\Exceptions\CouponInvalidException;
 use App\Domains\Commerce\Models\Coupon;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Collection;
 
 /**

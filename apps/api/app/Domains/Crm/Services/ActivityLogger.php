@@ -4,7 +4,7 @@ namespace App\Domains\Crm\Services;
 
 use App\Domains\Crm\Enums\ActivityType;
 use App\Domains\Crm\Models\CrmActivity;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Database\Eloquent\Model;
 
 /**

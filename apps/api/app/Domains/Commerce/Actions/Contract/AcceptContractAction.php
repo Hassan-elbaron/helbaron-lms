@@ -7,7 +7,7 @@ use App\Domains\Commerce\Events\ContractAccepted;
 use App\Domains\Commerce\Exceptions\ContractAlreadyAcceptedException;
 use App\Domains\Commerce\Models\Contract;
 use App\Domains\Commerce\Models\ContractAcceptance;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Records an immutable acceptance (template version + body hash + actor context) and marks the

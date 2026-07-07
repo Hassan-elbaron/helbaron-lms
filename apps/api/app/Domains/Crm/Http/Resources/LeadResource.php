@@ -3,7 +3,7 @@
 namespace App\Domains\Crm\Http\Resources;
 
 use App\Domains\Crm\Models\Lead;
-use App\Shared\Resources\BaseResource;
+use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**

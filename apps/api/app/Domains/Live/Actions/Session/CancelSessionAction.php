@@ -5,7 +5,7 @@ namespace App\Domains\Live\Actions\Session;
 use App\Domains\Live\Enums\LiveSessionStatus;
 use App\Domains\Live\Events\SessionCancelled;
 use App\Domains\Live\Models\LiveSession;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class CancelSessionAction extends BaseAction
 {

@@ -4,7 +4,7 @@ namespace App\Domains\Learning\Policies;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Learning\Models\Enrollment;
-use App\Shared\Policies\BasePolicy;
+use App\Platform\Shared\Policies\BasePolicy;
 
 /**
  * A learner may only view/act on their own enrollments. super_admin bypasses via before().

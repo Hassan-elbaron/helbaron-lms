@@ -5,8 +5,8 @@ import { renderWithI18n } from "../render";
 const { useCategories, useTrainers } = vi.hoisted(() => ({ useCategories: vi.fn(), useTrainers: vi.fn() }));
 vi.mock("@/lib/catalog/hooks", () => ({ useCategories, useTrainers }));
 
-import CategoriesPage from "@/app/(public)/categories/page";
-import TrainersPage from "@/app/(public)/trainers/page";
+import CategoriesPage from "@/app/(marketing)/(site)/categories/page";
+import TrainersPage from "@/app/(marketing)/(site)/trainers/page";
 
 const ok = (data: unknown) => ({ isPending: false, isError: false, refetch: vi.fn(), data });
 

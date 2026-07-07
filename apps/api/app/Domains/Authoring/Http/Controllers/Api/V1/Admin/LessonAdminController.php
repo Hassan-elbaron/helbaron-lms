@@ -21,7 +21,7 @@ use App\Domains\Authoring\Http\Resources\LessonMediaResource;
 use App\Domains\Authoring\Http\Resources\LessonResource;
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;

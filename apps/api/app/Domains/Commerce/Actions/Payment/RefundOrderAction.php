@@ -11,7 +11,7 @@ use App\Domains\Commerce\Exceptions\OrderNotRefundableException;
 use App\Domains\Commerce\Models\Order;
 use App\Domains\Commerce\Models\PaymentTransaction;
 use App\Domains\Commerce\Payments\Data\RefundRequest;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Refunds a paid order via the gateway, records the refund transaction, and marks the order

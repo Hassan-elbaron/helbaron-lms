@@ -8,7 +8,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn(), push: 
 vi.mock("@/lib/auth/api", () => ({ verifyMfa }));
 vi.mock("@/lib/api/client", () => ({ getToken: () => "tok" }));
 
-import MfaPage from "@/app/(onboarding)/mfa/page";
+import MfaPage from "@/app/(marketing)/(auth)/mfa/page";
 
 describe("MfaPage", () => {
   beforeEach(() => vi.clearAllMocks());

@@ -4,7 +4,7 @@ namespace App\Domains\Live\Models;
 
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Live\Database\Factories\LiveCourseFactory;
-use App\Shared\Traits\HasPublicId;
+use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

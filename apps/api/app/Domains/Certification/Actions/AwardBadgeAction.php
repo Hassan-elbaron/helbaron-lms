@@ -7,7 +7,7 @@ use App\Domains\Certification\Events\BadgeAwarded;
 use App\Domains\Certification\Models\Badge;
 use App\Domains\Certification\Models\BadgeAward;
 use App\Domains\Identity\Models\User;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Awards a badge to a user idempotently (unique per badge+user).

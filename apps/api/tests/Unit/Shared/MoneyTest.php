@@ -1,6 +1,6 @@
 <?php
 
-use App\Shared\ValueObjects\Money;
+use App\Platform\Shared\ValueObjects\Money;
 
 it('builds from minor and major units', function () {
     expect(Money::fromMinor(1999, 'sar')->minor)->toBe(1999)

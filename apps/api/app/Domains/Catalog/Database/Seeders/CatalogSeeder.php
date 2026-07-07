@@ -11,8 +11,8 @@ use App\Domains\Catalog\Models\CourseTag;
 use App\Domains\Identity\Database\Seeders\RolePermissionSeeder;
 use App\Domains\Identity\Enums\Role;
 use App\Domains\Identity\Models\User;
-use App\Shared\Enums\Visibility;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Enums\Visibility;
+use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 

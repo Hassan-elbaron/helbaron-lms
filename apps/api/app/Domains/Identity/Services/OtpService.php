@@ -11,7 +11,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Models\UserOtp;
 use App\Domains\Identity\Notifications\EmailOtpNotification;
 use App\Domains\Identity\Notifications\PhoneOtpNotification;
-use App\Shared\Services\BaseService;
+use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Facades\Log;
 
 /**

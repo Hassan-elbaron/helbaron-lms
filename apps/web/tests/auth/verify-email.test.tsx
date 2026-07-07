@@ -14,7 +14,7 @@ vi.mock("@/lib/auth/auth-context", () => ({
 }));
 vi.mock("@/lib/api/client", () => ({ getToken: () => "tok" }));
 
-import VerifyEmailPage from "@/app/(onboarding)/verify-email/page";
+import VerifyEmailPage from "@/app/(marketing)/(auth)/verify-email/page";
 
 describe("VerifyEmailPage", () => {
   beforeEach(() => vi.clearAllMocks());

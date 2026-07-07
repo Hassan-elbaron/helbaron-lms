@@ -9,7 +9,7 @@ use App\Domains\Learning\Http\Resources\LearnCourseResource;
 use App\Domains\Learning\Models\Enrollment;
 use App\Domains\Learning\Models\LessonProgress;
 use App\Domains\Learning\Services\LessonAccessService;
-use App\Shared\Support\ApiResponse;
+use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

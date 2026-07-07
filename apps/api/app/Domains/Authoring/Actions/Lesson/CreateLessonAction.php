@@ -6,7 +6,7 @@ use App\Domains\Authoring\Enums\LessonType;
 use App\Domains\Authoring\Enums\PublishState;
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class CreateLessonAction extends BaseAction
 {

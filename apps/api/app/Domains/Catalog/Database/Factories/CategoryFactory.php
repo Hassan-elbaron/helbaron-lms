@@ -3,7 +3,7 @@
 namespace App\Domains\Catalog\Database\Factories;
 
 use App\Domains\Catalog\Models\Category;
-use App\Shared\Helpers\Slug;
+use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

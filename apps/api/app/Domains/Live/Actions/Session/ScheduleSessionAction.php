@@ -10,7 +10,7 @@ use App\Domains\Live\Events\SessionScheduled;
 use App\Domains\Live\Meeting\Data\MeetingRequest;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Services\TimezoneService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Schedules a live session: validates timezone, creates a meeting (Fake provider) + a calendar

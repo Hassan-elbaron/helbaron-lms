@@ -3,7 +3,7 @@
 namespace App\Domains\Catalog\Actions\Course;
 
 use App\Domains\Catalog\Models\Course;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 class UpdateCourseAction extends BaseAction
 {

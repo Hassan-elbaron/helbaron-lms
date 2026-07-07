@@ -12,7 +12,7 @@ vi.mock("@/lib/commerce/hooks", () => ({
   useClearCart: () => ({ mutate: clearMutate, isPending: false }),
 }));
 
-import CartPage from "@/app/(public)/cart/page";
+import CartPage from "@/app/(commerce)/cart/page";
 
 describe("CartPage", () => {
   beforeEach(() => vi.clearAllMocks());

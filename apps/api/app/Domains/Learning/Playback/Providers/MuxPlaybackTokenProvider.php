@@ -6,7 +6,7 @@ use App\Domains\Authoring\Models\LessonMedia;
 use App\Domains\Learning\Contracts\PlaybackTokenProvider;
 use App\Domains\Learning\Exceptions\MediaUnavailableException;
 use App\Domains\Learning\Playback\Data\PlaybackToken;
-use App\Shared\Support\Jwt;
+use App\Platform\Shared\Support\Jwt;
 use RuntimeException;
 
 /**

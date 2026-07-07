@@ -1,6 +1,6 @@
 <?php
 
-use App\Shared\ValueObjects\Duration;
+use App\Platform\Shared\ValueObjects\Duration;
 
 it('builds from units and formats', function () {
     expect(Duration::fromMinutes(90)->seconds)->toBe(5400)

@@ -11,7 +11,7 @@ use App\Domains\Learning\Events\LessonProgressRecorded;
 use App\Domains\Learning\Models\LessonProgress;
 use App\Domains\Learning\Services\LessonAccessService;
 use App\Domains\Learning\Services\ProgressService;
-use App\Shared\Actions\BaseAction;
+use App\Platform\Shared\Actions\BaseAction;
 
 /**
  * Records progress for a lesson. Idempotent per lesson; recomputes completion and dispatches
