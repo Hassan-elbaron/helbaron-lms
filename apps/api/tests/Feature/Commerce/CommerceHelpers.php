@@ -3,8 +3,8 @@
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Models\Course;
-use App\Domains\Commerce\Models\ContractTemplate;
-use App\Domains\Commerce\Models\Product;
+use App\Contexts\Commerce\Models\ContractTemplate;
+use App\Contexts\Commerce\Models\Product;
 
 /** A published course + a product that grants it, priced in SAR, plus an active terms template. */
 function courseProduct(int $amountMinor = 19900): array

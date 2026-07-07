@@ -1,7 +1,7 @@
 <?php
 
-use App\Domains\Analytics\Models\MetricSnapshot;
-use App\Domains\Analytics\Models\ReportDefinition;
+use App\Contexts\Analytics\Models\MetricSnapshot;
+use App\Contexts\Analytics\Models\ReportDefinition;
 use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;

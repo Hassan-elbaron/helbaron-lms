@@ -1,7 +1,7 @@
 <?php
 
 use App\Domains\Authoring\Models\LessonMedia;
-use App\Domains\Learning\Playback\Providers\FakePlaybackTokenProvider;
+use App\Contexts\Learning\Playback\Providers\FakePlaybackTokenProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

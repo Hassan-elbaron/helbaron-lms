@@ -1,8 +1,8 @@
 <?php
 
 use App\Platform\Identity\Models\User;
-use App\Domains\Notifications\Models\Notification;
-use App\Domains\Notifications\Models\UserNotificationSetting;
+use App\Platform\Notifications\Models\Notification;
+use App\Platform\Notifications\Models\UserNotificationSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 

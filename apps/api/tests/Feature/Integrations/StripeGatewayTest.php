@@ -1,11 +1,11 @@
 <?php
 
-use App\Domains\Commerce\Exceptions\WebhookSignatureException;
-use App\Domains\Commerce\Payments\Data\ChargeRequest;
-use App\Domains\Commerce\Payments\Data\RefundRequest;
-use App\Domains\Commerce\Payments\GatewayManager;
-use App\Domains\Commerce\Payments\Gateways\FakeGateway;
-use App\Domains\Commerce\Payments\Gateways\StripeGateway;
+use App\Contexts\Commerce\Exceptions\WebhookSignatureException;
+use App\Contexts\Commerce\Payments\Data\ChargeRequest;
+use App\Contexts\Commerce\Payments\Data\RefundRequest;
+use App\Contexts\Commerce\Payments\GatewayManager;
+use App\Contexts\Commerce\Payments\Gateways\FakeGateway;
+use App\Contexts\Commerce\Payments\Gateways\StripeGateway;
 use Illuminate\Http\Client\Factory as HttpClient;
 use Illuminate\Support\Facades\Http;
 

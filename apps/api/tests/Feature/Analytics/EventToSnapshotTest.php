@@ -1,7 +1,7 @@
 <?php
 
-use App\Domains\Commerce\Events\OrderPaid;
-use App\Domains\Commerce\Models\Order;
+use App\Contexts\Commerce\Events\OrderPaid;
+use App\Contexts\Commerce\Models\Order;
 use App\Platform\Identity\Events\UserRegistered;
 use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

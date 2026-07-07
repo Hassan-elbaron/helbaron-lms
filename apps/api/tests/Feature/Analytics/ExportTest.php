@@ -1,12 +1,12 @@
 <?php
 
-use App\Domains\Analytics\Enums\ExportStatus;
-use App\Domains\Analytics\Export\ExportWriterManager;
-use App\Domains\Analytics\Jobs\ProcessExportJob;
-use App\Domains\Analytics\Models\ExportJob;
-use App\Domains\Analytics\Models\MetricSnapshot;
-use App\Domains\Analytics\Models\ReportDefinition;
-use App\Domains\Analytics\Services\ExportService;
+use App\Contexts\Analytics\Enums\ExportStatus;
+use App\Contexts\Analytics\Export\ExportWriterManager;
+use App\Contexts\Analytics\Jobs\ProcessExportJob;
+use App\Contexts\Analytics\Models\ExportJob;
+use App\Contexts\Analytics\Models\MetricSnapshot;
+use App\Contexts\Analytics\Models\ReportDefinition;
+use App\Contexts\Analytics\Services\ExportService;
 use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;

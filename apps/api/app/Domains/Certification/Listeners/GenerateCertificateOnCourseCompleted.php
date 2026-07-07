@@ -3,7 +3,7 @@
 namespace App\Domains\Certification\Listeners;
 
 use App\Domains\Certification\Actions\GenerateCertificateAction;
-use App\Domains\Learning\Events\CourseCompleted;
+use App\Contexts\Learning\Events\CourseCompleted;
 
 /**
  * The key integration: when Learning reports a completed course, issue a certificate. Idempotent

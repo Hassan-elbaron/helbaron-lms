@@ -1,9 +1,9 @@
 <?php
 
 use App\Platform\Identity\Models\User;
-use App\Domains\Learning\Actions\Enrollment\GrantEnrollmentAction;
-use App\Domains\Learning\Enums\EnrollmentSource;
-use App\Domains\Learning\Events\CourseCompleted;
+use App\Contexts\Learning\Actions\Enrollment\GrantEnrollmentAction;
+use App\Contexts\Learning\Enums\EnrollmentSource;
+use App\Contexts\Learning\Events\CourseCompleted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;

@@ -1,7 +1,7 @@
 <?php
 
-use App\Domains\Commerce\Models\Coupon;
-use App\Domains\Commerce\Services\CouponService;
+use App\Contexts\Commerce\Models\Coupon;
+use App\Contexts\Commerce\Services\CouponService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 

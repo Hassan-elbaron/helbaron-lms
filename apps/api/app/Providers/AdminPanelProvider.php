@@ -33,17 +33,17 @@ class AdminPanelProvider extends PanelProvider
      *
      * @var array<int, string>
      */
-    private const DOMAINS = [
-        'Identity',
-        'Catalog',
-        'Authoring',
-        'Learning',
-        'Commerce',
-        'Certification',
-        'Live',
-        'Crm',
-        'Analytics',
-        'Notifications',
+    private const RESOURCE_PATHS = [
+        'App\\Platform\\Identity\\Filament\\Resources' => 'Platform/Identity/Filament/Resources',
+        'App\\Platform\\Notifications\\Filament\\Resources' => 'Platform/Notifications/Filament/Resources',
+        'App\\Contexts\\Learning\\Filament\\Resources' => 'Contexts/Learning/Filament/Resources',
+        'App\\Contexts\\Commerce\\Filament\\Resources' => 'Contexts/Commerce/Filament/Resources',
+        'App\\Contexts\\Analytics\\Filament\\Resources' => 'Contexts/Analytics/Filament/Resources',
+        'App\\Domains\\Catalog\\Filament\\Resources' => 'Domains/Catalog/Filament/Resources',
+        'App\\Domains\\Authoring\\Filament\\Resources' => 'Domains/Authoring/Filament/Resources',
+        'App\\Domains\\Certification\\Filament\\Resources' => 'Domains/Certification/Filament/Resources',
+        'App\\Domains\\Live\\Filament\\Resources' => 'Domains/Live/Filament/Resources',
+        'App\\Domains\\Crm\\Filament\\Resources' => 'Domains/Crm/Filament/Resources',
     ];
 
     public function panel(Panel $panel): Panel
@@ -85,18 +85,8 @@ class AdminPanelProvider extends PanelProvider
                 EnforceAdminMfa::class,
             ]);
 
-        foreach (self::DOMAINS as $domain) {
-            if ($domain === 'Identity') {
-                $panel->discoverResources(
-                    in: app_path('Platform/Identity/Filament/Resources'),
-                    for: 'App\Platform\Identity\Filament\Resources',
-                );
-                continue;
-            }
-            $panel->discoverResources(
-                in: app_path("Domains/{$domain}/Filament/Resources"),
-                for: "App\\Domains\\{$domain}\\Filament\\Resources",
-            );
+        foreach (self::RESOURCE_PATHS as $namespace => $path) {
+            $panel->discoverResources(in: app_path($path), for: $namespace);
         }
 
         return $panel;

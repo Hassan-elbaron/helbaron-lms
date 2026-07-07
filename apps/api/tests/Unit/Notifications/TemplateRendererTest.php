@@ -1,8 +1,8 @@
 <?php
 
-use App\Domains\Notifications\Enums\Channel;
-use App\Domains\Notifications\Models\NotificationTemplate;
-use App\Domains\Notifications\Services\TemplateRenderer;
+use App\Platform\Notifications\Enums\Channel;
+use App\Platform\Notifications\Models\NotificationTemplate;
+use App\Platform\Notifications\Services\TemplateRenderer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

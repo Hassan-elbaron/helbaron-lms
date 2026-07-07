@@ -1,15 +1,15 @@
 <?php
 
-use App\Domains\Analytics\Providers\AnalyticsServiceProvider;
+use App\Contexts\Analytics\Providers\AnalyticsServiceProvider;
 use App\Domains\Authoring\Providers\AuthoringServiceProvider;
 use App\Domains\Catalog\Providers\CatalogServiceProvider;
 use App\Domains\Certification\Providers\CertificationServiceProvider;
-use App\Domains\Commerce\Providers\CommerceServiceProvider;
+use App\Contexts\Commerce\Providers\CommerceServiceProvider;
 use App\Domains\Crm\Providers\CrmServiceProvider;
 use App\Platform\Identity\Providers\IdentityServiceProvider;
-use App\Domains\Learning\Providers\LearningServiceProvider;
+use App\Contexts\Learning\Providers\LearningServiceProvider;
 use App\Domains\Live\Providers\LiveServiceProvider;
-use App\Domains\Notifications\Providers\NotificationsServiceProvider;
+use App\Platform\Notifications\Providers\NotificationsServiceProvider;
 use App\Providers\AdminPanelProvider;
 use App\Providers\AppServiceProvider;
 use App\Platform\Shared\Providers\SharedServiceProvider;

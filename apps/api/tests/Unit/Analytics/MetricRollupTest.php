@@ -1,8 +1,8 @@
 <?php
 
-use App\Domains\Analytics\Models\MetricSnapshot;
-use App\Domains\Analytics\Services\KpiEngine;
-use App\Domains\Analytics\Services\MetricRollupService;
+use App\Contexts\Analytics\Models\MetricSnapshot;
+use App\Contexts\Analytics\Services\KpiEngine;
+use App\Contexts\Analytics\Services\MetricRollupService;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

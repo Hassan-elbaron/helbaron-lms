@@ -1,61 +1,61 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$file_path\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$file_path\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Controllers/Api/V1/ExportController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$format\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$format\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Analytics/Http/Controllers/Api/V1/ExportController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Analytics/Http/Controllers/Api/V1/ExportController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportRun\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportRun\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Controllers/Api/V1/ReportController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportRun\:\:\$ran_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportRun\:\:\$ran_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Controllers/Api/V1/ReportController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportRun\:\:\$result\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportRun\:\:\$result\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Controllers/Api/V1/ReportController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\DashboardDefinition\:\:\$is_default\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\DashboardDefinition\:\:\$is_default\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/DashboardResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\DashboardDefinition\:\:\$key\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\DashboardDefinition\:\:\$key\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/DashboardResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\DashboardDefinition\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\DashboardDefinition\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/DashboardResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\DashboardDefinition\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\DashboardDefinition\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/DashboardResource.php
@@ -97,139 +97,139 @@ parameters:
 			path: app/Domains/Analytics/Http/Resources/DashboardResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$completed_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$completed_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ExportJobResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$format\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$format\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ExportJobResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ExportJobResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$row_count\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$row_count\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ExportJobResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ExportJobResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportDefinition\:\:\$metric_keys\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$metric_keys\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ReportDefinitionResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportDefinition\:\:\$name\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ReportDefinitionResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportDefinition\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ReportDefinitionResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportDefinition\:\:\$type\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$type\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ReportDefinitionResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportDefinition\:\:\$visibility\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$visibility\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Http/Resources/ReportDefinitionResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$format\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$format\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Jobs/ProcessExportJob.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$params\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$params\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Jobs/ProcessExportJob.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Jobs/ProcessExportJob.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Listeners/MetricEventSubscriber.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Models/ExportJob.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ExportJob\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ExportJob\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Policies/ExportJobPolicy.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportDefinition\:\:\$owner_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$owner_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Policies/ReportDefinitionPolicy.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportDefinition\:\:\$visibility\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$visibility\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Policies/ReportDefinitionPolicy.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\MetricSnapshot\:\:\$cohort\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\MetricSnapshot\:\:\$cohort\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Services/CohortService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\MetricSnapshot\:\:\$value\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\MetricSnapshot\:\:\$value\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Services/CohortService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\MetricSnapshot\:\:\$period\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\MetricSnapshot\:\:\$period\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Services/KpiEngine.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\MetricSnapshot\:\:\$value\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\MetricSnapshot\:\:\$value\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Services/KpiEngine.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Analytics\\Models\\ReportDefinition\:\:\$type\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$type\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Analytics/Services/ReportingEngine.php
@@ -931,25 +931,25 @@ parameters:
 			path: app/Domains/Certification/Services/VerificationUrlService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Cart\:\:\$currency\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Cart\:\:\$currency\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Actions/Checkout/CheckoutAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$currency\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$currency\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Domains/Commerce/Actions/Checkout/CheckoutAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Commerce/Actions/Checkout/CheckoutAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
 			identifier: property.notFound
 			count: 3
 			path: app/Domains/Commerce/Actions/Checkout/CheckoutAction.php
@@ -985,7 +985,7 @@ parameters:
 			path: app/Domains/Commerce/Actions/Checkout/CheckoutAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Contract\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Contract\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Actions/Contract/AcceptContractAction.php
@@ -1003,7 +1003,7 @@ parameters:
 			path: app/Domains/Commerce/Actions/Contract/AcceptContractAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$fulfilled_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$fulfilled_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Actions/Payment/FulfillOrderAction.php
@@ -1021,61 +1021,61 @@ parameters:
 			path: app/Domains/Commerce/Actions/Payment/FulfillOrderAction.php
 
 		-
-			message: '#^Parameter \#1 \$user of method App\\Domains\\Learning\\Actions\\Enrollment\\GrantEnrollmentAction\:\:execute\(\) expects App\\Platform\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			message: '#^Parameter \#1 \$user of method App\\Contexts\\Learning\\Actions\\Enrollment\\GrantEnrollmentAction\:\:execute\(\) expects App\\Platform\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Domains/Commerce/Actions/Payment/FulfillOrderAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$currency\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$currency\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Commerce/Actions/Payment/InitiatePaymentAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Actions/Payment/InitiatePaymentAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Actions/Payment/InitiatePaymentAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Commerce/Actions/Payment/InitiatePaymentAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Actions/Payment/ProcessWebhookAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\PaymentWebhookEvent\:\:\$processed_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\PaymentWebhookEvent\:\:\$processed_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Actions/Payment/ProcessWebhookAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$currency\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$currency\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Commerce/Actions/Payment/RefundOrderAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Actions/Payment/RefundOrderAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Commerce/Actions/Payment/RefundOrderAction.php
@@ -1099,19 +1099,19 @@ parameters:
 			path: app/Domains/Commerce/Database/Seeders/CommerceSeeder.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Contract\:\:\$accepted_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Contract\:\:\$accepted_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/ContractResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Contract\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Contract\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/ContractResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Contract\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Contract\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/ContractResource.php
@@ -1147,55 +1147,55 @@ parameters:
 			path: app/Domains/Commerce/Http/Resources/ContractResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$currency\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$currency\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$discount_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$discount_minor\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$fulfilled_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$fulfilled_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$paid_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$paid_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$placed_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$placed_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$subtotal_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$subtotal_minor\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
@@ -1231,31 +1231,31 @@ parameters:
 			path: app/Domains/Commerce/Http/Resources/OrderResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Product\:\:\$description\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Product\:\:\$description\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/ProductResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Product\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Product\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/ProductResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Product\:\:\$slug\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Product\:\:\$slug\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/ProductResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Product\:\:\$title\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Product\:\:\$title\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/ProductResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Product\:\:\$type\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Product\:\:\$type\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Http/Resources/ProductResource.php
@@ -1297,13 +1297,13 @@ parameters:
 			path: app/Domains/Commerce/Http/Resources/ProductResource.php
 
 		-
-			message: '#^Parameter \#1 \$order of method App\\Domains\\Commerce\\Actions\\Payment\\FulfillOrderAction\:\:execute\(\) expects App\\Domains\\Commerce\\Models\\Order, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#1 \$order of method App\\Contexts\\Commerce\\Actions\\Payment\\FulfillOrderAction\:\:execute\(\) expects App\\Contexts\\Commerce\\Models\\Order, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Domains/Commerce/Listeners/FulfillOnContractAccepted.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Listeners/RevokeEnrollmentsOnRefund.php
@@ -1315,109 +1315,109 @@ parameters:
 			path: app/Domains/Commerce/Listeners/RevokeEnrollmentsOnRefund.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Contract\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Contract\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/Contract.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\ContractTemplate\:\:\$body\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\ContractTemplate\:\:\$body\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/ContractTemplate.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Coupon\:\:\$ends_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Coupon\:\:\$ends_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/Coupon.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Coupon\:\:\$max_redemptions\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Coupon\:\:\$max_redemptions\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/Coupon.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Coupon\:\:\$redeemed_count\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Coupon\:\:\$redeemed_count\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/Coupon.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Coupon\:\:\$starts_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Coupon\:\:\$starts_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/Coupon.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$paid_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$paid_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/Order.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/Order.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Product\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Product\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/Product.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\ProductPrice\:\:\$amount_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\ProductPrice\:\:\$amount_minor\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/ProductPrice.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\ProductPrice\:\:\$sale_amount_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\ProductPrice\:\:\$sale_amount_minor\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Commerce/Models/ProductPrice.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\ProductPrice\:\:\$sale_ends_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\ProductPrice\:\:\$sale_ends_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/ProductPrice.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\ProductPrice\:\:\$sale_starts_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\ProductPrice\:\:\$sale_starts_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Models/ProductPrice.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Contract\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Contract\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Policies/ContractPolicy.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Policies/OrderPolicy.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Cart\:\:\$currency\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Cart\:\:\$currency\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Services/CartService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\CartItem\:\:\$product_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\CartItem\:\:\$product_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Services/CartService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\CartItem\:\:\$unit_amount_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\CartItem\:\:\$unit_amount_minor\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Services/CartService.php
@@ -1429,43 +1429,43 @@ parameters:
 			path: app/Domains/Commerce/Services/CartService.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{product_id\: mixed, amount_minor\: mixed\}, Closure\(App\\Domains\\Commerce\\Models\\CartItem\)\: array\{product_id\: mixed, amount_minor\: mixed\} given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{product_id\: mixed, amount_minor\: mixed\}, Closure\(App\\Contexts\\Commerce\\Models\\CartItem\)\: array\{product_id\: mixed, amount_minor\: mixed\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Domains/Commerce/Services/CartService.php
 
 		-
-			message: '#^Parameter \#1 \$coupon of method App\\Domains\\Commerce\\Services\\CouponService\:\:discountMinor\(\) expects App\\Domains\\Commerce\\Models\\Coupon, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#1 \$coupon of method App\\Contexts\\Commerce\\Services\\CouponService\:\:discountMinor\(\) expects App\\Contexts\\Commerce\\Models\\Coupon, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Domains/Commerce/Services/CartService.php
 
 		-
-			message: '#^Parameter \#2 \$lines of method App\\Domains\\Commerce\\Services\\CouponService\:\:discountMinor\(\) expects Illuminate\\Support\\Collection\<int, array\{product_id\: int, amount_minor\: int\}\>, Illuminate\\Support\\Collection\<int, array\{product_id\: mixed, amount_minor\: mixed\}\> given\.$#'
+			message: '#^Parameter \#2 \$lines of method App\\Contexts\\Commerce\\Services\\CouponService\:\:discountMinor\(\) expects Illuminate\\Support\\Collection\<int, array\{product_id\: int, amount_minor\: int\}\>, Illuminate\\Support\\Collection\<int, array\{product_id\: mixed, amount_minor\: mixed\}\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Domains/Commerce/Services/CartService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Coupon\:\:\$is_active\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Coupon\:\:\$is_active\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Services/CouponService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Coupon\:\:\$scope\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Coupon\:\:\$scope\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Services/CouponService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Coupon\:\:\$type\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Coupon\:\:\$type\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Commerce/Services/CouponService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Coupon\:\:\$value\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Coupon\:\:\$value\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Commerce/Services/CouponService.php
@@ -1477,7 +1477,7 @@ parameters:
 			path: app/Domains/Commerce/Services/CouponService.php
 
 		-
-			message: '#^Method App\\Domains\\Commerce\\Services\\PricingService\:\:priceRecord\(\) should return App\\Domains\\Commerce\\Models\\ProductPrice\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			message: '#^Method App\\Contexts\\Commerce\\Services\\PricingService\:\:priceRecord\(\) should return App\\Contexts\\Commerce\\Models\\ProductPrice\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Domains/Commerce/Services/PricingService.php
@@ -2071,7 +2071,7 @@ parameters:
 			path: app/Domains/Learning/Actions/Enrollment/EnrollInCourseAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Actions/Enrollment/GrantEnrollmentAction.php
@@ -2089,25 +2089,25 @@ parameters:
 			path: app/Domains/Learning/Http/Controllers/Api/V1/LessonPlayerController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonProgress\:\:\$position_seconds\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonProgress\:\:\$position_seconds\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Controllers/Api/V1/LessonPlayerController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonProgress\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonProgress\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Controllers/Api/V1/LessonPlayerController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonProgress\:\:\$position_seconds\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonProgress\:\:\$position_seconds\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Controllers/Api/V1/LessonProgressController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonProgress\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonProgress\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Controllers/Api/V1/LessonProgressController.php
@@ -2119,13 +2119,13 @@ parameters:
 			path: app/Domains/Learning/Http/Controllers/Api/V1/LessonProgressController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonNote\:\:\$body\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonNote\:\:\$body\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Controllers/Api/V1/NoteController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonNote\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonNote\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Controllers/Api/V1/NoteController.php
@@ -2149,7 +2149,7 @@ parameters:
 			path: app/Domains/Learning/Http/Resources/ContinueLearningResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$progress_percentage\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$progress_percentage\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Resources/ContinueLearningResource.php
@@ -2203,31 +2203,31 @@ parameters:
 			path: app/Domains/Learning/Http/Resources/LearnSectionResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$completed_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$completed_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Resources/MyLearningItemResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$enrolled_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$enrolled_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Resources/MyLearningItemResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$progress_percentage\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$progress_percentage\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Resources/MyLearningItemResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Resources/MyLearningItemResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Http/Resources/MyLearningItemResource.php
@@ -2257,25 +2257,25 @@ parameters:
 			path: app/Domains/Learning/Http/Resources/MyLearningItemResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$course_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$course_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Listeners/UpdateLearningSession.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Listeners/UpdateLearningSession.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Models/Enrollment.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonProgress\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonProgress\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Models/LessonProgress.php
@@ -2305,31 +2305,31 @@ parameters:
 			path: app/Domains/Learning/Playback/Providers/S3PlaybackTokenProvider.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Policies/EnrollmentPolicy.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$course_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$course_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Services/ContinueLearningService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$updated_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$updated_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Services/ContinueLearningService.php
 
 		-
-			message: '#^Method App\\Domains\\Learning\\Services\\ContinueLearningService\:\:forUser\(\) should return Illuminate\\Support\\Collection\<int, array\{enrollment\: App\\Domains\\Learning\\Models\\Enrollment, next_lesson\: App\\Domains\\Authoring\\Models\\Lesson\|null\}\> but returns Illuminate\\Support\\Collection\<int, array\{enrollment\: App\\Domains\\Learning\\Models\\Enrollment, next_lesson\: App\\Domains\\Authoring\\Models\\Lesson\|null\}\>\.$#'
+			message: '#^Method App\\Contexts\\Learning\\Services\\ContinueLearningService\:\:forUser\(\) should return Illuminate\\Support\\Collection\<int, array\{enrollment\: App\\Contexts\\Learning\\Models\\Enrollment, next_lesson\: App\\Domains\\Authoring\\Models\\Lesson\|null\}\> but returns Illuminate\\Support\\Collection\<int, array\{enrollment\: App\\Contexts\\Learning\\Models\\Enrollment, next_lesson\: App\\Domains\\Authoring\\Models\\Lesson\|null\}\>\.$#'
 			identifier: return.type
 			count: 1
 			path: app/Domains/Learning/Services/ContinueLearningService.php
 
 		-
-			message: '#^Parameter \#1 \$media of method App\\Domains\\Learning\\Contracts\\PlaybackTokenProvider\:\:issue\(\) expects App\\Domains\\Authoring\\Models\\LessonMedia, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#1 \$media of method App\\Contexts\\Learning\\Contracts\\PlaybackTokenProvider\:\:issue\(\) expects App\\Domains\\Authoring\\Models\\LessonMedia, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Domains/Learning/Services/LearningMediaService.php
@@ -2347,43 +2347,43 @@ parameters:
 			path: app/Domains/Learning/Services/LessonAccessService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$completed_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$completed_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Services/ProgressService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$course_id\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$course_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Services/ProgressService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$progress_percentage\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$progress_percentage\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Services/ProgressService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\Enrollment\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\Enrollment\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Services/ProgressService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonProgress\:\:\$completed_at\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonProgress\:\:\$completed_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Services/ProgressService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonProgress\:\:\$position_seconds\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonProgress\:\:\$position_seconds\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Learning/Services/ProgressService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Learning\\Models\\LessonProgress\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Learning\\Models\\LessonProgress\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Learning/Services/ProgressService.php
@@ -2719,13 +2719,13 @@ parameters:
 			path: app/Domains/Live/Services/RegistrationValidationService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$read_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$read_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Actions/MarkNotificationReadAction.php
 
 		-
-			message: '#^Match arm comparison between App\\Domains\\Notifications\\Enums\\Channel\:\:WhatsApp and App\\Domains\\Notifications\\Enums\\Channel\:\:WhatsApp is always true\.$#'
+			message: '#^Match arm comparison between App\\Platform\\Notifications\\Enums\\Channel\:\:WhatsApp and App\\Platform\\Notifications\\Enums\\Channel\:\:WhatsApp is always true\.$#'
 			identifier: match.alwaysTrue
 			count: 1
 			path: app/Domains/Notifications/Channels/ChannelManager.php
@@ -2749,127 +2749,127 @@ parameters:
 			path: app/Domains/Notifications/Channels/Fake/FakeSmsChannel.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\UserNotificationSetting\:\:\$digest_frequency\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\UserNotificationSetting\:\:\$digest_frequency\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Controllers/Api/V1/PreferenceController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\UserNotificationSetting\:\:\$locale\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\UserNotificationSetting\:\:\$locale\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Controllers/Api/V1/PreferenceController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\UserNotificationSetting\:\:\$timezone\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\UserNotificationSetting\:\:\$timezone\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Controllers/Api/V1/PreferenceController.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$attempts\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$attempts\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationDeliveryResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$channel\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$channel\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationDeliveryResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$dead_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$dead_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationDeliveryResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationDeliveryResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$sent_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$sent_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationDeliveryResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationDeliveryResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$archived_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$archived_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$body\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$body\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$category\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$category\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$created_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$created_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$data\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$data\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$locale\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$locale\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$public_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$read_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$read_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$title\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$title\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$type\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$type\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Http/Resources/NotificationResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$attempts\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$attempts\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Jobs/DeliverNotificationJob.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$channel\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$channel\.$#'
 			identifier: property.notFound
 			count: 2
 			path: app/Domains/Notifications/Jobs/DeliverNotificationJob.php
@@ -2905,7 +2905,7 @@ parameters:
 			path: app/Domains/Notifications/Listeners/NotificationEventSubscriber.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
+			message: '#^Access to an undefined property App\\Contexts\\Commerce\\Models\\Order\:\:\$total_minor\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Listeners/NotificationEventSubscriber.php
@@ -2935,31 +2935,31 @@ parameters:
 			path: app/Domains/Notifications/Listeners/NotificationEventSubscriber.php
 
 		-
-			message: '#^Parameter \#1 \$user of method App\\Domains\\Notifications\\Services\\NotificationDispatcher\:\:dispatch\(\) expects App\\Platform\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			message: '#^Parameter \#1 \$user of method App\\Platform\\Notifications\\Services\\NotificationDispatcher\:\:dispatch\(\) expects App\\Platform\\Identity\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 5
 			path: app/Domains/Notifications/Listeners/NotificationEventSubscriber.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$read_at\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$read_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Models/Notification.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationDelivery\:\:\$status\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationDelivery\:\:\$status\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Models/NotificationDelivery.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\Notification\:\:\$user_id\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\Notification\:\:\$user_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Policies/NotificationPolicy.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\UserNotificationSetting\:\:\$locale\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\UserNotificationSetting\:\:\$locale\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Services/NotificationDispatcher.php
@@ -2971,25 +2971,25 @@ parameters:
 			path: app/Domains/Notifications/Services/NotificationDispatcher.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationPreference\:\:\$enabled\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationPreference\:\:\$enabled\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Services/PreferenceService.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationTemplate\:\:\$body\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationTemplate\:\:\$body\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Services/TemplateRenderer.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationTemplate\:\:\$locale\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationTemplate\:\:\$locale\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Services/TemplateRenderer.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Notifications\\Models\\NotificationTemplate\:\:\$subject\.$#'
+			message: '#^Access to an undefined property App\\Platform\\Notifications\\Models\\NotificationTemplate\:\:\$subject\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Notifications/Services/TemplateRenderer.php

@@ -2,10 +2,10 @@
 
 use App\Platform\Identity\Events\UserRegistered;
 use App\Platform\Identity\Models\User;
-use App\Domains\Notifications\Enums\DeliveryStatus;
-use App\Domains\Notifications\Jobs\DeliverNotificationJob;
-use App\Domains\Notifications\Models\Notification;
-use App\Domains\Notifications\Models\NotificationTemplate;
+use App\Platform\Notifications\Enums\DeliveryStatus;
+use App\Platform\Notifications\Jobs\DeliverNotificationJob;
+use App\Platform\Notifications\Models\Notification;
+use App\Platform\Notifications\Models\NotificationTemplate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 

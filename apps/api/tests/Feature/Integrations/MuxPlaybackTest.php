@@ -1,10 +1,10 @@
 <?php
 
 use App\Domains\Authoring\Models\LessonMedia;
-use App\Domains\Learning\Playback\PlaybackTokenManager;
-use App\Domains\Learning\Playback\Providers\CloudFrontPlaybackTokenProvider;
-use App\Domains\Learning\Playback\Providers\FakePlaybackTokenProvider;
-use App\Domains\Learning\Playback\Providers\MuxPlaybackTokenProvider;
+use App\Contexts\Learning\Playback\PlaybackTokenManager;
+use App\Contexts\Learning\Playback\Providers\CloudFrontPlaybackTokenProvider;
+use App\Contexts\Learning\Playback\Providers\FakePlaybackTokenProvider;
+use App\Contexts\Learning\Playback\Providers\MuxPlaybackTokenProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

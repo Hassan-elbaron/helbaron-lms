@@ -1,12 +1,12 @@
 <?php
 
-use App\Domains\Notifications\Channels\ChannelManager;
-use App\Domains\Notifications\Enums\DeliveryStatus;
-use App\Domains\Notifications\Jobs\DeliverNotificationJob;
-use App\Domains\Notifications\Models\Notification;
-use App\Domains\Notifications\Models\NotificationDelivery;
-use App\Domains\Notifications\Services\RateLimiterService;
-use App\Domains\Notifications\Services\TemplateRenderer;
+use App\Platform\Notifications\Channels\ChannelManager;
+use App\Platform\Notifications\Enums\DeliveryStatus;
+use App\Platform\Notifications\Jobs\DeliverNotificationJob;
+use App\Platform\Notifications\Models\Notification;
+use App\Platform\Notifications\Models\NotificationDelivery;
+use App\Platform\Notifications\Services\RateLimiterService;
+use App\Platform\Notifications\Services\TemplateRenderer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

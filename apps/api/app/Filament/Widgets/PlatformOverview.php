@@ -3,13 +3,13 @@
 namespace App\Filament\Widgets;
 
 use App\Domains\Catalog\Models\Course;
-use App\Domains\Commerce\Enums\OrderStatus;
-use App\Domains\Commerce\Models\Order;
+use App\Contexts\Commerce\Enums\OrderStatus;
+use App\Contexts\Commerce\Models\Order;
 use App\Domains\Crm\Models\Lead;
 use App\Platform\Identity\Models\User;
-use App\Domains\Learning\Models\Enrollment;
+use App\Contexts\Learning\Models\Enrollment;
 use App\Domains\Live\Models\LiveSession;
-use App\Domains\Notifications\Models\Notification;
+use App\Platform\Notifications\Models\Notification;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Domains\Commerce\Models\Coupon;
+use App\Contexts\Commerce\Models\Coupon;
 use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;

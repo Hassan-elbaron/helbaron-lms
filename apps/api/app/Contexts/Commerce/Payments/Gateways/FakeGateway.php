@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Contexts\Commerce\Payments\Gateways;
+
+use App\Contexts\Commerce\Contracts\PaymentGateway;
+use App\Contexts\Commerce\Exceptions\WebhookSignatureException;
+use App\Contexts\Commerce\Payments\Data\ChargeRequest;
+use App\Contexts\Commerce\Payments\Data\ChargeResult;
+use App\Contexts\Commerce\Payments\Data\RefundRequest;
+use App\Contexts\Commerce\Payments\Data\RefundResult;
+use App\Contexts\Commerce\Payments\Data\WebhookEvent;
+use Illuminate\Support\Str;
+
+/**
+ * Default gateway for local/test. Never contacts a real processor. Charges return a pending
+ * intent; a webhook (posted by the test/frontend) then confirms it.
+ */
+class FakeGateway implements PaymentGateway
+{
+    public function charge(ChargeRequest $request): ChargeResult
+    {
+        $reference = 'fake_'.Str::random(24);
+
+        return new ChargeResult(
+            providerReference: $reference,
+            status: 'pending',
+            clientSecret: 'cs_'.Str::random(24),
+        );
+    }
+
+    public function refund(RefundRequest $request): RefundResult
+    {
+        return new RefundResult(
+            providerReference: 'fake_re_'.Str::random(20),
+            status: 'succeeded',
+        );
+    }
+
+    public function parseWebhook(string $payload, ?string $signature): WebhookEvent
+    {
+        $expected = 'fake-signature='.hash_hmac('sha256', $payload, (string) config('commerce.payment.webhook_secret'));
+
+        if ($signature !== null && ! hash_equals($expected, $signature)) {
+            throw new WebhookSignatureException;
+        }
+
+        $data = json_decode($payload, true) ?: [];
+
+        return new WebhookEvent(
+            id: (string) ($data['id'] ?? Str::uuid()),
+            type: (string) ($data['type'] ?? 'payment.succeeded'),
+            orderReference: (string) ($data['order_reference'] ?? ''),
+            providerReference: $data['provider_reference'] ?? null,
+            raw: $data,
+        );
+    }
+
+    /** Helper used by tests to build a validly-signed webhook payload. */
+    public static function sign(string $payload): string
+    {
+        return 'fake-signature='.hash_hmac('sha256', $payload, (string) config('commerce.payment.webhook_secret'));
+    }
+}

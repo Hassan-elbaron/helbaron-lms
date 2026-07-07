@@ -1,10 +1,10 @@
 <?php
 
-use App\Domains\Commerce\Actions\Payment\RefundOrderAction;
-use App\Domains\Commerce\Models\Order;
-use App\Domains\Commerce\Payments\Gateways\FakeGateway;
+use App\Contexts\Commerce\Actions\Payment\RefundOrderAction;
+use App\Contexts\Commerce\Models\Order;
+use App\Contexts\Commerce\Payments\Gateways\FakeGateway;
 use App\Platform\Identity\Models\User;
-use App\Domains\Learning\Models\Enrollment;
+use App\Contexts\Learning\Models\Enrollment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 

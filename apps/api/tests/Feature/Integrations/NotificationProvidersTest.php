@@ -1,13 +1,13 @@
 <?php
 
-use App\Domains\Notifications\Channels\Fake\FakeMailProvider;
-use App\Domains\Notifications\Channels\ProviderManager;
-use App\Domains\Notifications\Channels\Providers\FirebasePushProvider;
-use App\Domains\Notifications\Channels\Providers\MailgunMailProvider;
-use App\Domains\Notifications\Channels\Providers\TwilioSmsProvider;
-use App\Domains\Notifications\Contracts\Providers\MailProvider;
-use App\Domains\Notifications\Contracts\Providers\PushProvider;
-use App\Domains\Notifications\Contracts\Providers\SmsProvider;
+use App\Platform\Notifications\Channels\Fake\FakeMailProvider;
+use App\Platform\Notifications\Channels\ProviderManager;
+use App\Platform\Notifications\Channels\Providers\FirebasePushProvider;
+use App\Platform\Notifications\Channels\Providers\MailgunMailProvider;
+use App\Platform\Notifications\Channels\Providers\TwilioSmsProvider;
+use App\Platform\Notifications\Contracts\Providers\MailProvider;
+use App\Platform\Notifications\Contracts\Providers\PushProvider;
+use App\Platform\Notifications\Contracts\Providers\SmsProvider;
 use Illuminate\Support\Facades\Http;
 
 it('sends email through Mailgun when configured', function () {
