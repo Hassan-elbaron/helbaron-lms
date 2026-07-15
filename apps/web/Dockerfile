@@ -20,6 +20,9 @@ RUN npm run build
 # ---- Stage 3: runtime ----
 FROM node:22-alpine AS runtime
 WORKDIR /app
+# Patch OS packages to their latest security-fixed versions (addresses fixable CRITICAL/HIGH OS
+# CVEs the base image may lag on; Trivy scans the final image with ignore-unfixed).
+RUN apk --no-cache upgrade
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \

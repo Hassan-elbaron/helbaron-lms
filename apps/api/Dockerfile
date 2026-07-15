@@ -10,6 +10,10 @@ RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --no-in
 # ---- Stage 2: runtime ----
 FROM php:8.3-fpm-alpine AS runtime
 
+# Patch OS packages to their latest security-fixed versions (addresses fixable CRITICAL/HIGH OS
+# CVEs the base image may lag on; the image is Trivy-scanned with ignore-unfixed).
+RUN apk --no-cache upgrade
+
 # Pinned installer release (supply-chain: never track "latest").
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.14/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions \
