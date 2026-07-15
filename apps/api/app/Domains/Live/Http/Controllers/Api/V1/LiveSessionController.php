@@ -23,6 +23,6 @@ class LiveSessionController extends Controller
 
     public function show(LiveSession $session): JsonResponse
     {
-        return ApiResponse::success(new LiveSessionResource($session->load(['trainers', 'recordings'])));
+        return ApiResponse::success(new LiveSessionResource($session->load(['trainerLinks', 'recordings'])));
     }
 }

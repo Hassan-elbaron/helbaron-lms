@@ -1,0 +1,22 @@
+node_modules
+.next
+out
+coverage
+tsconfig.tsbuildinfo
+
+# Tests / e2e artifacts — not needed in the image
+tests
+e2e
+playwright-report
+test-results
+playwright.config.ts
+vitest.config.ts
+
+# Local env + misc
+.env*
+!.env.example
+*.log
+.DS_Store
+Dockerfile
+.dockerignore
+.git

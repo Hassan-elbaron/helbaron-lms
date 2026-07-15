@@ -1,31 +1,20 @@
-"use client";
+import type { Metadata } from "next";
+import { getSeo } from "@/lib/seo/api";
+import { resolveLocale } from "@/lib/seo/locale";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { TrainersPageClient } from "./trainers-page-client";
 
-import { Users } from "lucide-react";
-import { useI18n } from "@/lib/i18n/i18n-context";
-import { useTrainers } from "@/lib/catalog/hooks";
-import { PageHero } from "@/components/marketing/page-hero";
-import { QueryState } from "@/components/student/query-state";
-import { TrainerCard } from "@/components/catalog/trainer-card";
-import { EmptyState } from "@/components/states/empty-state";
+/** Static metadata is the fallback; a managed SEO override (marketing_page/trainers) wins. */
+export async function generateMetadata(): Promise<Metadata> {
+  const fallback: Metadata = {
+    title: "Trainers",
+    description: "Meet the HElbaron trainers — experienced instructors behind our courses, cohorts and workshops.",
+  };
+
+  const [seo, locale] = await Promise.all([getSeo("marketing_page", "trainers"), resolveLocale()]);
+  return buildMetadata(seo, fallback, locale);
+}
 
 export default function TrainersPage() {
-  const { t } = useI18n();
-  const query = useTrainers();
-
-  return (
-    <div>
-      <PageHero page="trainers" />
-      <QueryState
-        query={query}
-        isEmpty={(d) => d.length === 0}
-        empty={<EmptyState icon={<Users className="size-8" />} title={t("catalog.trainers.empty")} />}
-      >
-        {(trainers) => (
-          <div className="stagger-in grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {trainers.map((tr) => <TrainerCard key={tr.id} trainer={tr} />)}
-          </div>
-        )}
-      </QueryState>
-    </div>
-  );
+  return <TrainersPageClient />;
 }

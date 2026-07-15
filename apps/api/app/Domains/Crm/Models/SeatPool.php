@@ -30,4 +30,8 @@ class SeatPool extends Model
         return $this->hasMany(SeatAssignment::class);
     }
 
-    public function available()
+    public function available(): int
+    {
+        return max(0, $this->total_seats - $this->used_seats);
+    }
+}

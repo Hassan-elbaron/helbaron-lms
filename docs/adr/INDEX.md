@@ -223,4 +223,39 @@
 - **Implementation Status:** Not started (Analytics currently subscribes to concrete domain events — TD-8).
 - **Sprint Target:** Sprint 12 (D5 Analytics repoint).
 - **Context:** BI must not couple to every domain's internals.
-- **Decision:** Analytics consumes contexts' published projections (esp. Learning's `LearningAnalyticsProjection`), never writes domain data, never binds to conc
+- **Decision:** Analytics consumes contexts' published projections (esp. Learning's `LearningAnalyticsProjection`), never writes domain data, never binds to concrete internal events.
+- **Affected Contexts:** Analytics, all publishers.
+- **Dependencies:** ADR-02, ADR-03, ADR-13.
+- **Superseded By:** —
+- **Related ADRs:** ADR-13.
+
+## ADR-19 — Adopt Deptrac + custom PHPStan rules for architecture fitness
+- **Status:** Accepted
+- **Implementation Status:** Implemented (Sprint 0 / A1: Deptrac + 4 custom rules + ADR check, all wired to CI).
+- **Sprint Target:** — (done; baselines burn down over Phases A-D).
+- **Context:** Boundaries were unenforced (TD-7); without automated fitness functions the redesign erodes silently.
+- **Decision:** Enforce the dependency matrix with Deptrac (baseline-backed, blocking in CI) and complement it at the AST/type level with four custom PHPStan rules (no cross-context Model use, no cross-context Eloquent access, no business logic in Filament resources, no business logic in controllers). This ADR-reference check is part of that fitness system.
+- **Affected Contexts:** all (tooling/governance).
+- **Dependencies:** ADR-02, ADR-04.
+- **Superseded By:** —
+- **Related ADRs:** ADR-20.
+
+## ADR-20 — Identity exposes a contracts seam; contexts depend on IdentityContracts only
+- **Status:** Accepted
+- **Implementation Status:** Foundation (Deptrac split Identity vs IdentityContracts in Sprint 0; contexts' direct `User`-model usage baselined; Identity ports + burn-down are future work).
+- **Sprint Target:** Sprint 1+ (Identity ports introduced as tenancy/identity work proceeds; baseline burns down).
+- **Context:** Contexts referenced the Identity implementation directly (e.g. `App\Platform\Identity\Models\User`), coupling them to Identity internals.
+- **Decision:** Split Identity into implementation vs `IdentityContracts` (ports). Every context/capability/kernel layer may depend on `IdentityContracts` only, never the Identity implementation; current direct usages are baselined and burn down as Identity ports land. Enforced by Deptrac.
+- **Affected Contexts:** Identity, all.
+- **Dependencies:** ADR-02, ADR-19.
+- **Superseded By:** —
+- **Related ADRs:** ADR-06, ADR-07, ADR-19.
+
+---
+
+## Adding a new ADR
+
+1. Append a new `## ADR-NN — Title` section here with all fields (Status, Implementation Status, Sprint Target, Context, Decision, Affected Contexts, Dependencies, Superseded By, Related ADRs) and a summary-table row.
+2. Reference `ADR-NN` in the PR description (or the fact that this file changed satisfies the ADR-reference check automatically).
+3. If a decision replaces an earlier one, set the old ADR's **Status** to `Superseded` and its **Superseded By** to the new id.
+4. Keep **Implementation Status** current as the decision moves Not started -> Foundation -> In progress -> Implemented.

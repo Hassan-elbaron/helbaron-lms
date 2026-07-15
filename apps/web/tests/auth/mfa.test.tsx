@@ -6,7 +6,7 @@ import { renderAuth } from "./util";
 const { verifyMfa } = vi.hoisted(() => ({ verifyMfa: vi.fn().mockResolvedValue({}) }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn(), push: vi.fn() }) }));
 vi.mock("@/lib/auth/api", () => ({ verifyMfa }));
-vi.mock("@/lib/api/client", () => ({ getToken: () => "tok" }));
+vi.mock("@/lib/api/client", () => ({ hasSession: () => true }));
 
 import MfaPage from "@/app/(marketing)/(auth)/mfa/page";
 

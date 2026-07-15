@@ -16,8 +16,16 @@ return [
         'Permissions-Policy' => env('SECURITY_PERMISSIONS_POLICY', 'geolocation=(), microphone=(), camera=(), payment=()'),
     ],
 
-    // JSON-only API: lock everything down by default. Tune if any HTML/asset surface is added.
+    // JSON-only API surface: lock everything down by default.
     'csp' => env('SECURITY_CSP', "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"),
+
+    // HTML/asset surfaces served by this same app — the Filament admin panel (Blade + Livewire +
+    // Alpine) and its Livewire endpoint. The API 'csp' above would block every stylesheet, script and
+    // even login-form submission in a real browser, so these paths get a Filament-appropriate policy.
+    'csp_web' => env('SECURITY_CSP_WEB', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self'; media-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"),
+
+    // Request paths that receive 'csp_web' instead of the locked-down API 'csp'.
+    'web_paths' => ['admin', 'admin/*', 'livewire/*'],
 
     'hsts' => [
         'enabled' => (bool) env('SECURITY_HSTS_ENABLED', true),

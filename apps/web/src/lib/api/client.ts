@@ -1,17 +1,18 @@
 import { siteConfig } from "@/config/site";
-import type { ApiError, ApiSuccess } from "@/types/api";
+import type { ApiError, ApiSuccess, AuthUser } from "@/types/api";
 
-const TOKEN_KEY = "helbaron.token";
+/**
+ * API access goes through the same-origin BFF proxy (/api/backend/*), which attaches the
+ * Sanctum token from an httpOnly cookie server-side. Browser JS never sees the token
+ * (mitigates XSS token exfiltration). Login/logout use /api/session.
+ */
+const MARKER_COOKIE = "helbaron_authed";
+const DEFAULT_TIMEOUT_MS = 20_000;
 
-export function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(TOKEN_KEY);
-}
-
-export function setToken(token: string | null): void {
-  if (typeof window === "undefined") return;
-  if (token) window.localStorage.setItem(TOKEN_KEY, token);
-  else window.localStorage.removeItem(TOKEN_KEY);
+/** True when a session marker cookie is present (the real credential is httpOnly). */
+export function hasSession(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.split("; ").some((c) => c.startsWith(`${MARKER_COOKIE}=1`));
 }
 
 /** Error thrown for any non-2xx response, carrying the standard error envelope. */
@@ -30,25 +31,12 @@ export class ApiRequestError extends Error {
 
 type RequestOptions = Omit<RequestInit, "body"> & { body?: unknown; auth?: boolean };
 
-/**
- * Typed fetch wrapper around the REST API (/api/v1). Attaches the Sanctum bearer token,
- * unwraps the standard envelope, and throws ApiRequestError on failure.
- */
-export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { body, auth = true, headers, ...rest } = options;
-  const token = auth ? getToken() : null;
+function apiBase(): string {
+  // In the browser, always go through the same-origin proxy; on the server, hit the API directly.
+  return typeof window === "undefined" ? siteConfig.apiBaseUrl : "/api/backend";
+}
 
-  const res = await fetch(`${siteConfig.apiBaseUrl}/${path.replace(/^\//, "")}`, {
-    ...rest,
-    headers: {
-      Accept: "application/json",
-      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...headers,
-    },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
-
+async function parseAndThrow(res: Response): Promise<unknown> {
   const json = res.status === 204 ? null : await res.json().catch(() => null);
 
   if (!res.ok) {
@@ -62,7 +50,63 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     );
   }
 
-  return json as T;
+  return json;
+}
+
+/**
+ * Typed fetch wrapper around the REST API (/api/v1 via the BFF proxy). Unwraps the standard
+ * envelope and throws ApiRequestError on failure. Requests time out after 20s unless the
+ * caller supplies its own AbortSignal.
+ */
+export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  const { body, auth: _auth, headers, signal, ...rest } = options;
+
+  const timeout = signal ? null : new AbortController();
+  const timer = timeout ? setTimeout(() => timeout.abort(), DEFAULT_TIMEOUT_MS) : null;
+
+  try {
+    const res = await fetch(`${apiBase()}/${path.replace(/^\//, "")}`, {
+      ...rest,
+      credentials: "same-origin",
+      signal: signal ?? timeout?.signal,
+      headers: {
+        Accept: "application/json",
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+        ...headers,
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+
+    return (await parseAndThrow(res)) as T;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+/** Logs in via the BFF session endpoint; the token is stored in an httpOnly cookie. */
+export async function sessionLogin(payload: {
+  email: string;
+  password: string;
+  mfa_code?: string;
+  device_name?: string;
+}): Promise<{ user: AuthUser }> {
+  const res = await fetch("/api/session", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return ((await parseAndThrow(res)) as ApiSuccess<{ user: AuthUser }>).data;
+}
+
+/** Revokes the server-side token and clears the session cookies. */
+export async function sessionLogout(): Promise<void> {
+  const res = await fetch("/api/session", {
+    method: "DELETE",
+    credentials: "same-origin",
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok && res.status !== 204) await parseAndThrow(res);
 }
 
 /** Convenience helpers returning the unwrapped `data` for success envelopes. */

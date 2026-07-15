@@ -2,39 +2,41 @@
 
 namespace App\Contexts\Learning\Services;
 
-use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Authoring\Models\Section;
-use App\Platform\Identity\Models\User;
 use App\Contexts\Learning\Exceptions\LessonLockedException;
 use App\Contexts\Learning\Exceptions\NotEnrolledException;
 use App\Contexts\Learning\Models\Enrollment;
 use App\Contexts\Learning\Models\LessonProgress;
+use App\Platform\Shared\Curriculum\Contracts\CurriculumReadPort;
 use App\Platform\Shared\Services\BaseService;
 
 /**
- * Central access rule for lessons: preview lessons are open; otherwise the user must have an
- * active enrollment in the lesson's course AND have completed the lesson's prerequisites.
+ * Central access rule for lessons: preview lessons are open (but still need an enrollment context);
+ * otherwise the user must have an active enrollment in the lesson's course AND have completed the
+ * lesson's prerequisites. All curriculum reads (course-of-lesson, isPreview, prerequisites) go
+ * through CurriculumReadPort — no Authoring/Catalog model dependency.
  */
 class LessonAccessService extends BaseService
 {
-    public function courseIdForLesson(Lesson $lesson): int
+    public function __construct(private readonly CurriculumReadPort $curriculum) {}
+
+    public function courseIdForLessonId(int $lessonId): int
     {
-        return (int) Section::whereKey($lesson->section_id)->value('course_id');
+        return $this->curriculum->courseIdForLesson($lessonId) ?? 0;
     }
 
-    public function activeEnrollment(User $user, int $courseId): ?Enrollment
+    public function activeEnrollmentByUserId(int $userId, int $courseId): ?Enrollment
     {
         return Enrollment::query()
-            ->where('user_id', $user->id)
+            ->where('user_id', $userId)
             ->where('course_id', $courseId)
             ->active()
             ->first();
     }
 
-    public function canAccess(User $user, Lesson $lesson): bool
+    public function canAccessByUserId(int $userId, int $lessonId): bool
     {
         try {
-            $this->assertAccess($user, $lesson);
+            $this->assertAccessByUserId($userId, $lessonId);
 
             return true;
         } catch (NotEnrolledException|LessonLockedException) {
@@ -43,28 +45,27 @@ class LessonAccessService extends BaseService
     }
 
     /** Throws NotEnrolledException or LessonLockedException when access is denied. */
-    public function assertAccess(User $user, Lesson $lesson): Enrollment
+    public function assertAccessByUserId(int $userId, int $lessonId): Enrollment
     {
-        $courseId = $this->courseIdForLesson($lesson);
-        $enrollment = $this->activeEnrollment($user, $courseId);
+        $ref = $this->curriculum->lessonRefById($lessonId);
+        $enrollment = $this->activeEnrollmentByUserId($userId, $ref?->courseId ?? 0);
 
         // Preview lessons are viewable, but still need an enrollment context for progress.
         if ($enrollment === null) {
             throw new NotEnrolledException;
         }
 
-        if (! $lesson->is_preview && ! $this->prerequisitesMet($enrollment, $lesson)) {
+        if ($ref !== null && ! $ref->isPreview && ! $this->prerequisitesMetByIds($enrollment, $ref->prerequisiteLessonIds)) {
             throw new LessonLockedException;
         }
 
         return $enrollment;
     }
 
-    private function prerequisitesMet(Enrollment $enrollment, Lesson $lesson): bool
+    /** @param list<int> $prerequisiteIds */
+    private function prerequisitesMetByIds(Enrollment $enrollment, array $prerequisiteIds): bool
     {
-        $prerequisiteIds = $lesson->prerequisites()->pluck('lessons.id');
-
-        if ($prerequisiteIds->isEmpty()) {
+        if ($prerequisiteIds === []) {
             return true;
         }
 
@@ -74,6 +75,6 @@ class LessonAccessService extends BaseService
             ->where('status', 'completed')
             ->count();
 
-        return $completed === $prerequisiteIds->count();
+        return $completed === count($prerequisiteIds);
     }
 }

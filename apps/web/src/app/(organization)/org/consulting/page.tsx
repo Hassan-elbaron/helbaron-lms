@@ -17,6 +17,7 @@ import { Field } from "@/components/auth/field";
 import { FormAlert } from "@/components/auth/form-alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 type RequestValues = { subject: string; description?: string; organization?: string };
 
@@ -67,11 +68,10 @@ function RequestForm() {
         <Input id="c-subject" placeholder={t("org.consulting.subjectPlaceholder")} {...register("subject")} />
       </Field>
       <Field id="c-description" label={t("org.consulting.description")} error={errors.description?.message}>
-        <textarea
+        <Textarea
           id="c-description"
           rows={4}
           placeholder={t("org.consulting.descriptionPlaceholder")}
-          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           {...register("description")}
         />
       </Field>

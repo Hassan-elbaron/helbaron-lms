@@ -2,7 +2,6 @@
 
 namespace App\Contexts\Learning\Models;
 
-use App\Domains\Authoring\Models\Lesson;
 use App\Contexts\Learning\Enums\LessonProgressStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,11 +26,6 @@ class LessonProgress extends Model
     public function enrollment(): BelongsTo
     {
         return $this->belongsTo(Enrollment::class);
-    }
-
-    public function lesson(): BelongsTo
-    {
-        return $this->belongsTo(Lesson::class);
     }
 
     public function isCompleted(): bool

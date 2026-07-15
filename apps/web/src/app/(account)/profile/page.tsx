@@ -14,8 +14,8 @@ import { Field } from "@/components/auth/field";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
-import { cn } from "@/lib/utils";
 
 type Values = {
   name: string;
@@ -24,14 +24,59 @@ type Values = {
   bio: string;
   gender: "" | "male" | "female" | "unspecified";
   date_of_birth: string;
+  country: string;
+  city: string;
   locale: "en" | "ar";
 };
 
 const controlClass =
   "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
+/**
+ * Curated country list mapping a localized display name to its ISO 3166-1 alpha-2 code.
+ * MENA-first, followed by other major markets. Kept short and human-editable on purpose.
+ */
+const COUNTRIES: { code: string; en: string; ar: string }[] = [
+  { code: "EG", en: "Egypt", ar: "مصر" },
+  { code: "SA", en: "Saudi Arabia", ar: "السعودية" },
+  { code: "AE", en: "United Arab Emirates", ar: "الإمارات" },
+  { code: "QA", en: "Qatar", ar: "قطر" },
+  { code: "KW", en: "Kuwait", ar: "الكويت" },
+  { code: "BH", en: "Bahrain", ar: "البحرين" },
+  { code: "OM", en: "Oman", ar: "عُمان" },
+  { code: "JO", en: "Jordan", ar: "الأردن" },
+  { code: "LB", en: "Lebanon", ar: "لبنان" },
+  { code: "PS", en: "Palestine", ar: "فلسطين" },
+  { code: "IQ", en: "Iraq", ar: "العراق" },
+  { code: "SY", en: "Syria", ar: "سوريا" },
+  { code: "YE", en: "Yemen", ar: "اليمن" },
+  { code: "MA", en: "Morocco", ar: "المغرب" },
+  { code: "DZ", en: "Algeria", ar: "الجزائر" },
+  { code: "TN", en: "Tunisia", ar: "تونس" },
+  { code: "LY", en: "Libya", ar: "ليبيا" },
+  { code: "SD", en: "Sudan", ar: "السودان" },
+  { code: "TR", en: "Türkiye", ar: "تركيا" },
+  { code: "US", en: "United States", ar: "الولايات المتحدة" },
+  { code: "GB", en: "United Kingdom", ar: "المملكة المتحدة" },
+  { code: "CA", en: "Canada", ar: "كندا" },
+  { code: "DE", en: "Germany", ar: "ألمانيا" },
+  { code: "FR", en: "France", ar: "فرنسا" },
+  { code: "ES", en: "Spain", ar: "إسبانيا" },
+  { code: "IT", en: "Italy", ar: "إيطاليا" },
+  { code: "NL", en: "Netherlands", ar: "هولندا" },
+  { code: "IN", en: "India", ar: "الهند" },
+  { code: "PK", en: "Pakistan", ar: "باكستان" },
+  { code: "CN", en: "China", ar: "الصين" },
+  { code: "JP", en: "Japan", ar: "اليابان" },
+  { code: "AU", en: "Australia", ar: "أستراليا" },
+  { code: "BR", en: "Brazil", ar: "البرازيل" },
+  { code: "ZA", en: "South Africa", ar: "جنوب أفريقيا" },
+  { code: "NG", en: "Nigeria", ar: "نيجيريا" },
+  { code: "KE", en: "Kenya", ar: "كينيا" },
+];
+
 function ProfileForm({ data }: { data: UserProfile }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const update = useUpdateProfile();
 
   const schema = z.object({
@@ -41,6 +86,8 @@ function ProfileForm({ data }: { data: UserProfile }) {
     bio: z.string().max(1000).optional(),
     gender: z.enum(["", "male", "female", "unspecified"]).optional(),
     date_of_birth: z.string().optional(),
+    country: z.string().max(2).optional(),
+    city: z.string().max(120).optional(),
     locale: z.enum(["en", "ar"]),
   });
 
@@ -53,6 +100,8 @@ function ProfileForm({ data }: { data: UserProfile }) {
       bio: data.profile?.bio ?? "",
       gender: (data.profile?.gender as Values["gender"]) ?? "",
       date_of_birth: data.profile?.date_of_birth ?? "",
+      country: data.profile?.country ?? "",
+      city: data.profile?.city ?? "",
       locale: data.locale ?? "en",
     },
   });
@@ -65,6 +114,8 @@ function ProfileForm({ data }: { data: UserProfile }) {
       bio: data.profile?.bio ?? "",
       gender: (data.profile?.gender as Values["gender"]) ?? "",
       date_of_birth: data.profile?.date_of_birth ?? "",
+      country: data.profile?.country ?? "",
+      city: data.profile?.city ?? "",
       locale: data.locale ?? "en",
     });
   }, [data, reset]);
@@ -78,6 +129,8 @@ function ProfileForm({ data }: { data: UserProfile }) {
         bio: v.bio || null,
         gender: v.gender ? v.gender : null,
         date_of_birth: v.date_of_birth || null,
+        country: v.country || null,
+        city: v.city || null,
         locale: v.locale,
       },
       {
@@ -103,7 +156,7 @@ function ProfileForm({ data }: { data: UserProfile }) {
             </Field>
           </div>
           <Field id="bio" label={t("student.profile.bio")}>
-            <textarea id="bio" rows={3} className={cn(controlClass, "h-auto")} {...register("bio")} />
+            <Textarea id="bio" rows={3} {...register("bio")} />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field id="gender" label={t("student.profile.gender")}>
@@ -116,6 +169,21 @@ function ProfileForm({ data }: { data: UserProfile }) {
             </Field>
             <Field id="date_of_birth" label={t("student.profile.dob")}>
               <Input id="date_of_birth" type="date" {...register("date_of_birth")} />
+            </Field>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field id="country" label={t("student.profile.country")}>
+              <select id="country" className={controlClass} {...register("country")}>
+                <option value="">—</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {locale === "ar" ? c.ar : c.en}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field id="city" label={t("student.profile.city")}>
+              <Input id="city" {...register("city")} />
             </Field>
           </div>
           <Field id="locale" label={t("student.profile.language")}>

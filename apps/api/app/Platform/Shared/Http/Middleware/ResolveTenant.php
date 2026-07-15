@@ -24,8 +24,7 @@ final class ResolveTenant
     public function __construct(
         private readonly TenantResolver $resolver,
         private readonly TenantContext $context,
-    ) {
-    }
+    ) {}
 
     public function handle(Request $request, Closure $next): Response
     {

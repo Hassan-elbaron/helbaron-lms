@@ -1,0 +1,28 @@
+name: Uptime check
+
+# Every 15 minutes: probe the repository variable UPTIME_URL (e.g. the public
+# https://<host>/api/v1/health/ready endpoint). A non-2xx/unreachable response
+# fails the job, which triggers GitHub's workflow-failure notification.
+# If UPTIME_URL is not set, the job exits 0 with a notice — no fake monitoring.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Probe UPTIME_URL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe
+        env:
+          UPTIME_URL: ${{ vars.UPTIME_URL }}
+        run: |
+          if [ -z "$UPTIME_URL" ]; then
+            echo "::notice::Uptime monitoring is DISABLED — repository variable UPTIME_URL is not set. Enable it under Settings → Secrets and variables → Actions → Variables, e.g. UPTIME_URL=https://your-host/api/v1/health/ready"
+            exit 0
+          fi
+          echo "Probing $UPTIME_URL"
+          curl -fsS --max-time 20 --retry 2 --retry-delay 5 "$UPTIME_URL" > /dev/null
+          echo "UP: $UPTIME_URL responded 2xx"

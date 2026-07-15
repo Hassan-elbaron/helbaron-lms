@@ -3,8 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export function StatCard({ label, value, icon: Icon }: { label: string; value: string | number; icon?: LucideIcon }) {
   return (
-    <Card className="card-hover hover:border-primary/30 hover:shadow-md">
-      <CardContent className="flex items-center gap-4 p-5">
+    <Card className="card-hover h-full hover:border-primary/30 hover:elevation-3">
+      <CardContent className="flex h-full items-center gap-4 p-5">
         {Icon ? (
           <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <Icon className="size-5" aria-hidden />

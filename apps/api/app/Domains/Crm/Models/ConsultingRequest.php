@@ -6,7 +6,6 @@ use App\Domains\Crm\Concerns\HasActivities;
 use App\Domains\Crm\Concerns\HasNotes;
 use App\Domains\Crm\Database\Factories\ConsultingRequestFactory;
 use App\Domains\Crm\Enums\ConsultingRequestStatus;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Tenancy\Concerns\BelongsToTenant;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,9 +39,8 @@ class ConsultingRequest extends Model
         return $this->belongsTo(Organization::class);
     }
 
-    public function requester(): BelongsTo
+    protected static function newFactory(): ConsultingRequestFactory
     {
-        return $this->belongsTo(User::class, 'requested_by');
+        return ConsultingRequestFactory::new();
     }
-
-    protected static function newFactory(): Con
+}

@@ -4,7 +4,6 @@ namespace App\Domains\Catalog\Models;
 
 use App\Domains\Catalog\Database\Factories\CourseFactory;
 use App\Domains\Catalog\Enums\CourseStatus;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Enums\Visibility;
 use App\Platform\Shared\Traits\HasPublicId;
 use App\Platform\Shared\Traits\HasSeo;
@@ -14,7 +13,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Catalog course aggregate. Owns metadata, taxonomy links, visibility, featuring and publish
@@ -75,9 +76,30 @@ class Course extends Model
         return $this->belongsToMany(CourseTag::class, 'course_tag', 'course_id', 'tag_id');
     }
 
-    public function trainers(): BelongsToMany
+    /** @return HasMany<CourseTrainer> Pivot links to trainer user ids (no Identity model reference). */
+    public function trainerLinks(): HasMany
     {
-        return $this->belongsToMany(User::class, 'course_trainer')->withPivot('position');
+        return $this->hasMany(CourseTrainer::class, 'course_id');
+    }
+
+    /**
+     * Flat sync of the course_trainer pivot by trainer user id (preserves the prior
+     * trainers()->sync($ids) behavior without a belongsToMany(User) relation).
+     *
+     * @param  array<int, int|string>  $userIds
+     */
+    public function syncTrainers(array $userIds): void
+    {
+        $userIds = array_values(array_unique(array_map('intval', $userIds)));
+        $existing = DB::table('course_trainer')->where('course_id', $this->id)
+            ->pluck('user_id')->map(fn ($v): int => (int) $v)->all();
+
+        if (($detach = array_diff($existing, $userIds)) !== []) {
+            DB::table('course_trainer')->where('course_id', $this->id)->whereIn('user_id', $detach)->delete();
+        }
+        foreach (array_diff($userIds, $existing) as $userId) {
+            DB::table('course_trainer')->insert(['course_id' => $this->id, 'user_id' => $userId]);
+        }
     }
 
     // ----- Scopes -----
@@ -97,9 +119,26 @@ class Course extends Model
         return $query->where('is_featured', true);
     }
 
+    /**
+     * Courses trained by the given user id (via the course_trainer pivot).
+     *
+     * @param  Builder<Course>  $query
+     * @return Builder<Course>
+     */
+    public function scopeForTrainer(Builder $query, int $userId): Builder
+    {
+        return $query->whereHas('trainerLinks', fn (Builder $t) => $t->where('user_id', $userId));
+    }
+
     public function isPublished(): bool
     {
         return $this->status === CourseStatus::Published;
+    }
+
+    /** True when the given user id trains (is linked to) this course. */
+    public function isTrainedBy(int $userId): bool
+    {
+        return $this->trainerLinks()->where('user_id', $userId)->exists();
     }
 
     protected static function newFactory(): CourseFactory

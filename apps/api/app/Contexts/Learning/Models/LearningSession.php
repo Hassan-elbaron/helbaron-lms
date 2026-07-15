@@ -2,15 +2,13 @@
 
 namespace App\Contexts\Learning\Models;
 
-use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Catalog\Models\Course;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * "Where did I leave off" per (user, course). Updated as the learner records progress.
+ * "Where did I leave off" per (user, course). Updated as the learner records progress. Holds the
+ * course_id / last_lesson_id foreign keys as scalar columns; cross-context course/lesson relations
+ * were removed (Curriculum coupling) — resolve via CurriculumReadPort where display data is needed.
  */
 class LearningSession extends Model
 {
@@ -21,20 +19,5 @@ class LearningSession extends Model
     protected function casts(): array
     {
         return ['last_activity_at' => 'datetime'];
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function course(): BelongsTo
-    {
-        return $this->belongsTo(Course::class);
-    }
-
-    public function lastLesson(): BelongsTo
-    {
-        return $this->belongsTo(Lesson::class, 'last_lesson_id');
     }
 }

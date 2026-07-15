@@ -2,7 +2,6 @@
 
 namespace App\Platform\Notifications\Models;
 
-use App\Platform\Identity\Models\User;
 use App\Platform\Notifications\Database\Factories\NotificationFactory;
 use App\Platform\Notifications\Enums\NotificationCategory;
 use App\Platform\Shared\Traits\HasPublicId;
@@ -31,14 +30,23 @@ class Notification extends Model
         ];
     }
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function deliveries(): HasMany
     {
         return $this->hasMany(NotificationDelivery::class);
+    }
+
+    /**
+     * Recipient of the notification. Resolved via auth config (not a concrete Identity import)
+     * so Notifications keeps no compile-time dependency on the Identity context.
+     *
+     * @return BelongsTo<Model, $this>
+     */
+    public function user(): BelongsTo
+    {
+        /** @var class-string<Model> $userModel */
+        $userModel = config('auth.providers.users.model');
+
+        return $this->belongsTo($userModel, 'user_id');
     }
 
     public function scopeUnread(Builder $query): Builder

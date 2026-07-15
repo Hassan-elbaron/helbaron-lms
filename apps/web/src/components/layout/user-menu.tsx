@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { LogOut, User } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useI18n } from "@/lib/i18n/i18n-context";
@@ -40,8 +41,10 @@ export function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <User className="me-2" aria-hidden /> {t("nav.settings")}
+        <DropdownMenuItem asChild>
+          <Link href="/profile">
+            <User className="me-2" aria-hidden /> {t("nav.profile")}
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => void logout()}>
           <LogOut className="me-2" aria-hidden /> {t("common.signOut")}

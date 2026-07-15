@@ -22,9 +22,11 @@ Route::prefix('v1')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('cart', [CartController::class, 'show']);
         Route::post('cart', [CartController::class, 'store']);
+        Route::delete('cart/items/{product}', [CartController::class, 'removeItem']);
         Route::delete('cart', [CartController::class, 'destroy']);
 
-        Route::post('checkout', [CheckoutController::class, 'store']);
+        Route::post('checkout', [CheckoutController::class, 'store'])
+            ->middleware('throttle:commerce-checkout');
 
         Route::get('orders', [OrderController::class, 'index']);
 

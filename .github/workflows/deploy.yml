@@ -1,0 +1,88 @@
+name: Deploy
+
+# Manual, tag-driven deploy over SSH.
+#
+# Required secrets (repo or environment scope):
+#   DEPLOY_SSH_HOST  — host/IP of the deploy target
+#   DEPLOY_SSH_USER  — SSH user with docker + repo checkout at DEPLOY_PATH
+#   DEPLOY_SSH_KEY   — private key (PEM) for that user
+# Optional repository variables:
+#   DEPLOY_PATH      — checkout path on the host (default /opt/helbaron)
+#   SMOKE_URL        — public readiness URL; when unset the smoke check runs
+#                      on-host against http://localhost:8080/api/v1/health/ready
+#
+# CI pushes images to ghcr.io/<repo>/api as sha-<commit> and latest;
+# pass one of those tags (or a full image ref) as image_tag.
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to deploy (e.g. sha-<commit>, latest, or full ref)"
+        required: true
+        type: string
+      environment:
+        description: "Target environment"
+        required: false
+        default: staging
+        type: choice
+        options: [staging, production]
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.image_tag }} → ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Fail fast if deploy secrets are not configured
+        env:
+          DEPLOY_SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          DEPLOY_SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          missing=""
+          [ -z "$DEPLOY_SSH_HOST" ] && missing="$missing DEPLOY_SSH_HOST"
+          [ -z "$DEPLOY_SSH_USER" ] && missing="$missing DEPLOY_SSH_USER"
+          [ -z "$DEPLOY_SSH_KEY" ]  && missing="$missing DEPLOY_SSH_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Deploy secrets not configured:$missing. Set them under Settings → Secrets and variables → Actions (or on the '${{ inputs.environment }}' environment). Refusing to continue — no fake success."
+            exit 1
+          fi
+          echo "All deploy secrets present."
+
+      - name: Run scripts/deploy.sh on host
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+            cd "${{ vars.DEPLOY_PATH != '' && vars.DEPLOY_PATH || '/opt/helbaron' }}"
+            export DEPLOY_REGISTRY_IMAGE="ghcr.io/${{ github.repository }}/api"
+            ./scripts/deploy.sh "${{ inputs.image_tag }}"
+
+      - name: Smoke check /api/v1/health/ready (public URL)
+        if: vars.SMOKE_URL != ''
+        run: |
+          echo "Probing ${{ vars.SMOKE_URL }}"
+          curl -fsS --max-time 20 --retry 3 --retry-delay 5 "${{ vars.SMOKE_URL }}"
+          echo "Smoke check passed."
+
+      - name: Smoke check /api/v1/health/ready (on host)
+        if: vars.SMOKE_URL == ''
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          script: |
+            curl -fsS --max-time 20 http://localhost:8080/api/v1/health/ready
+            echo "Smoke check passed (on-host)."

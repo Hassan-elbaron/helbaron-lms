@@ -4,10 +4,8 @@ namespace App\Contexts\Analytics\Models;
 
 use App\Contexts\Analytics\Enums\ExportFormat;
 use App\Contexts\Analytics\Enums\ExportStatus;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ExportJob extends Model
 {
@@ -25,11 +23,6 @@ class ExportJob extends Model
             'params' => 'array',
             'completed_at' => 'datetime',
         ];
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function isCompleted(): bool

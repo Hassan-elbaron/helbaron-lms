@@ -28,4 +28,12 @@ final class RequestTenantResolver implements TenantResolver
         }
 
         /** @var int|string|null $organizationId */
-        $or
+        $organizationId = $user->getAttribute('organization_id');
+
+        if ($organizationId === null) {
+            return null;
+        }
+
+        return TenantId::from($organizationId);
+    }
+}

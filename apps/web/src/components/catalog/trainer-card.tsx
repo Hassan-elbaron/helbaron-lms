@@ -8,7 +8,7 @@ function initials(name: string) {
 
 export function TrainerCard({ trainer }: { trainer: Trainer }) {
   return (
-    <Card className="card-hover hover:border-primary/30 hover:shadow-lg">
+    <Card className="card-hover hover:border-primary/30 hover:elevation-3">
       <CardContent className="flex items-center gap-4 p-5">
         <Avatar className="size-14">
           <AvatarFallback className="text-base">{initials(trainer.name)}</AvatarFallback>

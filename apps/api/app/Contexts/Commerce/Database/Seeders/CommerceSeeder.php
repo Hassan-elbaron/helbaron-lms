@@ -2,13 +2,12 @@
 
 namespace App\Contexts\Commerce\Database\Seeders;
 
-use App\Domains\Catalog\Models\Course;
 use App\Contexts\Commerce\Enums\CommercePermission;
 use App\Contexts\Commerce\Enums\ProductStatus;
 use App\Contexts\Commerce\Enums\ProductType;
 use App\Contexts\Commerce\Models\ContractTemplate;
 use App\Contexts\Commerce\Models\Product;
-use App\Platform\Identity\Enums\Role;
+use App\Domains\Catalog\Models\Course;
 use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
@@ -27,7 +26,7 @@ class CommerceSeeder extends Seeder
         foreach (CommercePermission::values() as $permission) {
             Permission::findOrCreate($permission, 'web');
         }
-        SpatieRole::findByName(Role::Admin->value, 'web')->givePermissionTo(CommercePermission::values());
+        SpatieRole::findByName('admin', 'web')->givePermissionTo(CommercePermission::values());
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         ContractTemplate::firstOrCreate(

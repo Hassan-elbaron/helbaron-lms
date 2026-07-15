@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 export function CategoryCard({ category }: { category: Category }) {
   const children = category.children ?? [];
   return (
-    <Card className="card-hover h-full hover:border-primary/30 hover:shadow-lg">
+    <Card className="card-hover h-full hover:border-primary/30 hover:elevation-3">
       <CardContent className="space-y-3 p-5">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">

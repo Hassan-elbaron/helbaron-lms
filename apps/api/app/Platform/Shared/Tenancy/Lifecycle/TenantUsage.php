@@ -13,8 +13,7 @@ final class TenantUsage
     /** @param array<string, int> $counts */
     public function __construct(
         private readonly array $counts = [],
-    ) {
-    }
+    ) {}
 
     public function count(string $key): int
     {

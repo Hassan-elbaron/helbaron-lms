@@ -17,7 +17,7 @@ const statusVariant: Record<string, "success" | "warning" | "destructive" | "sec
 export function OrderCard({ order }: { order: Order }) {
   const { t, locale } = useI18n();
   return (
-    <Card className="card-hover hover:border-primary/30 hover:shadow-md">
+    <Card className="card-hover hover:border-primary/30 hover:elevation-3">
       <CardContent className="space-y-3 p-5">
         <div className="flex items-center justify-between gap-2">
           <div>

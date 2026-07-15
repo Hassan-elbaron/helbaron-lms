@@ -3,7 +3,7 @@
 namespace App\Domains\Catalog\Policies;
 
 use App\Domains\Catalog\Models\Course;
-use App\Platform\Identity\Models\User;
+use App\Platform\Identity\Contracts\Actor;
 use App\Platform\Shared\Policies\BasePolicy;
 
 /**
@@ -14,24 +14,24 @@ class CoursePolicy extends BasePolicy
 {
     public function before(mixed $user, string $ability): ?bool
     {
-        if ($user instanceof User && $user->hasRole('super_admin')) {
+        if ($user instanceof Actor && $user->hasRole('super_admin')) {
             return true;
         }
 
         return null;
     }
 
-    public function create(User $user): bool
+    public function create(Actor $user): bool
     {
         return $user->can('catalog.courses.manage');
     }
 
-    public function update(User $user, Course $course): bool
+    public function update(Actor $user, Course $course): bool
     {
         return $user->can('catalog.courses.manage');
     }
 
-    public function delete(User $user, Course $course): bool
+    public function delete(Actor $user, Course $course): bool
     {
         return $user->can('catalog.courses.manage');
     }

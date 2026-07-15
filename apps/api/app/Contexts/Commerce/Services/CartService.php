@@ -6,7 +6,6 @@ use App\Contexts\Commerce\Exceptions\ProductUnavailableException;
 use App\Contexts\Commerce\Models\Cart;
 use App\Contexts\Commerce\Models\CartItem;
 use App\Contexts\Commerce\Models\Product;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Services\BaseService;
 
 /**
@@ -19,10 +18,10 @@ class CartService extends BaseService
         private readonly CouponService $coupons,
     ) {}
 
-    public function current(User $user): Cart
+    public function currentByUserId(int $userId): Cart
     {
         return Cart::firstOrCreate(
-            ['user_id' => $user->id],
+            ['user_id' => $userId],
             ['currency' => (string) config('commerce.default_currency')],
         );
     }

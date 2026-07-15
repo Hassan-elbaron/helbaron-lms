@@ -22,7 +22,7 @@ class LiveSessionAdminController extends Controller
     {
         Gate::authorize('manage', LiveSession::class);
 
-        return ApiResponse::created(new LiveSessionResource($action->execute($request->validated())->load('trainers')), 'Session scheduled.');
+        return ApiResponse::created(new LiveSessionResource($action->execute($request->validated())->load('trainerLinks')), 'Session scheduled.');
     }
 
     public function reschedule(RescheduleSessionRequest $request, LiveSession $session, RescheduleSessionAction $action): JsonResponse

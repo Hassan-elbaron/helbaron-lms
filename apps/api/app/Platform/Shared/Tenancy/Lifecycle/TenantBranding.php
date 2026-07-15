@@ -15,6 +15,5 @@ final class TenantBranding
         public readonly ?string $logoUrl = null,
         public readonly ?string $primaryColor = null,
         public readonly ?string $theme = null,
-    ) {
-    }
+    ) {}
 }

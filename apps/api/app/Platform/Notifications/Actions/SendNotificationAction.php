@@ -2,7 +2,6 @@
 
 namespace App\Platform\Notifications\Actions;
 
-use App\Platform\Identity\Models\User;
 use App\Platform\Notifications\Enums\Channel;
 use App\Platform\Notifications\Enums\NotificationCategory;
 use App\Platform\Notifications\Models\Notification;
@@ -20,8 +19,8 @@ class SendNotificationAction extends BaseAction
      * @param  array<string, mixed>  $data
      * @param  array<int, Channel>|null  $channels
      */
-    public function execute(User $user, NotificationCategory $category, string $templateKey, array $data = [], ?array $channels = null): Notification
+    public function executeForUserId(int $userId, NotificationCategory $category, string $templateKey, array $data = [], ?array $channels = null): Notification
     {
-        return $this->dispatcher->dispatch($user, $category, $templateKey, $data, $channels);
+        return $this->dispatcher->dispatchToUserId($userId, $category, $templateKey, $data, $channels);
     }
 }

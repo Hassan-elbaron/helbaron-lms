@@ -2,8 +2,6 @@
 
 namespace App\Contexts\Learning\Actions\Progress;
 
-use App\Domains\Authoring\Models\Lesson;
-use App\Platform\Identity\Models\User;
 use App\Contexts\Learning\Enums\LessonProgressStatus;
 use App\Contexts\Learning\Events\CourseCompleted;
 use App\Contexts\Learning\Events\LessonCompleted;
@@ -24,16 +22,16 @@ class RecordLessonProgressAction extends BaseAction
         private readonly ProgressService $progress,
     ) {}
 
-    public function execute(User $user, Lesson $lesson, LessonProgressStatus $status, ?int $positionSeconds = null): LessonProgress
+    public function executeByUserId(int $userId, int $lessonId, LessonProgressStatus $status, ?int $positionSeconds = null): LessonProgress
     {
-        $enrollment = $this->access->assertAccess($user, $lesson);
+        $enrollment = $this->access->assertAccessByUserId($userId, $lessonId);
 
-        $result = $this->transaction(fn () => $this->progress->record($enrollment, $lesson, $status, $positionSeconds));
+        $result = $this->transaction(fn () => $this->progress->recordByLessonId($enrollment, $lessonId, $status, $positionSeconds));
 
-        LessonProgressRecorded::dispatch($result['enrollment'], $lesson);
+        LessonProgressRecorded::dispatch($result['enrollment'], $lessonId);
 
         if ($result['just_completed_lesson']) {
-            LessonCompleted::dispatch($result['enrollment'], $lesson);
+            LessonCompleted::dispatch($result['enrollment'], $lessonId);
         }
 
         if ($result['just_completed_course']) {

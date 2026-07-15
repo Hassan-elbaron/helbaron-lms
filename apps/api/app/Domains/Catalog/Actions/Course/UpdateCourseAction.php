@@ -32,10 +32,10 @@ class UpdateCourseAction extends BaseAction
                 $course->tags()->sync($data['tag_ids']);
             }
             if (isset($data['trainer_ids'])) {
-                $course->trainers()->sync($data['trainer_ids']);
+                $course->syncTrainers($data['trainer_ids']);
             }
 
-            return $course->fresh(['level', 'language', 'categories', 'tags', 'trainers']);
+            return $course->fresh(['level', 'language', 'categories', 'tags', 'trainerLinks']);
         });
     }
 }

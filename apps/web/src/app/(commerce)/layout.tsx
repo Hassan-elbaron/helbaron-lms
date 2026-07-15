@@ -11,7 +11,7 @@ export default function CommerceLayout({ children }: { children: ReactNode }) {
       <div className="flex min-h-dvh flex-col">
         <AnnouncementBar />
         <LandingHeader />
-        <main className="flex-1">
+        <main id="main-content" className="flex-1">
           <PageTransition className="mx-auto w-full max-w-6xl px-4 py-10">{children}</PageTransition>
         </main>
         <LandingFooter />

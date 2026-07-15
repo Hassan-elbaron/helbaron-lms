@@ -2,9 +2,9 @@
 
 namespace App\Contexts\Learning\Database\Factories;
 
+use App\Contexts\Learning\Models\LessonNote;
 use App\Domains\Authoring\Models\Lesson;
 use App\Platform\Identity\Models\User;
-use App\Contexts\Learning\Models\LessonNote;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

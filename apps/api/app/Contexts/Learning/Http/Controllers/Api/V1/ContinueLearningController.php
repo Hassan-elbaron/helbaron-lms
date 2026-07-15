@@ -13,7 +13,7 @@ class ContinueLearningController extends Controller
 {
     public function index(Request $request, ContinueLearningService $service): JsonResponse
     {
-        $items = $service->forUser($request->user())
+        $items = $service->forUserId($request->user()->id)
             ->map(fn ($row) => (new ContinueLearningResource($row))->resolve());
 
         return ApiResponse::success($items->values());

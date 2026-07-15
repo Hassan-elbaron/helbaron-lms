@@ -2,7 +2,6 @@
 
 namespace App\Domains\Live\Database\Seeders;
 
-use App\Platform\Identity\Enums\Role;
 use App\Domains\Live\Actions\Session\ScheduleSessionAction;
 use App\Domains\Live\Enums\LivePermission;
 use App\Domains\Live\Models\LiveCourse;
@@ -22,7 +21,7 @@ class LiveSeeder extends Seeder
         foreach (LivePermission::values() as $permission) {
             Permission::findOrCreate($permission, 'web');
         }
-        SpatieRole::findByName(Role::Admin->value, 'web')->givePermissionTo(LivePermission::values());
+        SpatieRole::findByName('admin', 'web')->givePermissionTo(LivePermission::values());
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $course = LiveCourse::firstOrCreate(

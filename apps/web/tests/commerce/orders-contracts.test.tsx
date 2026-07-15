@@ -5,7 +5,7 @@ import { renderWithI18n } from "../render";
 
 const { useOrders, useContracts, acceptMutate } = vi.hoisted(() => ({ useOrders: vi.fn(), useContracts: vi.fn(), acceptMutate: vi.fn() }));
 vi.mock("@/lib/auth/auth-context", () => ({ useAuth: () => ({ status: "authenticated" }) }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn() }), usePathname: () => "/cart", useSearchParams: () => new URLSearchParams() }));
 vi.mock("@/lib/commerce/hooks", () => ({
   useOrders, useContracts,
   useAcceptContract: () => ({ mutate: acceptMutate, isPending: false, variables: undefined }),

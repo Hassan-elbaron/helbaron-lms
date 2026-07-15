@@ -4,7 +4,6 @@ namespace App\Domains\Crm\Models;
 
 use App\Domains\Crm\Enums\MemberRole;
 use App\Domains\Crm\Enums\MemberStatus;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Tenancy\Concerns\BelongsToTenant;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
@@ -31,5 +30,4 @@ class OrganizationMember extends Model
     {
         return $this->belongsTo(Organization::class);
     }
-
-    public func
+}

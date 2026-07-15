@@ -2,7 +2,6 @@
 
 namespace App\Domains\Live\Services;
 
-use App\Platform\Identity\Models\User;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Models\SessionJoinToken;
 use App\Platform\Shared\Services\BaseService;
@@ -14,11 +13,11 @@ use Illuminate\Support\Str;
  */
 class JoinTokenService extends BaseService
 {
-    public function issue(LiveSession $session, User $user): SessionJoinToken
+    public function issueByUserId(LiveSession $session, int $userId): SessionJoinToken
     {
         return SessionJoinToken::create([
             'session_id' => $session->id,
-            'user_id' => $user->id,
+            'user_id' => $userId,
             'token' => Str::random(48),
             'expires_at' => now()->addMinutes((int) config('live.join.token_ttl_minutes', 120)),
         ]);

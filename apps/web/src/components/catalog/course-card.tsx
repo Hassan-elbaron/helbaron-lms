@@ -10,7 +10,7 @@ export function CourseCard({ course }: { course: CourseListItem }) {
   const { t } = useI18n();
   return (
     <Link href={`/courses/${course.id}`} className="group block focus-visible:outline-none">
-      <Card className="card-hover h-full overflow-hidden group-hover:border-primary/30 group-hover:shadow-xl group-focus-visible:ring-2 group-focus-visible:ring-ring">
+      <Card className="card-hover h-full overflow-hidden group-hover:border-primary/30 group-hover:elevation-4 group-focus-visible:ring-2 group-focus-visible:ring-ring">
         <CourseMedia title={course.title} />
         <CardContent className="space-y-2 p-4">
           <div className="flex items-start justify-between gap-2">

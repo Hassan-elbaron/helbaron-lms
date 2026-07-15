@@ -6,7 +6,9 @@ use App\Domains\Catalog\Contracts\CoursePublishGuard;
 use App\Domains\Catalog\Contracts\NullCoursePublishGuard;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Course;
+use App\Domains\Catalog\Models\CourseAnnouncement;
 use App\Domains\Catalog\Policies\CategoryPolicy;
+use App\Domains\Catalog\Policies\CourseAnnouncementPolicy;
 use App\Domains\Catalog\Policies\CoursePolicy;
 use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 
@@ -16,12 +18,13 @@ use App\Platform\Shared\Providers\BaseDomainServiceProvider;
  */
 class CatalogServiceProvider extends BaseDomainServiceProvider
 {
-    protected array $routeFiles = ['routes/catalog.php'];
+    protected array $routeFiles = ['routes/catalog.php', 'routes/teach.php'];
 
     /** @var array<class-string, class-string> */
     protected array $policies = [
         Course::class => CoursePolicy::class,
         Category::class => CategoryPolicy::class,
+        CourseAnnouncement::class => CourseAnnouncementPolicy::class,
     ];
 
     protected function domainPath(): string

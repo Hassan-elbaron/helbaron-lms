@@ -2,13 +2,13 @@
 
 namespace App\Platform\Notifications\Listeners;
 
-use App\Domains\Certification\Events\CertificateIssued;
 use App\Contexts\Commerce\Events\OrderPaid;
-use App\Domains\Crm\Events\ConsultingRequestCreated;
-use App\Platform\Identity\Events\UserRegistered;
 use App\Contexts\Learning\Events\CourseCompleted;
 use App\Contexts\Learning\Events\UserEnrolled;
+use App\Domains\Certification\Events\CertificateIssued;
+use App\Domains\Crm\Events\ConsultingRequestCreated;
 use App\Domains\Live\Events\SessionScheduled;
+use App\Platform\Identity\Events\UserRegistered;
 use App\Platform\Notifications\Enums\NotificationCategory;
 use App\Platform\Notifications\Services\NotificationDispatcher;
 use Illuminate\Events\Dispatcher;
@@ -23,51 +23,51 @@ class NotificationEventSubscriber
 
     public function onUserRegistered(UserRegistered $event): void
     {
-        $this->dispatcher->dispatch($event->user, NotificationCategory::Account, 'welcome', ['name' => $event->user->name]);
+        $this->dispatcher->dispatchToUserId($event->user->id, NotificationCategory::Account, 'welcome', ['name' => $event->user->name]);
     }
 
     public function onUserEnrolled(UserEnrolled $event): void
     {
-        if ($event->enrollment->user) {
-            $this->dispatcher->dispatch($event->enrollment->user, NotificationCategory::Learning, 'enrollment_confirmed', []);
+        if ($event->enrollment->user_id !== null) {
+            $this->dispatcher->dispatchToUserId($event->enrollment->user_id, NotificationCategory::Learning, 'enrollment_confirmed', []);
         }
     }
 
     public function onCourseCompleted(CourseCompleted $event): void
     {
-        if ($event->enrollment->user) {
-            $this->dispatcher->dispatch($event->enrollment->user, NotificationCategory::Learning, 'course_completed', []);
+        if ($event->enrollment->user_id !== null) {
+            $this->dispatcher->dispatchToUserId($event->enrollment->user_id, NotificationCategory::Learning, 'course_completed', []);
         }
     }
 
     public function onOrderPaid(OrderPaid $event): void
     {
-        if ($event->order->user) {
-            $this->dispatcher->dispatch($event->order->user, NotificationCategory::Commerce, 'order_receipt', ['total' => $event->order->total_minor]);
+        if ($event->order->user_id !== null) {
+            $this->dispatcher->dispatchToUserId($event->order->user_id, NotificationCategory::Commerce, 'order_receipt', ['total' => $event->order->total_minor]);
         }
     }
 
     public function onCertificateIssued(CertificateIssued $event): void
     {
-        if ($event->certificate->user) {
-            $this->dispatcher->dispatch($event->certificate->user, NotificationCategory::Certification, 'certificate_ready', ['number' => $event->certificate->number]);
+        if ($event->certificate->user_id !== null) {
+            $this->dispatcher->dispatchToUserId($event->certificate->user_id, NotificationCategory::Certification, 'certificate_ready', ['number' => $event->certificate->number]);
         }
     }
 
     public function onSessionScheduled(SessionScheduled $event): void
     {
         // Announce to registered participants.
-        foreach ($event->session->registrations()->where('status', 'registered')->with('user')->get() as $registration) {
-            if ($registration->user) {
-                $this->dispatcher->dispatch($registration->user, NotificationCategory::Live, 'session_scheduled', ['title' => $event->session->title]);
+        foreach ($event->session->registrations()->where('status', 'registered')->get() as $registration) {
+            if ($registration->user_id !== null) {
+                $this->dispatcher->dispatchToUserId($registration->user_id, NotificationCategory::Live, 'session_scheduled', ['title' => $event->session->title]);
             }
         }
     }
 
     public function onConsultingRequestCreated(ConsultingRequestCreated $event): void
     {
-        if ($event->request->requester) {
-            $this->dispatcher->dispatch($event->request->requester, NotificationCategory::Crm, 'consulting_ack', ['subject' => $event->request->subject]);
+        if ($event->request->requested_by !== null) {
+            $this->dispatcher->dispatchToUserId($event->request->requested_by, NotificationCategory::Crm, 'consulting_ack', ['subject' => $event->request->subject]);
         }
     }
 

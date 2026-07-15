@@ -37,4 +37,71 @@ class SharedServiceProvider extends ServiceProvider
         $this->app->singleton(TenantContext::class, static function ($app): TenantContext {
             return new TenantContext($app->make(TenantResolver::class));
         });
-        $this->app->bind(Curre
+        $this->app->bind(CurrentTenantProvider::class, static fn ($app): TenantContext => $app->make(TenantContext::class));
+
+        // Tenant column resolution (A2-S04): default + supported columns + per-model overrides
+        // from config, so BelongsToTenant needs no change to support new tenant shapes.
+        $this->app->singleton(TenantMetadata::class, static function ($app): TenantMetadata {
+            /** @var array{default_column?: string, columns?: list<string>, overrides?: array<class-string, string>} $config */
+            $config = (array) $app['config']->get('tenancy', []);
+
+            return new TenantMetadata(
+                $config['default_column'] ?? 'organization_id',
+                $config['columns'] ?? ['organization_id'],
+                $config['overrides'] ?? [],
+            );
+        });
+
+        // Default tenancy-bypass policy: never bypass. Identity binds the concrete role-based
+        // policy (platform admins bypass); provider order makes Identity's binding win.
+        $this->app->bind(TenancyBypassPolicy::class, NullTenancyBypassPolicy::class);
+    }
+
+    public function boot(): void
+    {
+        $this->registerBlueprintMacros();
+        $this->registerTenancyMiddlewareAlias();
+    }
+
+    /**
+     * Register the tenant-resolution middleware as a named alias only. It is intentionally NOT
+     * added to any middleware group/route yet, so the request pipeline is unchanged. Applying
+     * this alias is the first step of A2-S02 (enforcement).
+     */
+    private function registerTenancyMiddlewareAlias(): void
+    {
+        /** @var Router $router */
+        $router = $this->app['router'];
+        $router->aliasMiddleware('tenant.resolve', ResolveTenant::class);
+    }
+
+    private function registerBlueprintMacros(): void
+    {
+        // $table->publicId(); — UUIDv7 external identifier, unique + indexed.
+        if (! Blueprint::hasMacro('publicId')) {
+            Blueprint::macro('publicId', function (string $column = 'public_id') {
+                /** @var Blueprint $this */
+                return $this->uuid($column)->unique();
+            });
+        }
+
+        // $table->auditColumns(); — nullable created_by / updated_by actor references.
+        if (! Blueprint::hasMacro('auditColumns')) {
+            Blueprint::macro('auditColumns', function () {
+                /** @var Blueprint $this */
+                $this->unsignedBigInteger('created_by')->nullable();
+                $this->unsignedBigInteger('updated_by')->nullable();
+
+                return $this;
+            });
+        }
+
+        // $table->seoColumns(); — JSON seo bag.
+        if (! Blueprint::hasMacro('seoColumns')) {
+            Blueprint::macro('seoColumns', function (string $column = 'seo') {
+                /** @var Blueprint $this */
+                return $this->json($column)->nullable();
+            });
+        }
+    }
+}

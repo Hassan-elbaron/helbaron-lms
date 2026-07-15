@@ -1,14 +1,14 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 export function LoadingState({ className, label }: { className?: string; label?: string }) {
   const { t } = useI18n();
   return (
     <div className={cn("flex flex-col items-center justify-center gap-3 p-8 text-muted-foreground", className)} role="status" aria-live="polite">
-      <Loader2 className="size-6 animate-spin" aria-hidden />
+      <Spinner size="md" aria-hidden />
       <span className="text-sm">{label ?? t("common.loading")}</span>
     </div>
   );

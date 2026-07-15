@@ -1,31 +1,20 @@
-"use client";
+import type { Metadata } from "next";
+import { getSeo } from "@/lib/seo/api";
+import { resolveLocale } from "@/lib/seo/locale";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { CategoriesPageClient } from "./categories-page-client";
 
-import { FolderTree } from "lucide-react";
-import { useI18n } from "@/lib/i18n/i18n-context";
-import { useCategories } from "@/lib/catalog/hooks";
-import { PageHero } from "@/components/marketing/page-hero";
-import { QueryState } from "@/components/student/query-state";
-import { CategoryCard } from "@/components/catalog/category-card";
-import { EmptyState } from "@/components/states/empty-state";
+/** Static metadata is the fallback; a managed SEO override (marketing_page/categories) wins. */
+export async function generateMetadata(): Promise<Metadata> {
+  const fallback: Metadata = {
+    title: "Categories",
+    description: "Explore HElbaron course categories and find learning paths across every subject area.",
+  };
+
+  const [seo, locale] = await Promise.all([getSeo("marketing_page", "categories"), resolveLocale()]);
+  return buildMetadata(seo, fallback, locale);
+}
 
 export default function CategoriesPage() {
-  const { t } = useI18n();
-  const query = useCategories();
-
-  return (
-    <div>
-      <PageHero page="categories" />
-      <QueryState
-        query={query}
-        isEmpty={(d) => d.length === 0}
-        empty={<EmptyState icon={<FolderTree className="size-8" />} title={t("catalog.categories.empty")} />}
-      >
-        {(cats) => (
-          <div className="stagger-in grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {cats.map((c) => <CategoryCard key={c.id} category={c} />)}
-          </div>
-        )}
-      </QueryState>
-    </div>
-  );
+  return <CategoriesPageClient />;
 }

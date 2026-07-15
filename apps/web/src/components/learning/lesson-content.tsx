@@ -1,10 +1,29 @@
 "use client";
 
+import DOMPurify from "isomorphic-dompurify";
 import { Download, ExternalLink, FileText } from "lucide-react";
 import type { LessonPayload } from "@/lib/learning/api";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/states/empty-state";
+
+/**
+ * Sanitize API-provided article HTML before injection. Allows standard formatting,
+ * links and images; strips script/style/iframe, event handlers and unsafe URIs
+ * (DOMPurify's default ALLOWED_URI_REGEXP applies).
+ */
+function sanitizeArticleHtml(dirty: string): string {
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: [
+      "a", "abbr", "b", "blockquote", "br", "caption", "code", "div", "em", "figcaption", "figure",
+      "h1", "h2", "h3", "h4", "h5", "h6", "hr", "i", "img", "li", "mark", "ol", "p", "pre", "s",
+      "small", "span", "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "u", "ul",
+    ],
+    ALLOWED_ATTR: ["href", "src", "alt", "title", "target", "rel", "class", "dir", "lang", "colspan", "rowspan", "width", "height", "start", "type"],
+    FORBID_TAGS: ["script", "style", "iframe", "object", "embed", "form"],
+    // Event handlers (on*) are stripped because they are not in ALLOWED_ATTR.
+  });
+}
 
 function articleText(content: Record<string, unknown> | null): { html?: string; text?: string } {
   if (!content) return {};
@@ -48,6 +67,26 @@ export function LessonContent({
           )}
         </div>
         <p className="text-xs text-muted-foreground">{t("learn.lesson.videoNote")}</p>
+      </div>
+    );
+  }
+
+  if (lesson.type === "audio") {
+    const transcript = typeof lesson.content?.transcript === "string" ? lesson.content.transcript : null;
+    return (
+      <div className="space-y-3">
+        {url ? (
+          // eslint-disable-next-line jsx-a11y/media-has-caption
+          <audio controls src={url} className="w-full" aria-label={lesson.title} />
+        ) : (
+          <EmptyState title={t("learn.lesson.noContent")} />
+        )}
+        {transcript ? (
+          <details className="rounded-lg border p-3">
+            <summary className="cursor-pointer text-sm font-medium">{t("learn.lesson.transcript")}</summary>
+            <div className="prose mt-2 max-w-none whitespace-pre-line dark:prose-invert">{transcript}</div>
+          </details>
+        ) : null}
       </div>
     );
   }
@@ -99,8 +138,8 @@ export function LessonContent({
   // article
   const { html, text } = articleText(lesson.content);
   if (html) {
-    // Admin-authored trusted content. Sanitize server-side before production exposure.
-    return <div className="prose max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: html }} />;
+    // API-provided HTML is sanitized client-side before injection (defense in depth).
+    return <div className="prose max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(html) }} />;
   }
   return text ? (
     <div className="whitespace-pre-line leading-relaxed text-foreground">{text}</div>

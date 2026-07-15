@@ -29,7 +29,13 @@ class StripeGateway implements PaymentGateway
 
     public function charge(ChargeRequest $request): ChargeResult
     {
-        $response = $this->client()->asForm()->post('/v1/payment_intents', array_filter([
+        $client = $this->client()->asForm();
+
+        if ($request->idempotencyKey !== null) {
+            $client = $client->withHeaders(['Idempotency-Key' => $request->idempotencyKey]);
+        }
+
+        $response = $client->post('/v1/payment_intents', array_filter([
             'amount' => $request->amountMinor,
             'currency' => strtolower($request->currency),
             'description' => $request->description !== '' ? $request->description : null,

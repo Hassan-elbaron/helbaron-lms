@@ -45,6 +45,23 @@
   --border: oklch(0.88 0.02 86);
   --input: oklch(0.88 0.02 86);
   --ring: oklch(0.36 0.045 185);
+
+  /* ── Additive semantic surfaces (light) — new families, existing names untouched ── */
+  --info: oklch(0.60 0.11 240);
+  --info-foreground: oklch(0.98 0.01 88);
+  /* Surface = a subtly recessed neutral, distinct from `card` (which is the raised panel). */
+  --surface: oklch(0.955 0.014 88);
+  --surface-foreground: oklch(0.30 0.017 190);
+  /* Overlay = modal/scrim tint (has alpha). */
+  --overlay: oklch(0.21 0.022 190 / 55%);
+  --sidebar: oklch(0.36 0.045 185);
+  --sidebar-foreground: oklch(0.97 0.015 88);
+  --sidebar-border: oklch(0.32 0.04 185);
+  --sidebar-accent: oklch(0.90 0.035 70);
+  --header: oklch(0.962 0.017 88);
+  --header-foreground: oklch(0.30 0.017 190);
+  --footer: oklch(0.36 0.045 185);
+  --footer-foreground: oklch(0.97 0.015 88);
 }
 
 .dark {
@@ -80,6 +97,21 @@
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 14%);
   --ring: oklch(0.62 0.07 183);
+
+  /* ── Additive semantic surfaces (dark) ── */
+  --info: oklch(0.66 0.11 240);
+  --info-foreground: oklch(0.16 0.02 190);
+  --surface: oklch(0.24 0.024 190);
+  --surface-foreground: oklch(0.94 0.015 88);
+  --overlay: oklch(0.12 0.02 190 / 62%);
+  --sidebar: oklch(0.25 0.026 190);
+  --sidebar-foreground: oklch(0.94 0.015 88);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-accent: oklch(0.33 0.035 60);
+  --header: oklch(0.21 0.022 190);
+  --header-foreground: oklch(0.94 0.015 88);
+  --footer: oklch(0.25 0.026 190);
+  --footer-foreground: oklch(0.94 0.015 88);
 }
 
 @theme inline {
@@ -111,14 +143,37 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  /* Additive semantic colour families → expose as utilities (bg-info, text-sidebar-foreground, …) */
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-overlay: var(--overlay);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-header: var(--header);
+  --color-header-foreground: var(--header-foreground);
+  --color-footer: var(--footer);
+  --color-footer-foreground: var(--footer-foreground);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 12px);
+  --radius-full: 9999px;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* Additive easing utilities (ease-standard / ease-emphasized / ease-spring).
+     Tailwind's built-in --ease-in / --ease-out / --ease-in-out are left untouched. */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --font-sans: var(--font-inter), var(--font-arabic), system-ui, ui-sans-serif, sans-serif;
   --font-serif: var(--font-fraunces), ui-serif, "Iowan Old Style", Georgia, serif;
+  --font-arabic: var(--font-ibm-plex-arabic), "Segoe UI", Tahoma, sans-serif;
 }
 
 @layer base {
@@ -134,8 +189,8 @@
     letter-spacing: -0.01em;
   }
   :focus-visible {
-    outline: 2px solid var(--color-ring);
-    outline-offset: 2px;
+    outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--color-ring));
+    outline-offset: var(--focus-ring-offset, 2px);
   }
 }
 
@@ -235,4 +290,321 @@
 @keyframes hb-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
   [class*="hb-spin"] { animation: none !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DESIGN-TOKEN FOUNDATION (additive — pure no-op until a component opts in)
+   Spacing · containers · shadow/elevation · z-index · opacity · focus ·
+   motion · fluid typography. All values are plain custom properties so they
+   never override Tailwind's built-in numeric spacing / shadow / max-w scales.
+   ══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Spacing scale (single source of truth; rem-based, mirrors Tailwind's rhythm) ── */
+  --space-0: 0rem;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;
+  --space-1: 0.25rem;
+  --space-1-5: 0.375rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* ── Container widths (custom names — deliberately NOT --container-* so Tailwind's
+        max-w-sm/md/… utilities are untouched). --container-width is the injector's base. ── */
+  --container-width: 80rem;
+  --container-width-sm: 40rem;
+  --container-width-md: 48rem;
+  --container-width-lg: 64rem;
+  --container-width-xl: 80rem;
+  --container-width-2xl: 96rem;
+
+  /* ── Shadow scale + semantic elevation (consumed as box-shadow: var(--shadow-md) /
+        var(--elevation-2); NOT registered in @theme so Tailwind's shadow-* is untouched). ── */
+  --shadow-xs: 0 1px 2px 0 oklch(0.30 0.02 190 / 0.05);
+  --shadow-sm: 0 1px 3px 0 oklch(0.30 0.02 190 / 0.08), 0 1px 2px -1px oklch(0.30 0.02 190 / 0.08);
+  --shadow-md: 0 4px 6px -1px oklch(0.30 0.02 190 / 0.09), 0 2px 4px -2px oklch(0.30 0.02 190 / 0.08);
+  --shadow-lg: 0 10px 15px -3px oklch(0.30 0.02 190 / 0.10), 0 4px 6px -4px oklch(0.30 0.02 190 / 0.08);
+  --shadow-xl: 0 20px 25px -5px oklch(0.30 0.02 190 / 0.11), 0 8px 10px -6px oklch(0.30 0.02 190 / 0.09);
+  --shadow-2xl: 0 25px 50px -12px oklch(0.30 0.02 190 / 0.22);
+
+  --elevation-0: none;
+  --elevation-1: var(--shadow-xs);
+  --elevation-2: var(--shadow-sm);
+  --elevation-3: var(--shadow-md);
+  --elevation-4: var(--shadow-lg);
+  --elevation-5: var(--shadow-xl);
+
+  /* ── z-index scale (ascending, ample gaps for local stacking) ── */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-overlay: 1200;
+  --z-drawer: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-toast: 1600;
+  --z-tooltip: 1700;
+
+  /* ── Opacity scale + semantic states ── */
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.10;
+  --opacity-20: 0.20;
+  --opacity-40: 0.40;
+  --opacity-60: 0.60;
+  --opacity-80: 0.80;
+  --opacity-100: 1;
+  --opacity-disabled: 0.5;
+  --opacity-muted: 0.7;
+  --opacity-hover: 0.9;
+
+  /* ── Focus ring tokens (base :focus-visible reads these; identical to prior 2px/2px) ── */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--ring);
+
+  /* ── Motion: durations + easing curves (easing curves for @theme utilities live above) ── */
+  --duration-instant: 75ms;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-slower: 600ms;
+  /* Decelerate/accelerate helpers for the consolidated motion utilities below. */
+  --ease-decelerate: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+  /* ── Fluid typographic scale (clamp: min = mobile, max = desktop). Each role ships a
+        size + line-height + weight + tracking token; utility classes below apply all four. ── */
+  --text-display: clamp(2.5rem, 1.6rem + 4.2vw, 4.5rem);
+  --leading-display: 1.02;
+  --weight-display: 700;
+  --tracking-display: -0.02em;
+
+  --text-h1: clamp(2rem, 1.4rem + 2.8vw, 3.25rem);
+  --leading-h1: 1.08;
+  --weight-h1: 700;
+  --tracking-h1: -0.02em;
+
+  --text-h2: clamp(1.625rem, 1.2rem + 2vw, 2.5rem);
+  --leading-h2: 1.12;
+  --weight-h2: 700;
+  --tracking-h2: -0.015em;
+
+  --text-h3: clamp(1.375rem, 1.1rem + 1.3vw, 1.875rem);
+  --leading-h3: 1.18;
+  --weight-h3: 600;
+  --tracking-h3: -0.01em;
+
+  --text-h4: clamp(1.2rem, 1.02rem + 0.8vw, 1.5rem);
+  --leading-h4: 1.25;
+  --weight-h4: 600;
+  --tracking-h4: -0.005em;
+
+  --text-h5: clamp(1.075rem, 0.98rem + 0.45vw, 1.25rem);
+  --leading-h5: 1.3;
+  --weight-h5: 600;
+  --tracking-h5: 0em;
+
+  --text-h6: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --leading-h6: 1.4;
+  --weight-h6: 600;
+  --tracking-h6: 0em;
+
+  --text-subtitle: clamp(1.05rem, 0.98rem + 0.35vw, 1.25rem);
+  --leading-subtitle: 1.5;
+  --weight-subtitle: 400;
+  --tracking-subtitle: 0em;
+
+  --text-body: clamp(0.95rem, 0.92rem + 0.15vw, 1rem);
+  --leading-body: 1.6;
+  --weight-body: 400;
+  --tracking-body: 0em;
+
+  --text-caption: clamp(0.8rem, 0.78rem + 0.1vw, 0.875rem);
+  --leading-caption: 1.45;
+  --weight-caption: 400;
+  --tracking-caption: 0.005em;
+
+  --text-label: clamp(0.8rem, 0.78rem + 0.1vw, 0.875rem);
+  --leading-label: 1.4;
+  --weight-label: 500;
+  --tracking-label: 0.01em;
+
+  --text-button: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  --leading-button: 1.2;
+  --weight-button: 600;
+  --tracking-button: 0.005em;
+}
+
+/* ── Dark-mode-aware shadows: softer spread but darker/deeper tint on dark surfaces ── */
+.dark {
+  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.35);
+  --shadow-sm: 0 1px 3px 0 oklch(0 0 0 / 0.45), 0 1px 2px -1px oklch(0 0 0 / 0.40);
+  --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.50), 0 2px 4px -2px oklch(0 0 0 / 0.45);
+  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.55), 0 4px 6px -4px oklch(0 0 0 / 0.45);
+  --shadow-xl: 0 20px 25px -5px oklch(0 0 0 / 0.60), 0 8px 10px -6px oklch(0 0 0 / 0.50);
+  --shadow-2xl: 0 25px 50px -12px oklch(0 0 0 / 0.70);
+}
+
+/* ── Arabic / RTL typography: headings fall back to the Arabic family (Fraunces has no
+      Arabic glyphs), body already inherits --font-sans which includes --font-arabic. ── */
+:where(html[lang="ar"]) h1, :where(html[lang="ar"]) h2, :where(html[lang="ar"]) h3,
+:where([dir="rtl"]) h1, :where([dir="rtl"]) h2, :where([dir="rtl"]) h3 {
+  font-family: var(--font-arabic), var(--font-serif);
+  letter-spacing: 0;
+}
+
+/* ── Fluid typographic utility classes (LTR + RTL safe; logical/no directional props) ── */
+@layer utilities {
+  .text-display { font-size: var(--text-display); line-height: var(--leading-display); font-weight: var(--weight-display); letter-spacing: var(--tracking-display); }
+  .text-h1 { font-size: var(--text-h1); line-height: var(--leading-h1); font-weight: var(--weight-h1); letter-spacing: var(--tracking-h1); }
+  .text-h2 { font-size: var(--text-h2); line-height: var(--leading-h2); font-weight: var(--weight-h2); letter-spacing: var(--tracking-h2); }
+  .text-h3 { font-size: var(--text-h3); line-height: var(--leading-h3); font-weight: var(--weight-h3); letter-spacing: var(--tracking-h3); }
+  .text-h4 { font-size: var(--text-h4); line-height: var(--leading-h4); font-weight: var(--weight-h4); letter-spacing: var(--tracking-h4); }
+  .text-h5 { font-size: var(--text-h5); line-height: var(--leading-h5); font-weight: var(--weight-h5); letter-spacing: var(--tracking-h5); }
+  .text-h6 { font-size: var(--text-h6); line-height: var(--leading-h6); font-weight: var(--weight-h6); letter-spacing: var(--tracking-h6); }
+  .text-subtitle { font-size: var(--text-subtitle); line-height: var(--leading-subtitle); font-weight: var(--weight-subtitle); letter-spacing: var(--tracking-subtitle); }
+  .text-body { font-size: var(--text-body); line-height: var(--leading-body); font-weight: var(--weight-body); letter-spacing: var(--tracking-body); }
+  .text-caption { font-size: var(--text-caption); line-height: var(--leading-caption); font-weight: var(--weight-caption); letter-spacing: var(--tracking-caption); }
+  .text-label { font-size: var(--text-label); line-height: var(--leading-label); font-weight: var(--weight-label); letter-spacing: var(--tracking-label); }
+  .text-button { font-size: var(--text-button); line-height: var(--leading-button); font-weight: var(--weight-button); letter-spacing: var(--tracking-button); }
+
+  /* Documented role aliases (hero/card/dashboard/table/navigation/form) map onto the scale. */
+  .text-hero { font-size: var(--text-display); line-height: var(--leading-display); font-weight: var(--weight-display); letter-spacing: var(--tracking-display); }
+  .text-card-title { font-size: var(--text-h4); line-height: var(--leading-h4); font-weight: var(--weight-h4); letter-spacing: var(--tracking-h4); }
+  .text-dashboard-title { font-size: var(--text-h2); line-height: var(--leading-h2); font-weight: var(--weight-h2); letter-spacing: var(--tracking-h2); }
+  .text-table { font-size: var(--text-caption); line-height: var(--leading-caption); font-weight: var(--weight-caption); letter-spacing: var(--tracking-caption); }
+  .text-nav { font-size: var(--text-label); line-height: var(--leading-label); font-weight: var(--weight-label); letter-spacing: var(--tracking-label); }
+  .text-form-label { font-size: var(--text-label); line-height: var(--leading-label); font-weight: var(--weight-label); letter-spacing: var(--tracking-label); }
+
+  /* Elevation / shadow token utilities (dark-aware; consumed by raised surfaces —
+     cards, popovers, dropdowns, dialogs, toasts). Distinct names so Tailwind's
+     built-in shadow-* utilities stay untouched. */
+  .elevation-0 { box-shadow: var(--elevation-0); }
+  .elevation-1 { box-shadow: var(--elevation-1); }
+  .elevation-2 { box-shadow: var(--elevation-2); }
+  .elevation-3 { box-shadow: var(--elevation-3); }
+  .elevation-4 { box-shadow: var(--elevation-4); }
+  .elevation-5 { box-shadow: var(--elevation-5); }
+  .hover\:elevation-2:hover { box-shadow: var(--elevation-2); }
+  .hover\:elevation-3:hover { box-shadow: var(--elevation-3); }
+  .hover\:elevation-4:hover { box-shadow: var(--elevation-4); }
+  .group:hover .group-hover\:elevation-3 { box-shadow: var(--elevation-3); }
+  .group:hover .group-hover\:elevation-4 { box-shadow: var(--elevation-4); }
+
+  /* Vertical rhythm helpers (opt-in; do not mass-rewrite pages). */
+  .stack-1 > * + * { margin-block-start: var(--space-1); }
+  .stack-2 > * + * { margin-block-start: var(--space-2); }
+  .stack-3 > * + * { margin-block-start: var(--space-3); }
+  .stack-4 > * + * { margin-block-start: var(--space-4); }
+  .stack-6 > * + * { margin-block-start: var(--space-6); }
+  .stack-8 > * + * { margin-block-start: var(--space-8); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CONSOLIDATED MOTION SYSTEM (token-driven; opt-in classes; reduced-motion safe)
+   ══════════════════════════════════════════════════════════════════════════ */
+@keyframes m-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes m-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes m-scale-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes m-scale-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.96); } }
+@keyframes m-slide-in-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes m-slide-in-down { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+/* Logical (start/end) slides mirror automatically under RTL. */
+@keyframes m-slide-in-start { from { opacity: 0; transform: translateX(var(--m-slide-start, -16px)); } to { opacity: 1; transform: none; } }
+@keyframes m-slide-in-end { from { opacity: 0; transform: translateX(var(--m-slide-end, 16px)); } to { opacity: 1; transform: none; } }
+@keyframes m-expand { from { opacity: 0; max-block-size: 0; } to { opacity: 1; max-block-size: var(--m-expand-max, 40rem); } }
+@keyframes m-collapse { from { opacity: 1; max-block-size: var(--m-expand-max, 40rem); } to { opacity: 0; max-block-size: 0; } }
+@keyframes m-spin { to { transform: rotate(360deg); } }
+@keyframes m-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+@layer utilities {
+  /* Fade / scale */
+  .motion-fade-in { animation: m-fade-in var(--duration-normal) var(--ease-standard) both; }
+  .motion-fade-out { animation: m-fade-out var(--duration-fast) var(--ease-accelerate) both; }
+  .motion-scale-in { animation: m-scale-in var(--duration-normal) var(--ease-decelerate) both; }
+  .motion-scale-out { animation: m-scale-out var(--duration-fast) var(--ease-accelerate) both; }
+
+  /* Directional slides (up/down + logical start/end for RTL correctness) */
+  .motion-slide-up { animation: m-slide-in-up var(--duration-normal) var(--ease-decelerate) both; }
+  .motion-slide-down { animation: m-slide-in-down var(--duration-normal) var(--ease-decelerate) both; }
+  .motion-slide-start { animation: m-slide-in-start var(--duration-normal) var(--ease-decelerate) both; }
+  .motion-slide-end { animation: m-slide-in-end var(--duration-normal) var(--ease-decelerate) both; }
+  [dir="rtl"] .motion-slide-start { --m-slide-start: 16px; }
+  [dir="rtl"] .motion-slide-end { --m-slide-end: -16px; }
+
+  /* Expand / collapse (disclosure) */
+  .motion-expand { overflow: hidden; animation: m-expand var(--duration-normal) var(--ease-standard) both; }
+  .motion-collapse { overflow: hidden; animation: m-collapse var(--duration-fast) var(--ease-accelerate) both; }
+
+  /* Surface-specific entrances (semantic aliases on the same primitives) */
+  .motion-page { animation: m-slide-in-up var(--duration-slow) var(--ease-decelerate) both; }
+  .motion-modal { animation: m-scale-in var(--duration-normal) var(--ease-decelerate) both; }
+  .motion-toast { animation: m-slide-in-up var(--duration-normal) var(--ease-spring) both; }
+  .motion-drawer { animation: m-slide-in-end var(--duration-normal) var(--ease-standard) both; }
+  .motion-dropdown { transform-origin: var(--m-origin, top); animation: m-scale-in var(--duration-fast) var(--ease-decelerate) both; }
+
+  /* Loading */
+  .motion-spin { animation: m-spin 1s linear infinite; }
+  .motion-pulse { animation: m-pulse 1.8s var(--ease-in-out) infinite; }
+
+  /* Hover affordance (transition-based; consumes tokens) */
+  .motion-hover { transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
+  .motion-hover:hover { transform: translateY(-2px); }
+
+  /* Scrim / overlay backdrop for modals & drawers */
+  .motion-scrim { position: fixed; inset: 0; z-index: var(--z-overlay); background: var(--overlay); animation: m-fade-in var(--duration-fast) var(--ease-standard) both; }
+}
+
+/* Global reduced-motion guard for the whole consolidated system + existing hb-* set. */
+@media (prefers-reduced-motion: reduce) {
+  .motion-fade-in, .motion-fade-out, .motion-scale-in, .motion-scale-out,
+  .motion-slide-up, .motion-slide-down, .motion-slide-start, .motion-slide-end,
+  .motion-expand, .motion-collapse, .motion-page, .motion-modal, .motion-toast,
+  .motion-drawer, .motion-dropdown, .motion-spin, .motion-pulse, .motion-scrim {
+    animation: none !important;
+  }
+  .motion-hover { transition: none !important; }
+  .motion-hover:hover { transform: none !important; }
+}
+
+/* Honor reduced-transparency: make scrim/overlay opaque and drop blur where used. */
+@media (prefers-reduced-transparency: reduce) {
+  .motion-scrim { background: var(--background); }
+  [class*="backdrop-blur"] { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CHART ENTRANCE MOTION (used by the dependency-free chart layer; token-driven,
+   reduced-motion safe). `.chart-grow` scales bars up from their baseline;
+   `.chart-draw` fades line/donut strokes in. transform-box:fill-box makes the
+   transform-origin resolve against each SVG element's own box.
+   ══════════════════════════════════════════════════════════════════════════ */
+/* ── Compact table density (opt-in via <Table density="compact">). Scoped attribute
+      selector wins over the cells' single-class padding without touching the default. ── */
+@layer utilities {
+  table[data-density="compact"] :where(th) { block-size: 2.25rem; padding-block: 0.375rem; padding-inline: 0.75rem; }
+  table[data-density="compact"] :where(td) { padding: 0.5rem 0.75rem; }
+}
+
+@keyframes hb-chart-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes hb-chart-draw { from { opacity: 0; } to { opacity: 1; } }
+@layer utilities {
+  .chart-grow {
+    transform-box: fill-box;
+    transform-origin: bottom;
+    animation: hb-chart-grow var(--duration-slow) var(--ease-decelerate) both;
+  }
+  .chart-draw { animation: hb-chart-draw var(--duration-slow) var(--ease-standard) both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart-grow, .chart-draw { animation: none !important; }
 }

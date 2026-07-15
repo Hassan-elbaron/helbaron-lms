@@ -18,7 +18,7 @@ class UpdateLearningSession
                 'course_id' => $event->enrollment->course_id,
             ],
             [
-                'last_lesson_id' => $event->lesson->id,
+                'last_lesson_id' => $event->lessonId,
                 'last_activity_at' => now(),
             ],
         );

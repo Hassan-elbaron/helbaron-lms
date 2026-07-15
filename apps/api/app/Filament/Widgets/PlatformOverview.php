@@ -2,13 +2,13 @@
 
 namespace App\Filament\Widgets;
 
-use App\Domains\Catalog\Models\Course;
 use App\Contexts\Commerce\Enums\OrderStatus;
 use App\Contexts\Commerce\Models\Order;
-use App\Domains\Crm\Models\Lead;
-use App\Platform\Identity\Models\User;
 use App\Contexts\Learning\Models\Enrollment;
+use App\Domains\Catalog\Models\Course;
+use App\Domains\Crm\Models\Lead;
 use App\Domains\Live\Models\LiveSession;
+use App\Platform\Identity\Contracts\UserLookupPort;
 use App\Platform\Notifications\Models\Notification;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -28,7 +28,7 @@ class PlatformOverview extends StatsOverviewWidget
         $revenueMinor = (int) Order::query()->where('status', OrderStatus::Paid->value)->sum('total_minor');
 
         return [
-            Stat::make('Users', (string) User::query()->count())
+            Stat::make('Users', (string) app(UserLookupPort::class)->totalCount())
                 ->description('Registered accounts')
                 ->descriptionIcon('heroicon-o-users')
                 ->color('primary'),

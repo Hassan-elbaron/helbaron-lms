@@ -33,7 +33,7 @@ class CourseController extends Controller
         $course = Course::query()
             ->published()
             ->visible()
-            ->with(['level', 'language', 'categories', 'tags', 'trainers.profile'])
+            ->with(['level', 'language', 'categories', 'tags', 'trainerLinks'])
             ->where('public_id', $publicId)
             ->first();
 

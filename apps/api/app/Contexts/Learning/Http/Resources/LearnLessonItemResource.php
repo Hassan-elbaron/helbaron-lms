@@ -2,15 +2,15 @@
 
 namespace App\Contexts\Learning\Http\Resources;
 
-use App\Domains\Authoring\Models\Lesson;
+use App\Platform\Shared\Curriculum\Contracts\CurriculumReadPort;
+use App\Platform\Shared\Curriculum\Data\LessonRef;
 use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**
- * Lesson node inside the learner curriculum tree. Carries progress + lock flags but NO media
- * identifiers — media is fetched separately through the player (LearningMediaService).
- *
- * @property Lesson $resource
+ * Lesson node inside the learner curriculum tree. Renders from a LessonRef DTO. Accepts either a
+ * LessonRef directly (Phase 3B, DTO input) or an Authoring Lesson model (mapped via
+ * CurriculumReadPort — the current controller path). Output is identical.
  */
 class LearnLessonItemResource extends BaseResource
 {
@@ -19,14 +19,18 @@ class LearnLessonItemResource extends BaseResource
         $completedIds = $this->additional['completed_ids'] ?? [];
         $accessibleIds = $this->additional['accessible_ids'] ?? [];
 
+        $lesson = $this->resource instanceof LessonRef
+            ? $this->resource
+            : app(CurriculumReadPort::class)->lessonRef($this->resource);
+
         return [
-            'id' => $this->resource->public_id,
-            'title' => $this->resource->title,
-            'type' => $this->resource->type->value,
-            'is_preview' => $this->resource->is_preview,
-            'has_media' => $this->resource->relationLoaded('media') ? $this->resource->media !== null : null,
-            'completed' => in_array($this->resource->id, $completedIds, true),
-            'locked' => ! in_array($this->resource->id, $accessibleIds, true) && ! $this->resource->is_preview,
+            'id' => $lesson->publicId,
+            'title' => $lesson->title,
+            'type' => $lesson->type,
+            'is_preview' => $lesson->isPreview,
+            'has_media' => $lesson->hasMedia,
+            'completed' => in_array($lesson->id, $completedIds, true),
+            'locked' => ! in_array($lesson->id, $accessibleIds, true) && ! $lesson->isPreview,
         ];
     }
 }

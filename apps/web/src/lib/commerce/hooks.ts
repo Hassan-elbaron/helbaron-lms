@@ -10,6 +10,7 @@ import {
   getContracts,
   getOrders,
   getProducts,
+  removeCartItem,
 } from "./api";
 
 export const useProducts = (page: number) =>
@@ -22,6 +23,13 @@ export function useAddToCart() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: { product: string; coupon_code?: string }) => addToCart(body),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["cart"] }),
+  });
+}
+export function useRemoveCartItem() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (productPublicId: string) => removeCartItem(productPublicId),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["cart"] }),
   });
 }

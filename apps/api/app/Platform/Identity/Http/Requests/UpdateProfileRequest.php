@@ -16,6 +16,8 @@ class UpdateProfileRequest extends BaseFormRequest
             'bio' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'gender' => ['sometimes', 'nullable', 'in:male,female,unspecified'],
             'date_of_birth' => ['sometimes', 'nullable', 'date'],
+            'country' => ['sometimes', 'nullable', 'string', 'size:2'],
+            'city' => ['sometimes', 'nullable', 'string', 'max:120'],
         ];
     }
 }

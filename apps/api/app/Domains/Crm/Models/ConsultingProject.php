@@ -22,4 +22,8 @@ class ConsultingProject extends Model
         return ['status' => ConsultingProjectStatus::class, 'started_at' => 'datetime', 'ended_at' => 'datetime'];
     }
 
-    public function sessions
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(ConsultingSession::class);
+    }
+}

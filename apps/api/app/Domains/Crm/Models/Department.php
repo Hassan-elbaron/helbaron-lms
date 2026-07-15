@@ -22,4 +22,8 @@ class Department extends Model
         return $this->belongsTo(Organization::class);
     }
 
-    public f
+    public function teams(): HasMany
+    {
+        return $this->hasMany(Team::class);
+    }
+}

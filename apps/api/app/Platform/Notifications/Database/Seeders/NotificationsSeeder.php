@@ -2,7 +2,6 @@
 
 namespace App\Platform\Notifications\Database\Seeders;
 
-use App\Platform\Identity\Enums\Role;
 use App\Platform\Notifications\Enums\NotificationsPermission;
 use App\Platform\Notifications\Models\NotificationTemplate;
 use Illuminate\Database\Seeder;
@@ -22,13 +21,14 @@ class NotificationsSeeder extends Seeder
         foreach (NotificationsPermission::values() as $permission) {
             Permission::findOrCreate($permission, 'web');
         }
-        SpatieRole::findByName(Role::Admin->value, 'web')->givePermissionTo(NotificationsPermission::values());
+        SpatieRole::findByName('admin', 'web')->givePermissionTo(NotificationsPermission::values());
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $templates = [
             ['welcome', 'Welcome, {{ name }}', 'Hello {{ name }}, welcome to HElbaron.', 'مرحبًا {{ name }}', 'أهلًا {{ name }}، مرحبًا بك في HElbaron.'],
             ['enrollment_confirmed', 'You are enrolled', 'You have been enrolled in a course.', 'تم تسجيلك', 'تم تسجيلك في دورة.'],
             ['course_completed', 'Course completed', 'Congratulations on completing your course.', 'أكملت الدورة', 'تهانينا على إكمال دورتك.'],
+            ['course_announcement', '{{ title }}', '{{ body }}', '{{ title }}', '{{ body }}'],
             ['order_receipt', 'Payment received', 'We received your payment. Thank you.', 'تم استلام الدفع', 'لقد استلمنا دفعتك. شكرًا لك.'],
             ['certificate_ready', 'Certificate ready', 'Your certificate {{ number }} is ready.', 'الشهادة جاهزة', 'شهادتك {{ number }} جاهزة.'],
             ['session_scheduled', 'Live session scheduled', 'A live session "{{ title }}" is scheduled.', 'تم جدولة جلسة مباشرة', 'تم جدولة جلسة مباشرة "{{ title }}".'],

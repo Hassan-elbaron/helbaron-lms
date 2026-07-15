@@ -46,7 +46,7 @@ class FulfillOrderAction extends BaseAction
                     );
 
                     if ($grant->wasRecentlyCreated) {
-                        $this->grant->execute($order->user, $course, EnrollmentSource::Purchase);
+                        $this->grant->executeByUserId($order->user_id, $course->id, EnrollmentSource::Purchase);
                     }
                 }
             }

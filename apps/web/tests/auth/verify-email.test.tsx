@@ -12,7 +12,7 @@ vi.mock("@/lib/auth/api", () => ({ verifyEmail }));
 vi.mock("@/lib/auth/auth-context", () => ({
   useAuth: () => ({ refresh, user: null, status: "authenticated", login: vi.fn(), logout: vi.fn() }),
 }));
-vi.mock("@/lib/api/client", () => ({ getToken: () => "tok" }));
+vi.mock("@/lib/api/client", () => ({ hasSession: () => true }));
 
 import VerifyEmailPage from "@/app/(marketing)/(auth)/verify-email/page";
 

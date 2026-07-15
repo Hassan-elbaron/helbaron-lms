@@ -2,7 +2,6 @@
 
 namespace App\Platform\Notifications\Services;
 
-use App\Platform\Identity\Models\User;
 use App\Platform\Notifications\Enums\Channel;
 use App\Platform\Notifications\Enums\DeliveryStatus;
 use App\Platform\Notifications\Enums\NotificationCategory;
@@ -27,18 +26,18 @@ class NotificationDispatcher extends BaseService
      * @param  array<string, mixed>  $data
      * @param  array<int, Channel>|null  $channels
      */
-    public function dispatch(User $user, NotificationCategory $category, string $templateKey, array $data = [], ?array $channels = null, ?string $dedupKey = null): Notification
+    public function dispatchToUserId(int $userId, NotificationCategory $category, string $templateKey, array $data = [], ?array $channels = null, ?string $dedupKey = null): Notification
     {
-        $locale = $this->localeFor($user);
+        $locale = $this->localeForUserId($userId);
 
         $inApp = $this->renderer->render($templateKey, Channel::InApp, $locale, $data);
 
         $candidate = $channels ?? $this->defaultChannels();
-        $enabled = $this->preferences->enabledChannels($user, $category, $candidate);
+        $enabled = $this->preferences->enabledChannelsForUserId($userId, $category, $candidate);
 
-        return $this->transaction(function () use ($user, $category, $templateKey, $data, $locale, $inApp, $enabled, $dedupKey): Notification {
+        return $this->transaction(function () use ($userId, $category, $templateKey, $data, $locale, $inApp, $enabled, $dedupKey): Notification {
             $notification = Notification::create([
-                'user_id' => $user->id,
+                'user_id' => $userId,
                 'category' => $category->value,
                 'type' => $templateKey,
                 'title' => $inApp->subject,
@@ -52,7 +51,7 @@ class NotificationDispatcher extends BaseService
                     ['notification_id' => $notification->id, 'channel' => $channel->value],
                     [
                         'status' => DeliveryStatus::Pending->value,
-                        'dedup_key' => $dedupKey ?? ($templateKey.':'.$user->id.':'.$channel->value.':'.now()->format('YmdHi')),
+                        'dedup_key' => $dedupKey ?? ($templateKey.':'.$userId.':'.$channel->value.':'.now()->format('YmdHi')),
                     ],
                 );
 
@@ -70,9 +69,9 @@ class NotificationDispatcher extends BaseService
         return array_map(fn (string $c) => Channel::from($c), (array) config('notifications.default_channels', ['in_app']));
     }
 
-    private function localeFor(User $user): string
+    private function localeForUserId(int $userId): string
     {
-        $setting = UserNotificationSetting::where('user_id', $user->id)->first();
+        $setting = UserNotificationSetting::where('user_id', $userId)->first();
 
         return $setting?->locale ?? (string) config('notifications.locale.default', 'en');
     }

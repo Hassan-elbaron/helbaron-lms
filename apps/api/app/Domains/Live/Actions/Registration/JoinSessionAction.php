@@ -2,7 +2,6 @@
 
 namespace App\Domains\Live\Actions\Registration;
 
-use App\Platform\Identity\Models\User;
 use App\Domains\Live\Enums\RegistrationStatus;
 use App\Domains\Live\Exceptions\JoinWindowClosedException;
 use App\Domains\Live\Exceptions\NotRegisteredException;
@@ -20,13 +19,13 @@ class JoinSessionAction extends BaseAction
     public function __construct(private readonly JoinTokenService $tokens) {}
 
     /** @return array{state: string, join_url?: string, token?: string, expires_at?: string, starts_at?: string} */
-    public function execute(LiveSession $session, User $user): array
+    public function executeByUserId(LiveSession $session, int $userId): array
     {
         if ($session->isCancelled()) {
             throw new SessionCancelledException;
         }
 
-        $registered = $session->registrations()->where('user_id', $user->id)
+        $registered = $session->registrations()->where('user_id', $userId)
             ->where('status', RegistrationStatus::Registered->value)->exists();
 
         if (! $registered) {
@@ -41,7 +40,7 @@ class JoinSessionAction extends BaseAction
             throw new JoinWindowClosedException;
         }
 
-        $token = $this->transaction(fn () => $this->tokens->issue($session, $user));
+        $token = $this->transaction(fn () => $this->tokens->issueByUserId($session, $userId));
 
         return [
             'state' => 'ready',

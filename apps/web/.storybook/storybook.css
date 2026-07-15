@@ -1,0 +1,20 @@
+/*
+  Storybook-only shims. next/font is not loaded outside the Next runtime, so the
+  --font-* custom properties that globals.css references would be undefined. Define
+  safe system fallbacks here (font FILES are not downloaded in Storybook — these map
+  onto the closest system faces so type still renders with correct weights/metrics).
+  This file is imported AFTER globals.css in preview.tsx; it never overrides tokens.
+*/
+:root {
+  --font-inter: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-fraunces: "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --font-ibm-plex-arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, "Noto Sans Arabic",
+    sans-serif;
+}
+
+/* Give every story canvas the DS background + foreground so tokens read correctly
+   in both light and dark (the .dark class is toggled on <html> by addon-themes). */
+.sb-story-root {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}

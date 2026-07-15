@@ -14,8 +14,7 @@ final class TenantId
 {
     private function __construct(
         public readonly int|string $value,
-    ) {
-    }
+    ) {}
 
     public static function from(int|string $value): self
     {

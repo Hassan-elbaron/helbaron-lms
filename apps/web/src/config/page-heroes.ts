@@ -10,6 +10,16 @@ export type PageHeroConfig = {
 };
 
 export const pageHeroes: Record<string, PageHeroConfig> = {
+  events: {
+    eyebrow: { en: "EVENTS", ar: "الفعاليات" },
+    title: { en: "Live", ar: "فعاليات" },
+    emphasis: { en: "events.", ar: "مباشرة." },
+    subtitle: {
+      en: "Workshops, live sessions and cohort kickoffs led by MENA practitioners — register and learn in real time.",
+      ar: "ورش وجلسات مباشرة وانطلاقات أفواج يقودها ممارسون من المنطقة — سجّل وتعلّم في الوقت الحقيقي.",
+    },
+    icon: "Users",
+  },
   courses: {
     eyebrow: { en: "COURSES", ar: "الدورات" },
     title: { en: "Learn by", ar: "تعلّم" },

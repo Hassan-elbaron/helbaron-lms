@@ -1,17 +1,31 @@
 <?php
 
-use App\Domains\Authoring\Models\LessonMedia;
-use App\Contexts\Learning\Playback\PlaybackTokenManager;
-use App\Contexts\Learning\Playback\Providers\CloudFrontPlaybackTokenProvider;
-use App\Contexts\Learning\Playback\Providers\FakePlaybackTokenProvider;
-use App\Contexts\Learning\Playback\Providers\MuxPlaybackTokenProvider;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
+use App\Platform\Media\Playback\PlaybackTokenManager;
+use App\Platform\Media\Playback\Providers\CloudFrontPlaybackSigner;
+use App\Platform\Media\Playback\Providers\FakePlaybackSigner;
+use App\Platform\Media\Playback\Providers\MuxPlaybackSigner;
+use App\Platform\Shared\Media\Data\MediaAccessPolicy;
+use App\Platform\Shared\Media\Data\MediaAssetRef;
 
 function b64urlDecode(string $s): string
 {
     return (string) base64_decode(strtr($s, '-_', '+/').str_repeat('=', (4 - strlen($s) % 4) % 4));
+}
+
+function muxAssetRef(): MediaAssetRef
+{
+    // A ref carrying the PUBLIC playback id + a storage key — never the raw Mux asset id, which
+    // is structurally absent from MediaAssetRef.
+    return new MediaAssetRef(
+        id: 'lm_public',
+        provider: 'mux',
+        playbackId: 'pb_public',
+        storageKey: 'media/x.mp4',
+        mimeType: 'video/mp4',
+        durationSeconds: 120,
+        policy: new MediaAccessPolicy(signed: true, visibility: 'private'),
+        metadata: [],
+    );
 }
 
 it('issues a Mux signed playback URL that exposes the playback id but never the asset id', function () {
@@ -26,11 +40,7 @@ it('issues a Mux signed playback URL that exposes the playback id but never the 
         'audience' => 'v',
     ];
 
-    $media = LessonMedia::factory()->create([
-        'mux_playback_id' => 'pb_public', 'mux_asset_id' => 'asset_secret', 's3_key' => 'media/x.mp4',
-    ]);
-
-    $token = (new MuxPlaybackTokenProvider($config))->issue($media, 600);
+    $token = (new MuxPlaybackSigner($config))->issue(muxAssetRef(), 600);
 
     expect($token->url)->toContain('pb_public')
         ->and($token->url)->not->toContain('asset_secret')
@@ -52,13 +62,13 @@ it('issues a Mux signed playback URL that exposes the playback id but never the 
 it('selects the playback provider by config', function () {
     config()->set('learning.playback.provider', 'fake');
     expect(app(PlaybackTokenManager::class)->resolve())
-        ->toBeInstanceOf(FakePlaybackTokenProvider::class);
+        ->toBeInstanceOf(FakePlaybackSigner::class);
 
     config()->set('learning.playback.provider', 'mux');
     config()->set('services.mux', ['signing_key_id' => 'k', 'signing_key' => 'x']);
-    expect(app(PlaybackTokenManager::class)->resolve())->toBeInstanceOf(MuxPlaybackTokenProvider::class);
+    expect(app(PlaybackTokenManager::class)->resolve())->toBeInstanceOf(MuxPlaybackSigner::class);
 
     config()->set('learning.playback.provider', 'cloudfront');
     expect(app(PlaybackTokenManager::class)->resolve())
-        ->toBeInstanceOf(CloudFrontPlaybackTokenProvider::class);
+        ->toBeInstanceOf(CloudFrontPlaybackSigner::class);
 });

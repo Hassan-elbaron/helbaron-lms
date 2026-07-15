@@ -12,7 +12,7 @@ class PreferenceController extends Controller
 {
     public function update(UpdatePreferencesRequest $request, UpdatePreferencesAction $action): JsonResponse
     {
-        $setting = $action->execute($request->user(), $request->validated());
+        $setting = $action->executeForUserId($request->user()->id, $request->validated());
 
         return ApiResponse::updated([
             'locale' => $setting->locale,

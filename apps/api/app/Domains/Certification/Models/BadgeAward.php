@@ -3,7 +3,6 @@
 namespace App\Domains\Certification\Models;
 
 use App\Domains\Certification\Enums\BadgeSource;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,10 +21,5 @@ class BadgeAward extends Model
     public function badge(): BelongsTo
     {
         return $this->belongsTo(Badge::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

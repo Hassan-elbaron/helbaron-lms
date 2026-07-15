@@ -14,10 +14,10 @@ use Rector\Config\RectorConfig;
  */
 return RectorConfig::configure()
     ->withPaths([
-        __DIR__ . '/app',
+        __DIR__.'/app',
     ])
     ->withSkip([
-        __DIR__ . '/app/*/openapi/*',
+        __DIR__.'/app/*/openapi/*',
     ])
     // PHP 8.3 language-level suggestions.
     ->withPhpSets(php83: true)

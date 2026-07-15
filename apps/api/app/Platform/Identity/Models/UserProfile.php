@@ -11,7 +11,7 @@ class UserProfile extends Model
     use HasPublicId;
 
     protected $fillable = [
-        'user_id', 'first_name', 'last_name', 'avatar_path', 'bio', 'gender', 'date_of_birth',
+        'user_id', 'first_name', 'last_name', 'avatar_path', 'bio', 'gender', 'date_of_birth', 'country', 'city',
     ];
 
     protected function casts(): array

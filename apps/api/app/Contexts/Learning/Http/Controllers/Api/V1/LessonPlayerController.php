@@ -2,38 +2,46 @@
 
 namespace App\Contexts\Learning\Http\Controllers\Api\V1;
 
-use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Authoring\Models\Section;
 use App\Contexts\Learning\Http\Resources\LearnerLessonResource;
 use App\Contexts\Learning\Models\LessonBookmark;
 use App\Contexts\Learning\Models\LessonNote;
 use App\Contexts\Learning\Models\LessonProgress;
 use App\Contexts\Learning\Services\LearningMediaService;
 use App\Contexts\Learning\Services\LessonAccessService;
+use App\Platform\Shared\Curriculum\Contracts\CurriculumReadPort;
+use App\Platform\Shared\Curriculum\Data\LessonRef;
 use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class LessonPlayerController extends Controller
 {
-    public function show(Request $request, Lesson $lesson, LessonAccessService $access, LearningMediaService $media): JsonResponse
+    public function show(Request $request, string $lesson, LessonAccessService $access, LearningMediaService $media, CurriculumReadPort $curriculum): JsonResponse
     {
         $user = $request->user();
-        $enrollment = $access->assertAccess($user, $lesson); // throws 403 if locked/not enrolled
 
-        $playback = $media->hasMedia($lesson) ? $media->playbackFor($user, $lesson) : null;
+        $ref = $curriculum->findLessonByPublicId($lesson);
+        if ($ref === null) {
+            throw new NotFoundHttpException('Lesson not found.');
+        }
+
+        $enrollment = $access->assertAccessByUserId($user->id, $ref->id); // throws 403 if locked/not enrolled
+
+        $playback = $media->hasMediaForLesson($ref->id) ? $media->playbackForLessonByUserId($user->id, $ref->id) : null;
 
         $progress = LessonProgress::where('enrollment_id', $enrollment->id)
-            ->where('lesson_id', $lesson->id)->first();
+            ->where('lesson_id', $ref->id)->first();
 
-        $bookmarked = LessonBookmark::where('user_id', $user->id)->where('lesson_id', $lesson->id)->exists();
-        $note = LessonNote::where('user_id', $user->id)->where('lesson_id', $lesson->id)->value('body');
+        $bookmarked = LessonBookmark::where('user_id', $user->id)->where('lesson_id', $ref->id)->exists();
+        $note = LessonNote::where('user_id', $user->id)->where('lesson_id', $ref->id)->value('body');
 
-        [$prev, $next] = $this->navigation($lesson);
+        [$prev, $next] = $this->navigation($curriculum, $ref);
 
         return ApiResponse::success(new LearnerLessonResource([
-            'lesson' => $lesson,
+            'lesson' => $ref,
+            'content' => $ref->content,
             'playback' => $playback,
             'progress_status' => $progress?->status->value ?? 'not_started',
             'position_seconds' => $progress?->position_seconds,
@@ -45,21 +53,25 @@ class LessonPlayerController extends Controller
     }
 
     /** @return array{0: ?string, 1: ?string} previous/next lesson public_ids in curriculum order */
-    private function navigation(Lesson $lesson): array
+    private function navigation(CurriculumReadPort $curriculum, LessonRef $ref): array
     {
-        $courseId = Section::whereKey($lesson->section_id)->value('course_id');
-        $sectionIds = Section::where('course_id', $courseId)->published()->orderBy('position')->pluck('id');
+        $ordered = $curriculum->orderedPublishedLessonRefs($ref->courseId);
 
-        $ordered = Lesson::whereIn('section_id', $sectionIds)
-            ->published()
-            ->orderBy('section_id')->orderBy('position')
-            ->get(['id', 'public_id']);
+        $index = null;
+        foreach ($ordered as $i => $item) {
+            if ($item->id === $ref->id) {
+                $index = $i;
+                break;
+            }
+        }
 
-        $index = $ordered->search(fn ($l) => $l->id === $lesson->id);
+        if ($index === null) {
+            return [null, null];
+        }
 
         return [
-            $index > 0 ? $ordered[$index - 1]->public_id : null,
-            $index !== false && $index < $ordered->count() - 1 ? $ordered[$index + 1]->public_id : null,
+            $index > 0 ? $ordered[$index - 1]->publicId : null,
+            $index < count($ordered) - 1 ? $ordered[$index + 1]->publicId : null,
         ];
     }
 }

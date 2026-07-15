@@ -5,7 +5,6 @@ namespace App\Domains\Certification\Models;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Certification\Database\Factories\CertificateFactory;
 use App\Domains\Certification\Enums\CertificateStatus;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,14 +40,23 @@ class Certificate extends Model
         ];
     }
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    /**
+     * Certificate holder. Resolved via auth config (not a concrete Identity import) so
+     * Certification keeps no compile-time dependency on the Identity context.
+     *
+     * @return BelongsTo<Model, $this>
+     */
+    public function user(): BelongsTo
+    {
+        /** @var class-string<Model> $userModel */
+        $userModel = config('auth.providers.users.model');
+
+        return $this->belongsTo($userModel, 'user_id');
     }
 
     public function template(): BelongsTo

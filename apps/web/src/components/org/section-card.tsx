@@ -11,7 +11,7 @@ export function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <Card className="card-hover hover:border-primary/30 hover:shadow-md">
+    <Card className="card-hover hover:border-primary/30 hover:elevation-3">
       <CardHeader className="flex-row items-center justify-between gap-2">
         <CardTitle className="text-base">{title}</CardTitle>
         {action}

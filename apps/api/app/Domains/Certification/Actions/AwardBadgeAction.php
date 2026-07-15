@@ -6,7 +6,6 @@ use App\Domains\Certification\Enums\BadgeSource;
 use App\Domains\Certification\Events\BadgeAwarded;
 use App\Domains\Certification\Models\Badge;
 use App\Domains\Certification\Models\BadgeAward;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Actions\BaseAction;
 
 /**
@@ -14,10 +13,10 @@ use App\Platform\Shared\Actions\BaseAction;
  */
 class AwardBadgeAction extends BaseAction
 {
-    public function execute(User $user, Badge $badge, BadgeSource $source = BadgeSource::Manual): BadgeAward
+    public function executeByUserId(int $userId, Badge $badge, BadgeSource $source = BadgeSource::Manual): BadgeAward
     {
-        [$award, $created] = $this->transaction(function () use ($user, $badge, $source): array {
-            $existing = BadgeAward::where('badge_id', $badge->id)->where('user_id', $user->id)->first();
+        [$award, $created] = $this->transaction(function () use ($userId, $badge, $source): array {
+            $existing = BadgeAward::where('badge_id', $badge->id)->where('user_id', $userId)->first();
 
             if ($existing !== null) {
                 return [$existing, false];
@@ -25,7 +24,7 @@ class AwardBadgeAction extends BaseAction
 
             $award = BadgeAward::create([
                 'badge_id' => $badge->id,
-                'user_id' => $user->id,
+                'user_id' => $userId,
                 'source' => $source->value,
                 'awarded_at' => now(),
             ]);

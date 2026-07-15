@@ -12,9 +12,8 @@ final class TenantArchived implements TenantEvent
 {
     public function __construct(
         public readonly TenantId $tenantId,
-        public readonly DateTimeImmutable $occurredAt = new DateTimeImmutable(),
-    ) {
-    }
+        public readonly DateTimeImmutable $occurredAt = new DateTimeImmutable,
+    ) {}
 
     public function tenantId(): TenantId
     {

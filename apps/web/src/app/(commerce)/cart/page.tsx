@@ -6,13 +6,14 @@ import { Trash2 } from "lucide-react";
 import { errorMessage } from "@/lib/api/errors";
 import { formatMoney } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/i18n-context";
-import { useAddToCart, useCart, useClearCart } from "@/lib/commerce/hooks";
+import { useAddToCart, useCart, useClearCart, useRemoveCartItem } from "@/lib/commerce/hooks";
 import type { Cart } from "@/lib/commerce/api";
 import { RequireAuth } from "@/lib/auth/guards";
 import { PageHero } from "@/components/marketing/page-hero";
 import { QueryState } from "@/components/student/query-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/states/empty-state";
 import { toast } from "@/components/ui/toast";
@@ -21,7 +22,9 @@ function CartView({ cart }: { cart: Cart }) {
   const { t, locale } = useI18n();
   const apply = useAddToCart();
   const clear = useClearCart();
+  const removeItem = useRemoveCartItem();
   const [coupon, setCoupon] = useState("");
+  const [clearOpen, setClearOpen] = useState(false);
 
   if (cart.items.length === 0) {
     return (
@@ -48,7 +51,16 @@ function CartView({ cart }: { cart: Cart }) {
                 <p className="truncate font-medium">{item.title}</p>
                 <p className="text-sm text-muted-foreground">{formatMoney(item.unit_amount_minor, cart.currency, locale)}</p>
               </div>
-              <Button variant="ghost" size="sm" loading={clear.isPending} onClick={() => clear.mutate()}>
+              <Button
+                variant="ghost"
+                size="sm"
+                loading={removeItem.isPending && removeItem.variables === item.product_id}
+                onClick={() =>
+                  removeItem.mutate(item.product_id, {
+                    onError: (e) => toast.error(errorMessage(e, t("common.error"))),
+                  })
+                }
+              >
                 <Trash2 className="size-4" aria-hidden /> {t("commerce.cart.remove")}
               </Button>
             </CardContent>
@@ -79,11 +91,32 @@ function CartView({ cart }: { cart: Cart }) {
             <span className="tabular-nums">{formatMoney(cart.total_minor, cart.currency, locale)}</span>
           </div>
           <Button asChild className="w-full"><Link href="/checkout">{t("commerce.cart.checkout")}</Link></Button>
-          <Button variant="ghost" className="w-full" loading={clear.isPending} onClick={() => clear.mutate()}>
+          <Button variant="ghost" className="w-full" loading={clear.isPending} onClick={() => setClearOpen(true)}>
             {t("commerce.cart.clear")}
           </Button>
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={clearOpen}
+        onOpenChange={setClearOpen}
+        title={t("commerce.cart.clearConfirmTitle")}
+        description={t("commerce.cart.clearConfirmBody")}
+        confirmLabel={t("commerce.cart.clear")}
+        loading={clear.isPending}
+        onConfirm={() =>
+          clear.mutate(undefined, {
+            onSuccess: () => {
+              toast.success(t("commerce.cart.cleared"));
+              setClearOpen(false);
+            },
+            onError: (e) => {
+              toast.error(errorMessage(e, t("common.error")));
+              setClearOpen(false);
+            },
+          })
+        }
+      />
     </div>
   );
 }

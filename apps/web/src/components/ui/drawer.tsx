@@ -17,10 +17,10 @@ const DrawerContent = forwardRef<
   ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DrawerPrimitive.Portal>
-    <DrawerPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80" />
+    <DrawerPrimitive.Overlay className="fixed inset-0 z-[--z-overlay] bg-overlay" />
     <DrawerPrimitive.Content
       ref={ref}
-      className={cn("fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background", className)}
+      className={cn("fixed inset-x-0 bottom-0 z-[--z-drawer] mt-24 flex h-auto flex-col rounded-t-xl border bg-background elevation-5", className)}
       {...props}
     >
       <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />

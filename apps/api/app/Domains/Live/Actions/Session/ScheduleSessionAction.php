@@ -62,7 +62,7 @@ class ScheduleSessionAction extends BaseAction
             ]);
 
             if (! empty($data['trainer_ids'])) {
-                $session->trainers()->sync($data['trainer_ids']);
+                $session->syncTrainers($data['trainer_ids']);
             }
 
             $this->calendar->createEvent(new CalendarEvent(

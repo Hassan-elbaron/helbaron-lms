@@ -27,6 +27,8 @@ class UpdateProfileAction extends BaseAction
                     'bio' => $data['bio'] ?? null,
                     'gender' => $data['gender'] ?? null,
                     'date_of_birth' => $data['date_of_birth'] ?? null,
+                    'country' => $data['country'] ?? null,
+                    'city' => $data['city'] ?? null,
                 ], fn ($v) => $v !== null),
             );
 

@@ -26,8 +26,7 @@ final class Tenant
         public readonly TenantBranding $branding,
         public readonly TenantDomains $domains,
         public readonly array $metadata = [],
-    ) {
-    }
+    ) {}
 
     public function isActive(): bool
     {

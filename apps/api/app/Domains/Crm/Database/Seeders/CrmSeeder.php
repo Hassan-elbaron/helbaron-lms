@@ -6,7 +6,6 @@ use App\Domains\Crm\Enums\CrmPermission;
 use App\Domains\Crm\Enums\PipelineType;
 use App\Domains\Crm\Models\Organization;
 use App\Domains\Crm\Models\Pipeline;
-use App\Platform\Identity\Enums\Role;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;
@@ -24,7 +23,7 @@ class CrmSeeder extends Seeder
         foreach (CrmPermission::values() as $permission) {
             Permission::findOrCreate($permission, 'web');
         }
-        SpatieRole::findByName(Role::Admin->value, 'web')->givePermissionTo(CrmPermission::values());
+        SpatieRole::findByName('admin', 'web')->givePermissionTo(CrmPermission::values());
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $pipeline = Pipeline::firstOrCreate(

@@ -2,12 +2,17 @@
 
 namespace App\Contexts\Learning\Http\Resources;
 
+use App\Platform\Shared\Curriculum\Data\LessonRef;
 use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
 /**
- * Full lesson player payload. Media is exposed ONLY as a signed playback object (url +
- * expiry) — never s3_key or mux_asset_id.
+ * Full lesson player payload. Media is exposed ONLY as a signed playback object (url + expiry) —
+ * never s3_key or mux_asset_id.
+ *
+ * Phase 3B: accepts either a Lesson model or a LessonRef in the `lesson` payload slot. Because
+ * LessonRef does not carry `content`, the DTO path reads `content` from the payload (`content` key)
+ * — the Phase-4 controller supplies it. The model path is unchanged (byte-identical).
  */
 class LearnerLessonResource extends BaseResource
 {
@@ -16,12 +21,26 @@ class LearnerLessonResource extends BaseResource
         $lesson = $this->resource['lesson'];
         $playback = $this->resource['playback']; // ?PlaybackToken
 
+        if ($lesson instanceof LessonRef) {
+            $id = $lesson->publicId;
+            $title = $lesson->title;
+            $type = $lesson->type;
+            $isPreview = $lesson->isPreview;
+            $content = $this->resource['content'] ?? null;
+        } else {
+            $id = $lesson->public_id;
+            $title = $lesson->title;
+            $type = $lesson->type->value;
+            $isPreview = $lesson->is_preview;
+            $content = $lesson->content;
+        }
+
         return [
-            'id' => $lesson->public_id,
-            'title' => $lesson->title,
-            'type' => $lesson->type->value,
-            'content' => $lesson->content,
-            'is_preview' => $lesson->is_preview,
+            'id' => $id,
+            'title' => $title,
+            'type' => $type,
+            'content' => $content,
+            'is_preview' => $isPreview,
             'playback' => $playback ? [
                 'url' => $playback->url,
                 'kind' => $playback->kind,

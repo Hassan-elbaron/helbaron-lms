@@ -4,6 +4,8 @@ namespace App\Domains\Live\Http\Resources;
 
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Services\TimezoneService;
+use App\Platform\Identity\Contracts\Data\UserRef;
+use App\Platform\Identity\Contracts\UserLookupPort;
 use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
@@ -32,9 +34,10 @@ class LiveSessionResource extends BaseResource
             'registered_count' => $this->resource->registeredCount(),
             'waiting_room' => $this->resource->waiting_room,
             'meeting_provider' => $this->resource->meeting_provider,
-            'trainers' => $this->whenLoaded('trainers', fn () => $this->resource->trainers->map(fn ($t) => [
-                'id' => $t->public_id, 'name' => $t->name,
-            ])->values()),
+            'trainers' => $this->whenLoaded('trainerLinks', fn () => array_values(array_map(
+                fn (UserRef $t) => ['id' => $t->publicId, 'name' => $t->name],
+                app(UserLookupPort::class)->refsByIds($this->resource->trainerLinks->pluck('user_id')->all())
+            ))),
             'recordings' => $this->whenLoaded('recordings', fn () => $this->resource->recordings->map(fn ($r) => [
                 'id' => $r->public_id, 'status' => $r->status->value, 'url' => $r->url, 'duration_seconds' => $r->duration_seconds,
             ])->values()),

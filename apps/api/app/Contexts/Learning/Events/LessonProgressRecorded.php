@@ -2,7 +2,6 @@
 
 namespace App\Contexts\Learning\Events;
 
-use App\Domains\Authoring\Models\Lesson;
 use App\Contexts\Learning\Models\Enrollment;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -14,6 +13,6 @@ class LessonProgressRecorded
 
     public function __construct(
         public readonly Enrollment $enrollment,
-        public readonly Lesson $lesson,
+        public readonly int $lessonId,
     ) {}
 }

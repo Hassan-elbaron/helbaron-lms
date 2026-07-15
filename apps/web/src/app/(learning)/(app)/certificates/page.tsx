@@ -47,7 +47,7 @@ export default function CertificatesPage() {
         empty={<EmptyState icon={<Award className="size-8" />} title={t("student.certificates.empty")} />}
       >
         {(items) => (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="stagger-in grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((c) => (
               <Card key={c.id}>
                 <CardContent className="space-y-4 p-5">

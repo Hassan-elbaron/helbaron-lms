@@ -6,6 +6,7 @@ use App\Domains\Certification\Contracts\PdfGenerator;
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Models\CertificateSetting;
 use App\Domains\Certification\Models\CertificateTemplate;
+use App\Platform\Identity\Contracts\UserLookupPort;
 use App\Platform\Shared\Services\BaseService;
 
 /**
@@ -18,11 +19,12 @@ class CertificateRenderService extends BaseService
         private readonly PdfGenerator $pdf,
         private readonly QrCodeService $qr,
         private readonly VerificationUrlService $urls,
+        private readonly UserLookupPort $users,
     ) {}
 
     public function renderBytes(Certificate $certificate): string
     {
-        $certificate->loadMissing(['user', 'course', 'template']);
+        $certificate->loadMissing(['course', 'template']);
         $template = $certificate->template ?? $this->fallbackTemplate();
 
         $html = $this->fill($template->html, $certificate);
@@ -36,7 +38,7 @@ class CertificateRenderService extends BaseService
         $verifyUrl = $this->urls->forCertificate($certificate);
 
         $replacements = [
-            '{{ holder_name }}' => (string) $certificate->user?->name,
+            '{{ holder_name }}' => (string) $this->users->refById($certificate->user_id)?->name,
             '{{ course_title }}' => (string) $certificate->course?->title,
             '{{ number }}' => $certificate->number,
             '{{ verification_code }}' => $certificate->verification_code,

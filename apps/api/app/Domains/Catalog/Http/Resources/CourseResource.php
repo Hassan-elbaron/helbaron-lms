@@ -3,6 +3,7 @@
 namespace App\Domains\Catalog\Http\Resources;
 
 use App\Domains\Catalog\Models\Course;
+use App\Platform\Identity\Contracts\UserLookupPort;
 use App\Platform\Shared\Resources\BaseResource;
 use Illuminate\Http\Request;
 
@@ -39,7 +40,9 @@ class CourseResource extends BaseResource
             'tags' => $this->whenLoaded('tags', fn () => $this->resource->tags->map(fn ($t) => [
                 'id' => $t->public_id, 'name' => $t->name, 'slug' => $t->slug,
             ])->values()),
-            'trainers' => TrainerResource::collection($this->whenLoaded('trainers')),
+            'trainers' => $this->whenLoaded('trainerLinks', fn () => TrainerResource::collection(
+                array_values(app(UserLookupPort::class)->refsByIds($this->resource->trainerLinks->pluck('user_id')->all()))
+            )),
             'related' => CourseListResource::collection($this->whenLoaded('related')),
             'published_at' => $this->resource->published_at?->toIso8601String(),
         ];

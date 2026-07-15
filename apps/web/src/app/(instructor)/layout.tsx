@@ -8,7 +8,7 @@ import { instructorNav } from "@/config/nav";
 export default function InstructorLayout({ children }: { children: ReactNode }) {
   return (
     <RequireAuth roles={["instructor", "admin", "super_admin"]}>
-      <AppShell nav={instructorNav}>{children}</AppShell>
+      <AppShell nav={instructorNav} location="instructor-sidebar">{children}</AppShell>
     </RequireAuth>
   );
 }

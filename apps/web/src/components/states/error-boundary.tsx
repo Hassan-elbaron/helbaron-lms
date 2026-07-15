@@ -14,19 +14,19 @@ interface State {
 
 /** Generic client error boundary. Wrap route subtrees or risky widgets. */
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false };
+  override state: State = { hasError: false };
 
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, message: error.message };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo): void {
+  override componentDidCatch(error: Error, info: ErrorInfo): void {
     if (process.env.NODE_ENV !== "production") console.error("ErrorBoundary caught", error, info);
   }
 
   reset = () => this.setState({ hasError: false, message: undefined });
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return this.props.fallback ?? <ErrorState message={this.state.message} onRetry={this.reset} />;
     }

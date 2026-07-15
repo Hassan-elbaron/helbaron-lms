@@ -2,7 +2,6 @@
 
 namespace App\Platform\Notifications\Actions;
 
-use App\Platform\Identity\Models\User;
 use App\Platform\Notifications\Models\NotificationPreference;
 use App\Platform\Notifications\Models\UserNotificationSetting;
 use App\Platform\Shared\Actions\BaseAction;
@@ -15,11 +14,11 @@ class UpdatePreferencesAction extends BaseAction
     /**
      * @param  array{locale?: string, digest_frequency?: string, timezone?: string, preferences?: array<int, array{category: string, channel: string, enabled: bool}>}  $data
      */
-    public function execute(User $user, array $data): UserNotificationSetting
+    public function executeForUserId(int $userId, array $data): UserNotificationSetting
     {
-        return $this->transaction(function () use ($user, $data): UserNotificationSetting {
+        return $this->transaction(function () use ($userId, $data): UserNotificationSetting {
             $setting = UserNotificationSetting::updateOrCreate(
-                ['user_id' => $user->id],
+                ['user_id' => $userId],
                 array_filter([
                     'locale' => $data['locale'] ?? null,
                     'digest_frequency' => $data['digest_frequency'] ?? null,
@@ -29,7 +28,7 @@ class UpdatePreferencesAction extends BaseAction
 
             foreach ($data['preferences'] ?? [] as $pref) {
                 NotificationPreference::updateOrCreate(
-                    ['user_id' => $user->id, 'category' => $pref['category'], 'channel' => $pref['channel']],
+                    ['user_id' => $userId, 'category' => $pref['category'], 'channel' => $pref['channel']],
                     ['enabled' => (bool) $pref['enabled']],
                 );
             }

@@ -2,40 +2,71 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { NavItem } from "@/config/nav";
-import { useI18n } from "@/lib/i18n/i18n-context";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/** A sidebar entry with an already-resolved label (from the CMS nav or the i18n dictionary). */
+export type SidebarNavItem = {
+  label: string;
+  href: string;
+  icon?: LucideIcon;
+  target?: "_blank" | "_self";
+  rel?: string;
+  external?: boolean;
+};
+
 export interface SidebarProps {
-  items: NavItem[];
+  items: SidebarNavItem[];
   brand?: string;
   className?: string;
+  /** Accessible name for the nav landmark (distinguishes the desktop rail from the mobile drawer). */
+  navLabel?: string;
 }
 
-/** Direction-agnostic vertical nav. Icons + i18n labels; active state by path prefix. */
-export function Sidebar({ items, brand = "HElbaron", className }: SidebarProps) {
+/** Direction-agnostic vertical nav. Icons + resolved labels; active state by path prefix. */
+export function Sidebar({ items, brand = "HElbaron", className, navLabel = "Primary" }: SidebarProps) {
   const pathname = usePathname();
-  const { t } = useI18n();
 
   return (
     <aside className={cn("flex h-full w-64 flex-col border-e bg-card", className)}>
       <div className="flex h-16 items-center px-6 text-lg font-semibold">{brand}</div>
-      <nav className="flex-1 space-y-1 px-3 py-2" aria-label="Primary">
+      <nav className="flex-1 space-y-1 px-3 py-2" aria-label={navLabel}>
         {items.map((item) => {
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active =
+            !item.external && (pathname === item.href || pathname.startsWith(`${item.href}/`));
           const Icon = item.icon;
-          return (
+          const className = cn(
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            active
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+          );
+          const content = (
+            <>
+              {Icon ? <Icon className="size-4 shrink-0" aria-hidden /> : null}
+              <span>{item.label}</span>
+            </>
+          );
+
+          // External items open in a new tab with a hardened rel; internal items use the router.
+          return item.external ? (
+            <a
+              key={`${item.href}-${item.label}`}
+              href={item.href}
+              target={item.target ?? "_blank"}
+              rel={item.rel ?? "noopener noreferrer"}
+              className={className}
+            >
+              {content}
+            </a>
+          ) : (
             <Link
-              key={item.href}
+              key={`${item.href}-${item.label}`}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
+              className={className}
             >
-              {Icon ? <Icon className="size-4 shrink-0" aria-hidden /> : null}
-              <span>{t(item.labelKey)}</span>
+              {content}
             </Link>
           );
         })}

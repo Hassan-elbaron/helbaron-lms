@@ -13,8 +13,7 @@ final class TenantLimits
     /** @param array<string, int|null> $limits null = unlimited */
     public function __construct(
         private readonly array $limits = [],
-    ) {
-    }
+    ) {}
 
     public function limit(string $key): ?int
     {

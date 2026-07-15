@@ -41,7 +41,7 @@ const crossGroupZones = ROUTE_GROUPS.map((group) => ({
 }));
 
 export default [
-  ...next(),
+  ...next,
   {
     files: ["src/**/*.{ts,tsx,js,jsx}"],
     plugins: { import: importPlugin },
@@ -52,6 +52,7 @@ export default [
       },
     },
     rules: {
+      "react-hooks/set-state-in-effect": "warn",
       "import/no-restricted-paths": [
         "error",
         { zones: [...sharedZones, ...crossGroupZones] },

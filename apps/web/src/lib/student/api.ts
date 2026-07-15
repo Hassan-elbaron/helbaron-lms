@@ -56,6 +56,9 @@ export type UserProfile = {
     bio: string | null;
     gender: string | null;
     date_of_birth: string | null;
+    /** ISO 3166-1 alpha-2 country code (size 2), e.g. "EG". */
+    country?: string | null;
+    city?: string | null;
   } | null;
 };
 
@@ -67,6 +70,9 @@ export type ProfileUpdate = {
   bio?: string | null;
   gender?: string | null;
   date_of_birth?: string | null;
+  /** ISO 3166-1 alpha-2 country code (size 2). */
+  country?: string | null;
+  city?: string | null;
 };
 
 export type PreferencesUpdate = { locale?: Locale; digest_frequency?: string; timezone?: string };

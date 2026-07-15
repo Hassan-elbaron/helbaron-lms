@@ -24,4 +24,6 @@ class Team extends Model
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(OrganizationMemb
+        return $this->belongsToMany(OrganizationMember::class, 'crm_team_members', 'team_id', 'member_id')->withPivot('role');
+    }
+}

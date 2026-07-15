@@ -5,11 +5,9 @@ namespace App\Contexts\Analytics\Models;
 use App\Contexts\Analytics\Database\Factories\ReportDefinitionFactory;
 use App\Contexts\Analytics\Enums\ReportType;
 use App\Contexts\Analytics\Enums\ReportVisibility;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ReportDefinition extends Model
@@ -29,11 +27,6 @@ class ReportDefinition extends Model
             'metric_keys' => 'array',
             'filters' => 'array',
         ];
-    }
-
-    public function owner(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function runs(): HasMany

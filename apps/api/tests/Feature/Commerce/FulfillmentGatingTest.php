@@ -2,8 +2,8 @@
 
 use App\Contexts\Commerce\Models\Order;
 use App\Contexts\Commerce\Payments\Gateways\FakeGateway;
-use App\Platform\Identity\Models\User;
 use App\Contexts\Learning\Models\Enrollment;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 

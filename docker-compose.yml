@@ -45,6 +45,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./apps/api:/var/www/html
+      - ./docker/php/zz-variables-order.ini:/usr/local/etc/php/conf.d/zz-variables-order.ini:ro
     environment:
       # Inside the compose network, reach the backing services by name on their
       # default ports (these override the host-oriented values in .env).

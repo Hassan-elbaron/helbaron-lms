@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Event;
  */
 class LiveServiceProvider extends BaseDomainServiceProvider
 {
-    protected array $routeFiles = ['routes/live.php'];
+    protected array $routeFiles = ['routes/live.php', 'routes/events_public.php'];
 
     /** @var array<class-string, class-string> */
     protected array $policies = [

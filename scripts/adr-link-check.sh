@@ -74,4 +74,18 @@ if printf '%s\n' "$files" | grep -Eq '^docs/adr/.*\.md$'; then
   exit 0
 fi
 
-# Not sat
+# Not satisfied -> fail with a clear, GitHub-annotated message.
+echo "::error::Architecture-sensitive change detected without an ADR reference."
+echo ""
+echo "Architecture-sensitive files changed (matched config/architecture/adr-watch.yaml):"
+printf '  - %s\n' $arch_files
+echo ""
+echo "Per docs/implementation/101_EXECUTION_RULES.md (section 7), a PR touching"
+echo "Providers / Ports / Adapters / Contracts, Deptrac config, PHPStan architecture"
+echo "rules, context boundaries, provider wiring, or tenancy foundation MUST reference an ADR."
+echo ""
+echo "To satisfy this check, do ONE of:"
+echo "  1. Add 'ADR-XX' (e.g. ADR-07) to the PR description, referencing the decision"
+echo "     recorded in docs/adr/INDEX.md; or"
+echo "  2. Add/update an ADR file under docs/adr/ if this introduces a NEW decision."
+exit 1

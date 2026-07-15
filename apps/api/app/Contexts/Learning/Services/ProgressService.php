@@ -2,29 +2,31 @@
 
 namespace App\Contexts\Learning\Services;
 
-use App\Domains\Authoring\Models\Lesson;
-use App\Domains\Authoring\Models\Section;
 use App\Contexts\Learning\Enums\EnrollmentStatus;
 use App\Contexts\Learning\Enums\LessonProgressStatus;
 use App\Contexts\Learning\Models\Enrollment;
 use App\Contexts\Learning\Models\LessonProgress;
+use App\Platform\Shared\Curriculum\Contracts\CurriculumReadPort;
 use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Collection;
 
 /**
- * Records lesson progress and recomputes section/course percentages. Idempotent per lesson:
- * re-recording the same completion is a no-op. Completion detection is derived, not asserted.
+ * Records lesson progress and recomputes section/course percentages. Idempotent per lesson.
+ * Curriculum reads (published lesson ids) go through CurriculumReadPort — no Authoring/Catalog
+ * model dependency; callers pass lesson/section ids.
  */
 class ProgressService extends BaseService
 {
+    public function __construct(private readonly CurriculumReadPort $curriculum) {}
+
     /**
      * @return array{progress: LessonProgress, enrollment: Enrollment, just_completed_lesson: bool, just_completed_course: bool}
      */
-    public function record(Enrollment $enrollment, Lesson $lesson, LessonProgressStatus $status, ?int $positionSeconds = null): array
+    public function recordByLessonId(Enrollment $enrollment, int $lessonId, LessonProgressStatus $status, ?int $positionSeconds = null): array
     {
         $progress = LessonProgress::firstOrNew([
             'enrollment_id' => $enrollment->id,
-            'lesson_id' => $lesson->id,
+            'lesson_id' => $lessonId,
         ]);
 
         $wasCompleted = $progress->exists && $progress->status === LessonProgressStatus::Completed;
@@ -50,19 +52,17 @@ class ProgressService extends BaseService
         ];
     }
 
-    /** Published lesson ids for a course, grouped and flat, used for percentage math. */
-    public function publishedLessonIds(int $courseId): Collection
+    public function sectionPercentageById(Enrollment $enrollment, int $sectionId): int
     {
-        $sectionIds = Section::where('course_id', $courseId)->published()->pluck('id');
-
-        return Lesson::whereIn('section_id', $sectionIds)->published()->pluck('id');
-    }
-
-    public function sectionPercentage(Enrollment $enrollment, Section $section): int
-    {
-        $lessonIds = Lesson::where('section_id', $section->id)->published()->pluck('id');
+        $lessonIds = collect($this->curriculum->publishedLessonIdsForSection($sectionId));
 
         return $this->percentage($enrollment, $lessonIds);
+    }
+
+    /** Published lesson ids for a course, used for percentage math. */
+    public function publishedLessonIds(int $courseId): Collection
+    {
+        return collect($this->curriculum->publishedLessonIdsForCourse($courseId));
     }
 
     private function recomputeCoursePercentage(Enrollment $enrollment): bool

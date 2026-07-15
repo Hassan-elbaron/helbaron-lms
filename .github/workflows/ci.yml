@@ -1,8 +1,15 @@
 name: CI
 
 on:
-  push: { branches: [main] }
-  pull_request: { branches: [main] }
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   api:
@@ -39,13 +46,20 @@ jobs:
           coverage: none
       - name: Cache composer
         uses: actions/cache@v4
-        with: { path: apps/api/vendor, key: composer-${{ hashFiles('apps/api/composer.lock') }} }
+        with:
+          path: apps/api/vendor
+          key: composer-${{ hashFiles('apps/api/composer.lock') }}
       - run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Security audit (composer)              # blocking
+        run: composer audit
       - run: cp .env.example .env && php artisan key:generate
       - name: Lint (Pint)
         run: vendor/bin/pint --test
       - name: Static analysis (PHPStan/Larastan)   # blocking (level 6 + custom architecture rules)
         run: vendor/bin/phpstan analyse --no-progress
+      - name: Ensure Rector is installed
+        continue-on-error: true
+        run: test -x vendor/bin/rector || composer require --dev rector/rector --no-interaction
       - name: Rector (dry-run, report-only)         # non-blocking modernization/quality report
         continue-on-error: true
         run: vendor/bin/rector process --dry-run --no-progress-bar
@@ -67,8 +81,13 @@ jobs:
           coverage: none
       - name: Cache composer
         uses: actions/cache@v4
-        with: { path: apps/api/vendor, key: composer-${{ hashFiles('apps/api/composer.lock') }} }
+        with:
+          path: apps/api/vendor
+          key: composer-${{ hashFiles('apps/api/composer.lock') }}
       - run: composer install --prefer-dist --no-interaction --no-progress
+      # Deptrac is expected in require-dev; install on the fly until that lands.
+      - name: Ensure Deptrac is installed
+        run: test -x vendor/bin/deptrac || composer require --dev deptrac/deptrac --no-interaction
       # Enforces bounded-context boundaries (deptrac.yaml + deptrac.baseline.yaml).
       # Fails ONLY on NEW violations; existing coupling is absorbed by the committed baseline.
       # Human-readable table output; non-zero exit blocks the PR.
@@ -83,13 +102,33 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20', cache: 'npm', cache-dependency-path: apps/web/package-lock.json }
-      - run: npm ci || npm install
+      - run: npm ci
+      - name: Security audit (npm, production deps)       # blocking
+        # Production dependencies must be clean at high+. Dev-only advisories (test runner,
+        # bundler dev server) are surfaced by the report-only step below and tracked in
+        # docs/reviews, not blocked here — they never ship in the production bundle.
+        run: npm audit --omit=dev --audit-level=high
+      - name: Security audit (npm, all — report only)
+        continue-on-error: true
+        run: npm audit --audit-level=high
       - name: Lint (ESLint + architectural boundaries)   # blocking
         run: npm run lint
       - name: Typecheck (tsc --noEmit)                    # blocking
         run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   e2e:
     name: E2E (Playwright + axe)
@@ -100,7 +139,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20', cache: 'npm', cache-dependency-path: apps/web/package-lock.json }
-      - run: npm ci || npm install
+      - run: npm ci
       - name: Install Playwright browser (chromium)
         run: npx playwright install --with-deps chromium
       - name: Run smoke journey (headless)
@@ -110,13 +149,92 @@ jobs:
         uses: actions/upload-artifact@v4
         with: { name: playwright-report, path: apps/web/playwright-report, retention-days: 7 }
 
-  image:
-    name: Build production image
+  image-api:
+    name: API image (build, scan, push on main/tags)
     runs-on: ubuntu-latest
     needs: [api]
+    permissions:
+      contents: read
+      packages: write
+    env:
+      DO_PUSH: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) }}
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
-      - name: Build (no push)
+      - name: Compute image name (GHCR requires lowercase)
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}/api" >> "$GITHUB_ENV"
+      - name: Log in to GHCR
+        if: env.DO_PUSH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build image (loaded locally for scanning)
         uses: docker/build-push-action@v6
-        with: { context: ./apps/api, file: ./apps/api/Dockerfile, push: false, tags: "helbaron-api:ci" }
+        with:
+          context: ./apps/api
+          file: ./apps/api/Dockerfile
+          push: false
+          load: true
+          tags: |
+            ${{ env.IMAGE }}:sha-${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+      - name: Trivy scan (CRITICAL/HIGH block)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}:sha-${{ github.sha }}
+          format: table
+          exit-code: '1'
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+      - name: Push to GHCR (main/tags only)
+        if: env.DO_PUSH == 'true'
+        run: |
+          docker push "$IMAGE:sha-$GITHUB_SHA"
+          docker push "$IMAGE:latest"
+
+  image-web:
+    name: Web image (build, scan, push on main/tags)
+    runs-on: ubuntu-latest
+    needs: [web]
+    permissions:
+      contents: read
+      packages: write
+    env:
+      DO_PUSH: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Compute image name (GHCR requires lowercase)
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}/web" >> "$GITHUB_ENV"
+      - name: Log in to GHCR
+        if: env.DO_PUSH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build image (loaded locally for scanning)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/web
+          file: ./apps/web/Dockerfile
+          push: false
+          load: true
+          tags: |
+            ${{ env.IMAGE }}:sha-${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+      - name: Trivy scan (CRITICAL/HIGH block)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}:sha-${{ github.sha }}
+          format: table
+          exit-code: '1'
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+      - name: Push to GHCR (main/tags only)
+        if: env.DO_PUSH == 'true'
+        run: |
+          docker push "$IMAGE:sha-$GITHUB_SHA"
+          docker push "$IMAGE:latest"

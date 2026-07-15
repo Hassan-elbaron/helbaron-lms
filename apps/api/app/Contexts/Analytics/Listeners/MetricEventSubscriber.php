@@ -3,13 +3,13 @@
 namespace App\Contexts\Analytics\Listeners;
 
 use App\Contexts\Analytics\Services\MetricRollupService;
-use App\Domains\Certification\Events\CertificateIssued;
 use App\Contexts\Commerce\Events\OrderPaid;
-use App\Domains\Crm\Events\ConsultingRequestCreated;
-use App\Platform\Identity\Events\UserRegistered;
 use App\Contexts\Learning\Events\CourseCompleted;
 use App\Contexts\Learning\Events\UserEnrolled;
+use App\Domains\Certification\Events\CertificateIssued;
+use App\Domains\Crm\Events\ConsultingRequestCreated;
 use App\Domains\Live\Events\SessionCompleted;
+use App\Platform\Identity\Events\UserRegistered;
 use Illuminate\Events\Dispatcher;
 
 /**

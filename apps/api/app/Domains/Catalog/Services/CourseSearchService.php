@@ -25,7 +25,7 @@ class CourseSearchService extends BaseService
         $query = Course::query()
             ->published()
             ->visible()
-            ->with(['level', 'language', 'categories', 'tags', 'trainers']);
+            ->with(['level', 'language', 'categories', 'tags', 'trainerLinks']);
 
         $this->applyCategory($query, $filters['category'] ?? null);
         $this->applyLevel($query, $filters['level'] ?? null);

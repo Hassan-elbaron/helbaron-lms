@@ -57,6 +57,8 @@ export const getProducts = (page = 1) => api.get<Paginated<Product>>(`products?p
 export const getCart = () => api.data<Cart>("cart");
 export const addToCart = (body: { product: string; coupon_code?: string }) =>
   api.post<ApiSuccess<Cart>>("cart", body);
+export const removeCartItem = (productPublicId: string) =>
+  api.del<ApiSuccess<Cart>>(`cart/items/${productPublicId}`);
 export const clearCart = () => api.del("cart");
 export const checkout = () => api.post<ApiSuccess<CheckoutResult>>("checkout");
 export const getOrders = (page = 1) => api.get<Paginated<Order>>(`orders?page=${page}`);

@@ -14,7 +14,7 @@ it('verifies a certificate publicly without auth and leaks no storage path', fun
     $user = User::factory()->create(['name' => 'Nour Hassan']);
     $course = Course::factory()->published()->create(['title' => 'Laravel Mastery']);
 
-    $cert = app(GenerateCertificateAction::class)->execute($user, $course);
+    $cert = app(GenerateCertificateAction::class)->executeByUserId($user->id, $course);
 
     $res = $this->getJson("/api/v1/certificates/verify/{$cert->verification_code}")->assertOk();
 
@@ -27,7 +27,7 @@ it('verifies a certificate publicly without auth and leaks no storage path', fun
 
 it('returns invalid for a revoked certificate and 404 for unknown codes', function () {
     CertificateTemplate::factory()->create(['is_active' => true]);
-    $cert = app(GenerateCertificateAction::class)->execute(User::factory()->create(), Course::factory()->published()->create());
+    $cert = app(GenerateCertificateAction::class)->executeByUserId(User::factory()->create()->id, Course::factory()->published()->create());
     app(RevokeCertificateAction::class)->execute($cert);
 
     $this->getJson("/api/v1/certificates/verify/{$cert->verification_code}")

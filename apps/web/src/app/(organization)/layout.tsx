@@ -8,7 +8,7 @@ import { organizationNav } from "@/config/nav";
 export default function OrganizationLayout({ children }: { children: ReactNode }) {
   return (
     <RequireAuth roles={["org_manager", "admin", "super_admin"]}>
-      <AppShell nav={organizationNav}>{children}</AppShell>
+      <AppShell nav={organizationNav} location="organization-sidebar">{children}</AppShell>
     </RequireAuth>
   );
 }

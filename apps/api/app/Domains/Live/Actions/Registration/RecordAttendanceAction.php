@@ -2,7 +2,6 @@
 
 namespace App\Domains\Live\Actions\Registration;
 
-use App\Platform\Identity\Models\User;
 use App\Domains\Live\Enums\AttendanceSource;
 use App\Domains\Live\Models\LiveSession;
 use App\Domains\Live\Models\SessionAttendance;
@@ -18,14 +17,14 @@ class RecordAttendanceAction extends BaseAction
     public function __construct(private readonly AttendanceValidationService $validator) {}
 
     /** @param array<string, mixed> $data optional left_at */
-    public function execute(LiveSession $session, User $user, array $data = []): SessionAttendance
+    public function executeByUserId(LiveSession $session, int $userId, array $data = []): SessionAttendance
     {
-        $this->validator->assertCanAttend($session, $user);
+        $this->validator->assertCanAttendByUserId($session, $userId);
 
-        return $this->transaction(function () use ($session, $user, $data): SessionAttendance {
+        return $this->transaction(function () use ($session, $userId, $data): SessionAttendance {
             $attendance = SessionAttendance::firstOrNew([
                 'session_id' => $session->id,
-                'user_id' => $user->id,
+                'user_id' => $userId,
             ]);
 
             if (! $attendance->exists) {

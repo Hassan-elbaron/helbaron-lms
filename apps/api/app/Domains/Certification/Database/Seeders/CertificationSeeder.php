@@ -6,7 +6,6 @@ use App\Domains\Certification\Enums\CertificationPermission;
 use App\Domains\Certification\Models\Badge;
 use App\Domains\Certification\Models\CertificateSetting;
 use App\Domains\Certification\Models\CertificateTemplate;
-use App\Platform\Identity\Enums\Role;
 use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
@@ -25,7 +24,7 @@ class CertificationSeeder extends Seeder
         foreach (CertificationPermission::values() as $permission) {
             Permission::findOrCreate($permission, 'web');
         }
-        SpatieRole::findByName(Role::Admin->value, 'web')->givePermissionTo(CertificationPermission::values());
+        SpatieRole::findByName('admin', 'web')->givePermissionTo(CertificationPermission::values());
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $template = CertificateTemplate::firstOrCreate(

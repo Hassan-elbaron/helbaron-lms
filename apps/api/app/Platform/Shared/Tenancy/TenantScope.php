@@ -44,4 +44,10 @@ final class TenantScope implements Scope
             return;
         }
 
-        $column = method_exists($model, 'g
+        $column = method_exists($model, 'getTenantColumn')
+            ? $model->getTenantColumn()
+            : app(TenantMetadata::class)->columnFor($model);
+
+        $builder->where($model->qualifyColumn($column), $tenantId->value);
+    }
+}

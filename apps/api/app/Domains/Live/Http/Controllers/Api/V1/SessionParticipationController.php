@@ -17,19 +17,19 @@ class SessionParticipationController extends Controller
 {
     public function register(Request $request, LiveSession $session, RegisterForSessionAction $action): JsonResponse
     {
-        $registration = $action->execute($session, $request->user());
+        $registration = $action->executeByUserId($session, $request->user()->id);
 
         return ApiResponse::created(new RegistrationResource($registration), 'Registered.');
     }
 
     public function join(Request $request, LiveSession $session, JoinSessionAction $action): JsonResponse
     {
-        return ApiResponse::success($action->execute($session, $request->user()));
+        return ApiResponse::success($action->executeByUserId($session, $request->user()->id));
     }
 
     public function attendance(RecordAttendanceRequest $request, LiveSession $session, RecordAttendanceAction $action): JsonResponse
     {
-        $attendance = $action->execute($session, $request->user(), $request->validated());
+        $attendance = $action->executeByUserId($session, $request->user()->id, $request->validated());
 
         return ApiResponse::success([
             'joined_at' => $attendance->joined_at?->toIso8601String(),

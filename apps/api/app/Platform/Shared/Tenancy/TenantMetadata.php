@@ -23,8 +23,7 @@ final class TenantMetadata
         private readonly string $defaultColumn,
         private readonly array $supportedColumns,
         private readonly array $overrides = [],
-    ) {
-    }
+    ) {}
 
     /** The tenant column for a model: a config override for its class, else the default. */
     public function columnFor(object $model): string

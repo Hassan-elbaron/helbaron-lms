@@ -2,6 +2,14 @@
 
 namespace App\Platform\Identity\Providers;
 
+use App\Platform\Identity\Adapters\CurrentUserAdapter;
+use App\Platform\Identity\Adapters\UserLookupAdapter;
+use App\Platform\Identity\Adapters\UserPermissionAdapter;
+use App\Platform\Identity\Adapters\UserRoleAdapter;
+use App\Platform\Identity\Contracts\CurrentUserPort;
+use App\Platform\Identity\Contracts\UserLookupPort;
+use App\Platform\Identity\Contracts\UserPermissionPort;
+use App\Platform\Identity\Contracts\UserRolePort;
 use App\Platform\Identity\Events\UserLoggedIn;
 use App\Platform\Identity\Events\UserRegistered;
 use App\Platform\Identity\Listeners\SendEmailOtpOnRegistration;
@@ -45,6 +53,13 @@ class IdentityServiceProvider extends BaseDomainServiceProvider
         // Identity owns RBAC, so it provides the concrete tenancy-bypass policy (platform admins
         // bypass tenant scoping). This overrides the Shared NullTenancyBypassPolicy default.
         $this->app->bind(TenancyBypassPolicy::class, RoleBasedTenancyBypassPolicy::class);
+
+        // IdentityContracts ports → Identity adapters. Identity is the ONLY layer that binds these
+        // (it alone may touch the User model). Consumers depend on the interfaces, not the adapters.
+        $this->app->bind(CurrentUserPort::class, CurrentUserAdapter::class);
+        $this->app->bind(UserLookupPort::class, UserLookupAdapter::class);
+        $this->app->bind(UserPermissionPort::class, UserPermissionAdapter::class);
+        $this->app->bind(UserRolePort::class, UserRoleAdapter::class);
     }
 
     protected function bootDomain(): void
@@ -64,4 +79,14 @@ class IdentityServiceProvider extends BaseDomainServiceProvider
 
         RateLimiter::for('identity-password', fn (Request $r) => Limit::perMinute(6)->by($r->ip()));
 
-        RateLimiter::for('identity-otp-verify', fn (Request $r) => L
+        RateLimiter::for('identity-otp-verify', fn (Request $r) => Limit::perMinute(10)
+            ->by(optional($r->user())->getAuthIdentifier() ?? $r->ip()));
+    }
+
+    private function registerListeners(): void
+    {
+        Event::listen(UserRegistered::class, SendEmailOtpOnRegistration::class);
+        Event::listen(UserRegistered::class, SendPhoneOtpOnRegistration::class);
+        Event::listen(UserLoggedIn::class, UpdateLastLoginTimestamp::class);
+    }
+}

@@ -1,7 +1,8 @@
 # HElbaron — v1.0.0-rc.1 (Release Candidate)
 
 A bilingual (AR/EN) enterprise Learning Management System. Laravel 12 modular-monolith API +
-custom Next.js 15 frontend. All 10 domains implemented, tested, and hardened for production.
+custom Next.js 15 frontend. All 10 domains implemented with test coverage; production hardening
+is in progress — see `PROJECT_STATUS.md` for the current, honest status and remaining gaps.
 
 ## Architecture
 
@@ -59,5 +60,6 @@ fakes locally and switch to real vendors by environment only. Secrets are inject
 - Readiness: `GET /api/v1/health/ready` (Postgres + Redis)
 
 ## Status
+See `PROJECT_STATUS.md` — the single source of truth for what is done, in progress, and open.
 Backend green on the Pest suite. Known follow-ups: Filament v3→v4 migration for `/admin`,
 Firebase FCM v1, and FK covering indexes after load testing (see `docs/audits/PRODUCTION_AUDIT.md`).

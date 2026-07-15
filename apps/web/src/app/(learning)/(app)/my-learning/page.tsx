@@ -20,7 +20,7 @@ export default function MyLearningPage() {
         empty={<EmptyState title={t("student.myLearning.empty")} />}
       >
         {(items) => (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="stagger-in grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((it) => (
               <CourseProgressCard
                 key={it.enrollment_id}

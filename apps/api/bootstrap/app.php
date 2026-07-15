@@ -1,11 +1,17 @@
 <?php
 
 use App\Http\Middleware\AssignCorrelationId;
+use App\Http\Middleware\ForceJsonForApi;
 use App\Http\Middleware\SecurityHeaders;
+use App\Platform\Features\Http\Middleware\EnsureFeatureEnabled;
 use App\Platform\Shared\Http\Middleware\ResolveTenant;
+use App\Platform\Shared\Support\ApiResponse;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Sentry\Laravel\Integration;
 
 /*
  | HElbaron API bootstrap.
@@ -36,5 +42,44 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(AssignCorrelationId::class);
         $middleware->append(SecurityHeaders::class);
 
+        // API is JSON-only: normalize api/* requests to expect JSON so error handling always takes
+        // the JSON path (prevents an unauthenticated request from attempting a redirect to a
+        // non-existent `login` route -> RouteNotFoundException -> 500). Prepended so it runs before
+        // auth. Scoped to the 'api' group; web/Filament are untouched.
+        $middleware->prependToGroup('api', ForceJsonForApi::class);
+
         // Multi-tenancy (A2-S02): resolve the active tenant on the API surface. Applied to the
-        // 'api' group only (NOT globall
+        // 'api' group only (NOT globally) — web/marketing and Filament panels activate the
+        // 'tenant.resolve' alias per-panel/per-route when needed. Resolution is also lazy in
+        // TenantContext, so this is an explicit early-population step; it changes no behavior
+        // until a model opts into the BelongsToTenant trait.
+        $middleware->appendToGroup('api', ResolveTenant::class);
+
+        // Feature-flag route guard: `->middleware('feature:<key>')`. Additive — default-on flags
+        // plus the built-in admin override mean a normal run is unaffected. See EnsureFeatureEnabled.
+        $middleware->alias([
+            'feature' => EnsureFeatureEnabled::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        // API is JSON-only: an unauthenticated api/* request must ALWAYS render the standard JSON 401
+        // envelope, regardless of the Accept header. Without this, the framework's default handler
+        // tries to redirect to a named `login` route (which this API-only app does not define) and
+        // throws RouteNotFoundException -> HTTP 500 whenever Accept is not application/json. Scoped to
+        // api/* so Filament/web auth (which does have a login route) is left untouched.
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return ApiResponse::error('UNAUTHENTICATED', 'Unauthenticated.', [], 401);
+            }
+
+            return null;
+        });
+
+        // Domain exceptions render themselves to the standard envelope; defaults handle the rest.
+        // Error tracking is optional: only wire Sentry when the package is actually installed.
+        // With no SENTRY_LARAVEL_DSN configured it is a no-op even when present.
+        if (class_exists(Integration::class)) {
+            Integration::handles($exceptions);
+        }
+    })
+    ->create();

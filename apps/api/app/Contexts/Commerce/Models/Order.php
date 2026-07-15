@@ -4,11 +4,9 @@ namespace App\Contexts\Commerce\Models;
 
 use App\Contexts\Commerce\Database\Factories\OrderFactory;
 use App\Contexts\Commerce\Enums\OrderStatus;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -38,11 +36,6 @@ class Order extends Model
             'fulfilled_at' => 'datetime',
             'refunded_at' => 'datetime',
         ];
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function items(): HasMany

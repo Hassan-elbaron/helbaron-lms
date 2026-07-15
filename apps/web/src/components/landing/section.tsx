@@ -24,7 +24,7 @@ export function SectionHeading({ eyebrow, title1, title2, subtitle }: { eyebrow?
   return (
     <Reveal className="mb-12 text-center">
       {eyebrow ? <div className="mb-4 flex justify-center"><Eyebrow>{eyebrow}</Eyebrow></div> : null}
-      <h2 className="mx-auto max-w-3xl font-serif text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-[1.1]">
+      <h2 className="text-h2 mx-auto max-w-3xl font-serif">
         {title1}{" "}
         {title2 ? <span className="italic text-copper">{title2}</span> : null}
       </h2>

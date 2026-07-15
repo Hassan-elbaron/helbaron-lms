@@ -14,4 +14,8 @@ class BillingProfile extends Model
 
     protected $fillable = ['organization_id', 'legal_name', 'tax_id', 'address', 'country'];
 
-    public function organizatio
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+}

@@ -10,6 +10,7 @@ import { z } from "zod";
 import { applyApiFieldErrors, errorMessage, isMfaRequired } from "@/lib/api/errors";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useI18n } from "@/lib/i18n/i18n-context";
+import { safeRedirect } from "@/lib/utils";
 import { AuthCard } from "@/components/auth/auth-card";
 import { Field } from "@/components/auth/field";
 import { FormAlert } from "@/components/auth/form-alert";
@@ -43,7 +44,7 @@ function LoginForm() {
 
   const mutation = useMutation({
     mutationFn: (v: Values) => auth.login(v.email, v.password, mfa ? v.mfa_code : undefined),
-    onSuccess: () => router.replace(params.get("redirect") ?? "/"),
+    onSuccess: () => router.replace(safeRedirect(params.get("redirect"))),
     onError: (err) => {
       if (isMfaRequired(err)) {
         setMfa(true);

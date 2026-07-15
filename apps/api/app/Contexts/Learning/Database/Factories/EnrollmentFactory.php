@@ -2,11 +2,11 @@
 
 namespace App\Contexts\Learning\Database\Factories;
 
-use App\Domains\Catalog\Models\Course;
-use App\Platform\Identity\Models\User;
 use App\Contexts\Learning\Enums\EnrollmentSource;
 use App\Contexts\Learning\Enums\EnrollmentStatus;
 use App\Contexts\Learning\Models\Enrollment;
+use App\Domains\Catalog\Models\Course;
+use App\Platform\Identity\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

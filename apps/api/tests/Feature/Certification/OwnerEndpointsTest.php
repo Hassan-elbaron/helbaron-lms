@@ -13,7 +13,7 @@ it('lists my certificates, returns a signed download url, and a share url', func
     CertificateTemplate::factory()->create(['is_active' => true]);
     $user = User::factory()->create();
     $course = Course::factory()->published()->create();
-    $cert = app(GenerateCertificateAction::class)->execute($user, $course);
+    $cert = app(GenerateCertificateAction::class)->executeByUserId($user->id, $course);
 
     Sanctum::actingAs($user);
 
@@ -30,7 +30,7 @@ it('lists my certificates, returns a signed download url, and a share url', func
 it('forbids viewing another user certificate', function () {
     CertificateTemplate::factory()->create(['is_active' => true]);
     $owner = User::factory()->create();
-    $cert = app(GenerateCertificateAction::class)->execute($owner, Course::factory()->published()->create());
+    $cert = app(GenerateCertificateAction::class)->executeByUserId($owner->id, Course::factory()->published()->create());
 
     Sanctum::actingAs(User::factory()->create());
     $this->getJson("/api/v1/certificates/{$cert->public_id}")->assertStatus(403);

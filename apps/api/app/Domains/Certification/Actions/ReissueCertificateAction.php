@@ -7,6 +7,7 @@ use App\Domains\Certification\Events\CertificateIssued;
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Services\SignatureService;
 use App\Platform\Shared\Actions\BaseAction;
+use App\Platform\Shared\Audit\AuditLogger;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -15,7 +16,10 @@ use Illuminate\Support\Facades\Storage;
  */
 class ReissueCertificateAction extends BaseAction
 {
-    public function __construct(private readonly SignatureService $signatures) {}
+    public function __construct(
+        private readonly SignatureService $signatures,
+        private readonly AuditLogger $audit,
+    ) {}
 
     public function execute(Certificate $certificate): Certificate
     {
@@ -36,6 +40,8 @@ class ReissueCertificateAction extends BaseAction
 
             return $certificate;
         });
+
+        $this->audit->log('certificate.reissued', $certificate);
 
         CertificateIssued::dispatch($certificate);
 

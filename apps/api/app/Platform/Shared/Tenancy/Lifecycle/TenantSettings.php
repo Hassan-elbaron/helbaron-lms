@@ -13,8 +13,7 @@ final class TenantSettings
     /** @param array<string, mixed> $values */
     public function __construct(
         private readonly array $values = [],
-    ) {
-    }
+    ) {}
 
     public function get(string $key, mixed $default = null): mixed
     {

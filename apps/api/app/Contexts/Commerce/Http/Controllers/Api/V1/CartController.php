@@ -5,6 +5,7 @@ namespace App\Contexts\Commerce\Http\Controllers\Api\V1;
 use App\Contexts\Commerce\Actions\Cart\AddToCartAction;
 use App\Contexts\Commerce\Actions\Cart\ApplyCouponAction;
 use App\Contexts\Commerce\Actions\Cart\ClearCartAction;
+use App\Contexts\Commerce\Actions\Cart\RemoveFromCartAction;
 use App\Contexts\Commerce\Http\Requests\AddToCartRequest;
 use App\Contexts\Commerce\Http\Resources\CartResource;
 use App\Contexts\Commerce\Models\Product;
@@ -19,7 +20,7 @@ class CartController extends Controller
 {
     public function show(Request $request, CartService $carts): JsonResponse
     {
-        $cart = $carts->current($request->user())->load(['items.product', 'coupon']);
+        $cart = $carts->currentByUserId($request->user()->id)->load(['items.product', 'coupon']);
 
         return ApiResponse::success(new CartResource(['cart' => $cart, 'totals' => $carts->totals($cart)]));
     }
@@ -33,20 +34,34 @@ class CartController extends Controller
             throw new NotFoundHttpException('Product not found.');
         }
 
-        $add->execute($request->user(), $product);
+        $add->executeByUserId($request->user()->id, $product);
 
         if (! empty($data['coupon_code'])) {
-            $applyCoupon->execute($request->user(), $data['coupon_code']);
+            $applyCoupon->executeByUserId($request->user()->id, $data['coupon_code']);
         }
 
-        $cart = $carts->current($request->user())->load(['items.product', 'coupon']);
+        $cart = $carts->currentByUserId($request->user()->id)->load(['items.product', 'coupon']);
 
         return ApiResponse::success(new CartResource(['cart' => $cart, 'totals' => $carts->totals($cart)]), 'Cart updated.');
     }
 
+    public function removeItem(string $product, Request $request, RemoveFromCartAction $remove, CartService $carts): JsonResponse
+    {
+        $model = Product::where('public_id', $product)->first();
+        if ($model === null) {
+            throw new NotFoundHttpException('Product not found.');
+        }
+
+        $remove->executeByUserId($request->user()->id, $model);
+
+        $cart = $carts->currentByUserId($request->user()->id)->load(['items.product', 'coupon']);
+
+        return ApiResponse::success(new CartResource(['cart' => $cart, 'totals' => $carts->totals($cart)]), 'Item removed.');
+    }
+
     public function destroy(Request $request, ClearCartAction $clear): JsonResponse
     {
-        $clear->execute($request->user());
+        $clear->executeByUserId($request->user()->id);
 
         return ApiResponse::deleted('Cart cleared.');
     }

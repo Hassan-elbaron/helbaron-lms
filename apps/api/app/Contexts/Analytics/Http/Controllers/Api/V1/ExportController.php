@@ -26,7 +26,7 @@ class ExportController extends Controller
             throw new NotFoundHttpException('Report not found.');
         }
 
-        $job = $action->execute($request->user(), $data['format'], 'report', [
+        $job = $action->executeByUserId($request->user()->id, $data['format'], 'report', [
             'report_definition_id' => $report->id,
             'from' => $data['from'] ?? null,
             'to' => $data['to'] ?? null,

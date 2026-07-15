@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Route;
  | Certification endpoints. Base 'api' prefix + these => /api/v1/*.
  */
 Route::prefix('v1')->group(function (): void {
-    // PUBLIC verification (no auth)
-    Route::get('certificates/verify/{code}', [VerificationController::class, 'show']);
+    // PUBLIC verification (no auth; throttled per IP against enumeration)
+    Route::get('certificates/verify/{code}', [VerificationController::class, 'show'])
+        ->middleware('throttle:certification-verify');
 
     // Signed PDF stream (no auth guard; signature authorizes)
     Route::get('certificates/{certificate}/file', CertificateFileController::class)

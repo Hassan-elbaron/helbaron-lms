@@ -5,7 +5,6 @@ namespace App\Contexts\Commerce\Services;
 use App\Contexts\Commerce\Models\Contract;
 use App\Contexts\Commerce\Models\ContractTemplate;
 use App\Contexts\Commerce\Models\Order;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Services\BaseService;
 
 /**
@@ -24,7 +23,7 @@ class ContractService extends BaseService
             ->first();
     }
 
-    public function createForOrder(User $user, Order $order): ?Contract
+    public function createForOrderByUserId(int $userId, Order $order): ?Contract
     {
         $template = $this->activeTemplate();
 
@@ -33,7 +32,7 @@ class ContractService extends BaseService
         }
 
         return Contract::create([
-            'user_id' => $user->id,
+            'user_id' => $userId,
             'order_id' => $order->id,
             'template_id' => $template->id,
             'status' => 'pending',

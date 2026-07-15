@@ -10,7 +10,8 @@ RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --no-in
 # ---- Stage 2: runtime ----
 FROM php:8.3-fpm-alpine AS runtime
 
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+# Pinned installer release (supply-chain: never track "latest").
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.14/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions \
     && install-php-extensions pdo_pgsql pgsql mbstring bcmath intl zip pcntl opcache \
     && apk add --no-cache fcgi
@@ -22,8 +23,7 @@ COPY --from=vendor /app/vendor ./vendor
 COPY . .
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer dump-autoload --optimize --no-dev --classmap-authoritative \
-    && chown -R www-data:www-data storage bootstrap/cache \
-    && cp infra/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini 2>/dev/null || true
+    && chown -R www-data:www-data storage bootstrap/cache
 
 # Production PHP + OPcache tuning.
 COPY infra/php/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
@@ -34,4 +34,7 @@ HEALTHCHECK --interval=15s --timeout=5s --retries=3 \
     CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1
 
 EXPOSE 9000
+
+# Run the FPM master as www-data (storage/ and bootstrap/cache are chowned above).
+USER www-data
 CMD ["php-fpm"]

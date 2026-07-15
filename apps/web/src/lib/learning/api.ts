@@ -1,7 +1,7 @@
 import { api } from "@/lib/api/client";
 import type { ApiSuccess } from "@/types/api";
 
-export type LessonType = "video" | "article" | "pdf" | "download" | "external_link" | "quiz_placeholder";
+export type LessonType = "video" | "audio" | "article" | "pdf" | "download" | "external_link" | "quiz_placeholder";
 export type ProgressStatus = "not_started" | "in_progress" | "completed";
 
 export type LearnLesson = {

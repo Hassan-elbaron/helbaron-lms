@@ -5,13 +5,14 @@ import { Play, Star, Clock, BookOpen } from "lucide-react";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { pickLocale } from "@/config/theme";
 import type { DemoCourse } from "@/config/demo";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CourseThumb } from "./course-thumb";
 
 export function CoursePreviewCard({ course, onPlay }: { course: DemoCourse; onPlay: (id: string) => void }) {
   const { locale } = useI18n();
   return (
-    <div className="card-hover group overflow-hidden rounded-2xl border bg-card shadow-sm hover:border-primary/30 hover:shadow-xl">
+    <Card className="card-hover group overflow-hidden rounded-xl p-0 hover:border-primary/30 hover:elevation-4">
       <div className="relative">
         <CourseThumb code={course.code} color={course.color} className="aspect-video w-full" />
         <button
@@ -19,7 +20,7 @@ export function CoursePreviewCard({ course, onPlay }: { course: DemoCourse; onPl
           aria-label="Play preview"
           className="absolute inset-0 flex items-center justify-center bg-primary/0 transition-colors group-hover:bg-primary/20"
         >
-          <span className="flex size-14 items-center justify-center rounded-full bg-white/90 text-primary shadow-lg transition-transform group-hover:scale-110">
+          <span className="flex size-14 items-center justify-center rounded-full bg-background/95 text-primary elevation-3 transition-transform group-hover:scale-110">
             <Play className="size-6 translate-x-0.5 fill-current" aria-hidden />
           </span>
         </button>
@@ -44,6 +45,6 @@ export function CoursePreviewCard({ course, onPlay }: { course: DemoCourse; onPl
           <span className="inline-flex items-center gap-1"><Clock className="size-3.5" aria-hidden /> {course.hours}h</span>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

@@ -53,7 +53,7 @@ export default function ReportsPage() {
             return <EmptyState icon={<FileText className="size-8" />} title={t("analytics.reports.empty")} />;
           }
           return (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="stagger-in grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {filtered.map((r) => (
                 <Card key={r.id}>
                   <CardContent className="space-y-3 p-5">

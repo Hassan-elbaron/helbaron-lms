@@ -6,7 +6,7 @@ use App\Domains\Crm\Enums\MemberStatus;
 use App\Domains\Crm\Events\MemberInvited;
 use App\Domains\Crm\Models\Organization;
 use App\Domains\Crm\Models\OrganizationMember;
-use App\Platform\Identity\Models\User;
+use App\Platform\Identity\Contracts\UserLookupPort;
 use App\Platform\Shared\Actions\BaseAction;
 
 /**
@@ -15,6 +15,8 @@ use App\Platform\Shared\Actions\BaseAction;
  */
 class InviteMemberAction extends BaseAction
 {
+    public function __construct(private readonly UserLookupPort $users) {}
+
     /** @param array<string, mixed> $data email, role? */
     public function execute(Organization $organization, array $data): OrganizationMember
     {
@@ -27,11 +29,11 @@ class InviteMemberAction extends BaseAction
                 return [$existing, false];
             }
 
-            $user = User::where('email', $data['email'])->first();
+            $userId = $this->users->idByEmail($data['email']);
 
             $member = OrganizationMember::create([
                 'organization_id' => $organization->id,
-                'user_id' => $user?->id,
+                'user_id' => $userId,
                 'email' => $data['email'],
                 'role' => $data['role'] ?? 'member',
                 'status' => MemberStatus::Invited->value,

@@ -2,7 +2,6 @@
 
 namespace App\Domains\Live\Actions\Registration;
 
-use App\Platform\Identity\Models\User;
 use App\Domains\Live\Enums\RegistrationStatus;
 use App\Domains\Live\Events\UserRegisteredForSession;
 use App\Domains\Live\Models\LiveSession;
@@ -18,15 +17,15 @@ class RegisterForSessionAction extends BaseAction
 {
     public function __construct(private readonly RegistrationValidationService $validator) {}
 
-    public function execute(LiveSession $session, User $user): SessionRegistration
+    public function executeByUserId(LiveSession $session, int $userId): SessionRegistration
     {
         $this->validator->assertOpen($session);
 
-        [$registration, $created] = $this->transaction(function () use ($session, $user): array {
+        [$registration, $created] = $this->transaction(function () use ($session, $userId): array {
             // Lock the session row to serialize capacity decisions.
             $locked = LiveSession::whereKey($session->id)->lockForUpdate()->first();
 
-            $existing = SessionRegistration::where('session_id', $locked->id)->where('user_id', $user->id)->first();
+            $existing = SessionRegistration::where('session_id', $locked->id)->where('user_id', $userId)->first();
             if ($existing !== null) {
                 if ($existing->status === RegistrationStatus::Cancelled) {
                     $existing->forceFill([
@@ -40,7 +39,7 @@ class RegisterForSessionAction extends BaseAction
 
             $registration = SessionRegistration::create([
                 'session_id' => $locked->id,
-                'user_id' => $user->id,
+                'user_id' => $userId,
                 'status' => $this->validator->statusForNewRegistration($locked),
                 'registered_at' => now(),
             ]);

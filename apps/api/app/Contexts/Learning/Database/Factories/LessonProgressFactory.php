@@ -2,10 +2,10 @@
 
 namespace App\Contexts\Learning\Database\Factories;
 
-use App\Domains\Authoring\Models\Lesson;
 use App\Contexts\Learning\Enums\LessonProgressStatus;
 use App\Contexts\Learning\Models\Enrollment;
 use App\Contexts\Learning\Models\LessonProgress;
+use App\Domains\Authoring\Models\Lesson;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

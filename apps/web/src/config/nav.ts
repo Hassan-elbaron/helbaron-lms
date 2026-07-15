@@ -1,12 +1,16 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  LayoutDashboard, GraduationCap, Award, Bell, User, Settings, Building2, Building, Headset,
+  LayoutDashboard, GraduationCap, Award, Bell, User, Building2, Building, Headset,
   Contact, Users, BarChart3, FileText, LayoutGrid, PlayCircle, ShoppingCart, FileSignature,
-  Presentation, BookOpen, CalendarClock, Wallet,
+  Presentation, LineChart,
 } from "lucide-react";
 
-/** labelKey is a dot-path into the i18n dictionary (resolved via useI18n().t). */
-export type NavItem = { labelKey: string; href: string; icon: LucideIcon };
+/**
+ * labelKey is a dot-path into the i18n dictionary (resolved via useI18n().t). `flag` optionally gates
+ * the entry behind a feature flag: the item shows unless the flag is explicitly OFF (default-on — an
+ * unknown/unreachable flag keeps the item visible). The underlying route is never removed.
+ */
+export type NavItem = { labelKey: string; href: string; icon: LucideIcon; flag?: string };
 
 export const learningNav: NavItem[] = [
   { labelKey: "nav.dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -15,10 +19,11 @@ export const learningNav: NavItem[] = [
   { labelKey: "nav.certificates", href: "/certificates", icon: Award },
 ];
 
+// Account is managed via Profile (details) and Notifications (preferences). There is no separate
+// "Settings" domain, so no Settings nav item is exposed (avoids a dead/stub destination).
 export const accountNav: NavItem[] = [
-  { labelKey: "nav.profile", href: "/account/profile", icon: User },
-  { labelKey: "nav.notifications", href: "/account/notifications", icon: Bell },
-  { labelKey: "nav.settings", href: "/account/settings", icon: Settings },
+  { labelKey: "nav.profile", href: "/profile", icon: User },
+  { labelKey: "nav.notifications", href: "/notifications", icon: Bell },
 ];
 
 export const commerceNav: NavItem[] = [
@@ -26,19 +31,19 @@ export const commerceNav: NavItem[] = [
   { labelKey: "nav.contracts", href: "/contracts", icon: FileSignature },
 ];
 
+// Instructor Portal: ownership-scoped teaching surface (dashboard, courses, students) plus the
+// shared profile page.
 export const instructorNav: NavItem[] = [
-  { labelKey: "nav.teach", href: "/teach", icon: Presentation },
-  { labelKey: "nav.courses", href: "/teach/courses", icon: BookOpen },
-  { labelKey: "nav.sessions", href: "/teach/sessions", icon: CalendarClock },
-  { labelKey: "nav.students", href: "/teach/students", icon: Users },
-  { labelKey: "nav.earnings", href: "/teach/earnings", icon: Wallet },
+  { labelKey: "nav.teachDashboard", href: "/teach", icon: LayoutDashboard },
+  { labelKey: "nav.teachCourses", href: "/teach/courses", icon: Presentation },
+  { labelKey: "nav.teachStudents", href: "/teach/students", icon: Users },
+  { labelKey: "nav.profile", href: "/profile", icon: User },
 ];
 
 export const organizationNav: NavItem[] = [
   { labelKey: "nav.organization", href: "/org", icon: Building2 },
   { labelKey: "nav.organizations", href: "/org/organizations", icon: Building },
   { labelKey: "nav.consulting", href: "/org/consulting", icon: Headset },
-  { labelKey: "nav.settings", href: "/account/settings", icon: Settings },
 ];
 
 export const crmNav: NavItem[] = [
@@ -51,5 +56,6 @@ export const crmNav: NavItem[] = [
 export const analyticsNav: NavItem[] = [
   { labelKey: "nav.analytics", href: "/analytics", icon: BarChart3 },
   { labelKey: "nav.reports", href: "/reports", icon: FileText },
+  { labelKey: "nav.reportsInsights", href: "/reports/insights", icon: LineChart, flag: "reports" },
   { labelKey: "nav.dashboards", href: "/dashboards", icon: LayoutGrid },
 ];

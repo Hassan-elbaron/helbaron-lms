@@ -22,6 +22,20 @@ php artisan migrate --force
 php artisan migrate:status
 ```
 
+## Backups & deploys
+```bash
+./scripts/backup.sh                 # ad-hoc pg_dump -> backups/db-<ts>.sql.gz (+ optional S3)
+./scripts/verify-backup.sh          # restore drill into a temp DB (safe, automated)
+./scripts/restore.sh --force <file> # DESTRUCTIVE restore (typed confirmation required)
+./scripts/deploy.sh sha-<commit>    # deploy a CI-pushed GHCR image (or no arg = on-host build)
+./scripts/rollback.sh ghcr.io/<org>/<repo>/api:sha-<commit>
+```
+Scheduled dumps run via the `db-backup` service in `docker-compose.prod.yml`
+(interval `BACKUP_INTERVAL_SECONDS`, retention `BACKUP_RETENTION_DAYS`). CI pushes
+`ghcr.io/<repo>/api` and `.../web` images tagged `sha-<commit>` + `latest` on main;
+deploys run via the `Deploy` GitHub workflow (see `.github/workflows/deploy.yml`).
+Uptime probing: `.github/workflows/uptime.yml` (set the `UPTIME_URL` repo variable).
+
 ## Correlation IDs
 Every request carries `X-Correlation-ID` (echoed on the response and in the error envelope).
 Grep structured logs by `correlation_id` to trace a request across web + queue.

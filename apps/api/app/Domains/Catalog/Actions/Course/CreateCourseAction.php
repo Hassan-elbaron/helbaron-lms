@@ -45,7 +45,7 @@ class CreateCourseAction extends BaseAction
             $course->tags()->sync($data['tag_ids']);
         }
         if (isset($data['trainer_ids'])) {
-            $course->trainers()->sync($data['trainer_ids']);
+            $course->syncTrainers($data['trainer_ids']);
         }
     }
 }

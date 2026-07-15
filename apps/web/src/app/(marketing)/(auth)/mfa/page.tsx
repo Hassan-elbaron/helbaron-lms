@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { getToken } from "@/lib/api/client";
+import { hasSession } from "@/lib/api/client";
 import { applyApiFieldErrors, errorMessage } from "@/lib/api/errors";
 import { verifyMfa } from "@/lib/auth/api";
 import { useI18n } from "@/lib/i18n/i18n-context";
@@ -28,7 +28,7 @@ export default function MfaPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
-    setAuthed(Boolean(getToken()));
+    setAuthed(hasSession());
     setReady(true);
   }, []);
 

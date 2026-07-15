@@ -12,6 +12,9 @@ apps/api/.env.docker
 *.key
 auth.json
 
+# Database backups (written by scripts/backup.sh and the db-backup compose service)
+backups/
+
 # Runtime-generated artifacts (should not be committed)
 apps/api/storage/app/private/certificates/
 apps/api/storage/framework/views/*.php

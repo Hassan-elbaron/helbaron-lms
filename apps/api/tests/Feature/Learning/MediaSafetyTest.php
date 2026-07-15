@@ -1,10 +1,10 @@
 <?php
 
+use App\Contexts\Learning\Actions\Enrollment\GrantEnrollmentAction;
+use App\Contexts\Learning\Enums\EnrollmentSource;
 use App\Domains\Authoring\Enums\LessonType;
 use App\Domains\Authoring\Models\LessonMedia;
 use App\Platform\Identity\Models\User;
-use App\Contexts\Learning\Actions\Enrollment\GrantEnrollmentAction;
-use App\Contexts\Learning\Enums\EnrollmentSource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 
@@ -23,7 +23,7 @@ it('never exposes s3_key or mux_asset_id in the player', function () {
     ]);
 
     $user = User::factory()->create();
-    app(GrantEnrollmentAction::class)->execute($user, $course, EnrollmentSource::Free);
+    app(GrantEnrollmentAction::class)->executeByUserId($user->id, $course->id, EnrollmentSource::Free);
     Sanctum::actingAs($user);
 
     $res = $this->getJson("/api/v1/lessons/{$lesson->public_id}")->assertOk();

@@ -8,7 +8,6 @@ use App\Domains\Authoring\Enums\PublishState;
 use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Models\Course;
-use App\Platform\Identity\Enums\Role;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;
@@ -28,8 +27,8 @@ class AuthoringSeeder extends Seeder
             Permission::findOrCreate($permission, 'web');
         }
 
-        foreach ([Role::Admin, Role::Instructor] as $role) {
-            $model = SpatieRole::findByName($role->value, 'web');
+        foreach (['admin', 'instructor'] as $role) {
+            $model = SpatieRole::findByName($role, 'web');
             $model->givePermissionTo(AuthoringPermission::values());
         }
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, Star } from "lucide-react";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { brandTheme, pickLocale } from "@/config/theme";
+import type { HeroContent } from "@/lib/homepage/api";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "./reveal";
 import { HeroArt } from "./hero-art";
@@ -20,9 +21,18 @@ function Chip({ eyebrow, body, className }: { eyebrow: string; body: string; cla
   );
 }
 
-export function Hero() {
+/**
+ * Landing hero. Renders CMS-managed content when provided (via the Homepage builder); otherwise
+ * falls back to the built-in brand default so the section is never empty.
+ */
+export function Hero({ content }: { content?: HeroContent }) {
   const { locale } = useI18n();
   const h = brandTheme.hero;
+
+  const cmsHeadline = content?.headline ? pickLocale(content.headline, locale) : null;
+  const subtitle = content?.subheadline ? pickLocale(content.subheadline, locale) : pickLocale(h.subtitle, locale);
+  const primary = content?.cta_primary ?? h.primaryCta;
+  const secondary = content?.cta_secondary ?? h.secondaryCta;
 
   return (
     <section className="relative overflow-hidden">
@@ -36,22 +46,28 @@ export function Hero() {
             <span className="h-px w-8 bg-copper/50" aria-hidden />
             {pickLocale(h.eyebrow, locale)}
           </div>
-          <h1 className="font-serif text-[2.75rem] font-semibold leading-[1.02] tracking-tight sm:text-[4.25rem]">
-            <span className="block text-primary">{pickLocale(h.headlineLine1, locale)}</span>
-            <span className="block italic text-copper">{pickLocale(h.headlineEmphasis, locale)}</span>
-            <span className="block text-primary">{pickLocale(h.headlineLine2, locale)}</span>
-          </h1>
-          <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">{pickLocale(h.subtitle, locale)}</p>
+          {cmsHeadline ? (
+            <h1 className="text-display font-serif text-primary">
+              {cmsHeadline}
+            </h1>
+          ) : (
+            <h1 className="text-display font-serif">
+              <span className="block text-primary">{pickLocale(h.headlineLine1, locale)}</span>
+              <span className="block italic text-copper">{pickLocale(h.headlineEmphasis, locale)}</span>
+              <span className="block text-primary">{pickLocale(h.headlineLine2, locale)}</span>
+            </h1>
+          )}
+          <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">{subtitle}</p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Button asChild size="lg" className="shine relative overflow-hidden">
-              <Link href={h.primaryCta.href}>
-                {pickLocale(h.primaryCta.label, locale)}
+              <Link href={primary.href}>
+                {pickLocale(primary.label, locale)}
                 <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href={h.secondaryCta.href}>{pickLocale(h.secondaryCta.label, locale)}</Link>
+              <Link href={secondary.href}>{pickLocale(secondary.label, locale)}</Link>
             </Button>
           </div>
 

@@ -1,15 +1,43 @@
 import { forwardRef, type HTMLAttributes, type TdHTMLAttributes, type ThHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(({ className, ...props }, ref) => (
+export type TableDensity = "comfortable" | "compact";
+
+export interface TableProps extends HTMLAttributes<HTMLTableElement> {
+  /**
+   * Row density. `comfortable` (default) keeps the original padding; `compact` opts into the
+   * tighter `[data-density="compact"]` spacing (see globals.css). Additive + non-breaking.
+   */
+  density?: TableDensity;
+}
+
+const Table = forwardRef<HTMLTableElement, TableProps>(({ className, density, ...props }, ref) => (
   <div className="relative w-full overflow-auto">
-    <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
+    <table
+      ref={ref}
+      data-density={density === "compact" ? "compact" : undefined}
+      className={cn("w-full caption-bottom text-sm", className)}
+      {...props}
+    />
   </div>
 ));
 Table.displayName = "Table";
 
-const TableHeader = forwardRef<HTMLTableSectionElement, HTMLAttributes<HTMLTableSectionElement>>(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+export interface TableHeaderProps extends HTMLAttributes<HTMLTableSectionElement> {
+  /** Pin the header to the top of a scrolling table body. */
+  sticky?: boolean;
+}
+
+const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(({ className, sticky, ...props }, ref) => (
+  <thead
+    ref={ref}
+    className={cn(
+      "[&_tr]:border-b",
+      sticky && "sticky top-0 z-[1] bg-card [&_tr]:shadow-[inset_0_-1px_0_0_var(--color-border)]",
+      className,
+    )}
+    {...props}
+  />
 ));
 TableHeader.displayName = "TableHeader";
 
@@ -19,7 +47,15 @@ const TableBody = forwardRef<HTMLTableSectionElement, HTMLAttributes<HTMLTableSe
 TableBody.displayName = "TableBody";
 
 const TableRow = forwardRef<HTMLTableRowElement, HTMLAttributes<HTMLTableRowElement>>(({ className, ...props }, ref) => (
-  <tr ref={ref} className={cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)} {...props} />
+  <tr
+    ref={ref}
+    className={cn(
+      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+      className,
+    )}
+    {...props}
+  />
 ));
 TableRow.displayName = "TableRow";
 

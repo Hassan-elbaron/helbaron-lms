@@ -131,8 +131,8 @@ it('Maintenance mode bypasses tenant scoping', function (): void {
 it('Queue jobs bypass tenant scoping via WithoutTenancy middleware', function (): void {
     app(TenantContext::class)->set(TenantId::from(1));
 
-    $middleware = new WithoutTenancy();
-    $count = $middleware->handle(new stdClass(), static fn ($job): int => TenantLeakModel::count());
+    $middleware = new WithoutTenancy;
+    $count = $middleware->handle(new stdClass, static fn ($job): int => TenantLeakModel::count());
 
     expect($count)->toBe(3);
 });

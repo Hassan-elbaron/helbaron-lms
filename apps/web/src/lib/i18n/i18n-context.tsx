@@ -1,8 +1,18 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { defaultLocale, isRtl, type Locale } from "./config";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { defaultLocale, isLocale, isRtl, localeCookieName, type Locale } from "./config";
 import { dictionaries } from "./dictionaries";
+
+const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
+
+/** Read the persisted locale from document.cookie (client only). */
+function readLocaleCookie(): Locale | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${localeCookieName}=([^;]+)`));
+  const value = match ? decodeURIComponent(match[1]) : null;
+  return isLocale(value) ? value : null;
+}
 
 type Translate = (key: string) => string;
 
@@ -34,7 +44,16 @@ export function I18nProvider({ children, initialLocale = defaultLocale }: { chil
     if (typeof document !== "undefined") {
       document.documentElement.lang = next;
       document.documentElement.dir = isRtl(next) ? "rtl" : "ltr";
+      // Persist so the server layout can render the right lang/dir on the next request.
+      document.cookie = `${localeCookieName}=${next}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax`;
     }
+  }, []);
+
+  // Initialize from the persisted cookie on mount (covers statically rendered pages).
+  useEffect(() => {
+    const persisted = readLocaleCookie();
+    if (persisted && persisted !== locale) setLocale(persisted);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
   const value = useMemo<I18nContextValue>(() => {

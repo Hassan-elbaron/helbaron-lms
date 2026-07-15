@@ -2,7 +2,6 @@
 
 namespace App\Domains\Live\Services;
 
-use App\Platform\Identity\Models\User;
 use App\Domains\Live\Enums\RegistrationStatus;
 use App\Domains\Live\Exceptions\NotRegisteredException;
 use App\Domains\Live\Models\LiveSession;
@@ -13,10 +12,10 @@ use App\Platform\Shared\Services\BaseService;
  */
 class AttendanceValidationService extends BaseService
 {
-    public function assertCanAttend(LiveSession $session, User $user): void
+    public function assertCanAttendByUserId(LiveSession $session, int $userId): void
     {
         $registered = $session->registrations()
-            ->where('user_id', $user->id)
+            ->where('user_id', $userId)
             ->whereIn('status', [RegistrationStatus::Registered->value, RegistrationStatus::Waitlisted->value])
             ->exists();
 

@@ -9,6 +9,9 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./tests/setup.ts"],
     css: true,
+    // Playwright specs live in e2e/ and must not be collected by Vitest.
+    include: ["tests/**/*.test.{ts,tsx}"],
+    exclude: ["e2e/**", "node_modules/**"],
   },
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },

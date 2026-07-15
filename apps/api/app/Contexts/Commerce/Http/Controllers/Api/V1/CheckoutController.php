@@ -13,7 +13,7 @@ class CheckoutController extends Controller
 {
     public function store(Request $request, CheckoutAction $action): JsonResponse
     {
-        $result = $action->execute($request->user());
+        $result = $action->executeByUserId($request->user()->id);
 
         return ApiResponse::created([
             'order' => (new OrderResource($result['order']->load(['items', 'invoice'])))->resolve(),

@@ -2,11 +2,10 @@
 
 namespace App\Contexts\Learning\Models;
 
-use App\Domains\Catalog\Models\Course;
-use App\Platform\Identity\Models\User;
 use App\Contexts\Learning\Database\Factories\EnrollmentFactory;
 use App\Contexts\Learning\Enums\EnrollmentSource;
 use App\Contexts\Learning\Enums\EnrollmentStatus;
+use App\Domains\Catalog\Models\Course;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,11 +39,6 @@ class Enrollment extends Model
             'enrolled_at' => 'datetime',
             'completed_at' => 'datetime',
         ];
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function course(): BelongsTo

@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/student/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { LoadingState } from "@/components/states/loading-state";
 import { ErrorState } from "@/components/states/error-state";
 import { toast } from "@/components/ui/toast";
@@ -120,12 +121,11 @@ function LessonInner() {
           <CardTitle className="text-base">{t("learn.lesson.notes")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <textarea
+          <Textarea
             rows={4}
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
             placeholder={t("learn.lesson.notePlaceholder")}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           />
           <Button
             size="sm"

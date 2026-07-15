@@ -9,6 +9,7 @@ namespace App\Domains\Authoring\Enums;
 enum LessonType: string
 {
     case Video = 'video';
+    case Audio = 'audio';
     case Article = 'article';
     case Pdf = 'pdf';
     case Download = 'download';
@@ -19,6 +20,7 @@ enum LessonType: string
     {
         return match ($this) {
             self::Video => 'Video',
+            self::Audio => 'Audio',
             self::Article => 'Article',
             self::Pdf => 'PDF',
             self::Download => 'Download',
@@ -30,7 +32,7 @@ enum LessonType: string
     /** Types that carry media metadata (Mux/S3). */
     public function usesMedia(): bool
     {
-        return in_array($this, [self::Video, self::Pdf, self::Download], true);
+        return in_array($this, [self::Video, self::Audio, self::Pdf, self::Download], true);
     }
 
     /** @return array<int, string> */

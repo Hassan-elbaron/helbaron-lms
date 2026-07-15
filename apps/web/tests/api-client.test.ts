@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { apiFetch, ApiRequestError, setToken } from "@/lib/api/client";
+import { apiFetch, ApiRequestError, hasSession, sessionLogin, sessionLogout } from "@/lib/api/client";
 
 function mockFetch(status: number, body: unknown) {
   return vi.fn().mockResolvedValue({
@@ -10,16 +10,37 @@ function mockFetch(status: number, body: unknown) {
   });
 }
 
+function clearMarkerCookie() {
+  document.cookie = "helbaron_authed=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+}
+
 afterEach(() => {
   vi.restoreAllMocks();
-  setToken(null);
+  clearMarkerCookie();
 });
 
 describe("apiFetch", () => {
   it("returns the parsed success envelope", async () => {
     vi.stubGlobal("fetch", mockFetch(200, { data: { id: "1" } }));
-    const res = await apiFetch<{ data: { id: string } }>("courses", { auth: false });
+    const res = await apiFetch<{ data: { id: string } }>("courses");
     expect(res.data.id).toBe("1");
+  });
+
+  it("routes browser requests through the same-origin BFF proxy", async () => {
+    const fetchMock = mockFetch(200, { data: null });
+    vi.stubGlobal("fetch", fetchMock);
+    await apiFetch("profile");
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/backend/profile");
+  });
+
+  it("never attaches an Authorization header from browser code (token is httpOnly)", async () => {
+    const fetchMock = mockFetch(200, { data: null });
+    vi.stubGlobal("fetch", fetchMock);
+    await apiFetch("profile");
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const headers = init.headers as Record<string, string>;
+    expect(headers.Authorization).toBeUndefined();
+    expect(init.credentials).toBe("same-origin");
   });
 
   it("throws a typed ApiRequestError on the standard error envelope", async () => {
@@ -27,20 +48,44 @@ describe("apiFetch", () => {
       "fetch",
       mockFetch(422, { error: { code: "VALIDATION", message: "Invalid", correlation_id: "c1", timestamp: "t" } }),
     );
-    await expect(apiFetch("courses", { auth: false })).rejects.toMatchObject({
+    await expect(apiFetch("courses")).rejects.toMatchObject({
       name: "ApiRequestError",
       status: 422,
       code: "VALIDATION",
     });
   });
+});
 
-  it("attaches the bearer token when present", async () => {
-    const fetchMock = mockFetch(200, { data: null });
+describe("session helpers", () => {
+  it("hasSession reflects the marker cookie only", () => {
+    expect(hasSession()).toBe(false);
+    document.cookie = "helbaron_authed=1; path=/";
+    expect(hasSession()).toBe(true);
+  });
+
+  it("sessionLogin posts credentials to /api/session and returns the user", async () => {
+    const fetchMock = mockFetch(200, { data: { user: { id: "u1" } } });
     vi.stubGlobal("fetch", fetchMock);
-    setToken("tok123");
-    await apiFetch("profile");
-    const headers = fetchMock.mock.calls[0][1].headers as Record<string, string>;
-    expect(headers.Authorization).toBe("Bearer tok123");
+    const res = await sessionLogin({ email: "a@b.c", password: "pw", device_name: "web" });
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/session");
+    expect((fetchMock.mock.calls[0][1] as RequestInit).method).toBe("POST");
+    expect(res.user).toMatchObject({ id: "u1" });
+  });
+
+  it("sessionLogin surfaces the API error envelope (e.g. MFA required)", async () => {
+    vi.stubGlobal("fetch", mockFetch(403, { error: { code: "MFA_REQUIRED", message: "MFA required" } }));
+    await expect(sessionLogin({ email: "a@b.c", password: "pw" })).rejects.toMatchObject({
+      status: 403,
+      code: "MFA_REQUIRED",
+    });
+  });
+
+  it("sessionLogout deletes the session", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 204, statusText: "", json: async () => null });
+    vi.stubGlobal("fetch", fetchMock);
+    await sessionLogout();
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/session");
+    expect((fetchMock.mock.calls[0][1] as RequestInit).method).toBe("DELETE");
   });
 });
 

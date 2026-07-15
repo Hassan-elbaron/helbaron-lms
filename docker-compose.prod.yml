@@ -18,10 +18,26 @@ services:
       timeout: 5s
       retries: 3
 
+  web:
+    image: ${HELBARON_WEB_IMAGE:-helbaron-web:1.0.0-rc.1}
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    restart: always
+    # NEXT_PUBLIC_* and server-side runtime env come from an out-of-band env file.
+    env_file: [./apps/web/.env.production]
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
   nginx:
     image: nginx:1.27-alpine
     restart: always
-    depends_on: [api]
+    depends_on: [api, web]
     volumes:
       - ./infra/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
@@ -45,8 +61,7 @@ services:
     image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.1}
     restart: always
     env_file: [./apps/api/.env.production]
-    entrypoint: ["/bin/sh", "-c"]
-    command: ["while true; do php artisan schedule:run --no-interaction; sleep 60; done"]
+    command: ["php", "artisan", "schedule:work"]
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
@@ -66,6 +81,38 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # Scheduled logical backups: pg_dump into ./backups on the host, with retention.
+  # Env-driven (DB_* comes from .env.production via env_file). For ad-hoc/off-schedule
+  # backups use scripts/backup.sh; for restore drills use scripts/verify-backup.sh.
+  db-backup:
+    image: postgres:16-alpine
+    restart: always
+    env_file: [./apps/api/.env.production]
+    environment:
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+    depends_on:
+      postgres: { condition: service_healthy }
+    volumes:
+      - ./backups:/backups
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        export PGPASSWORD="$$DB_PASSWORD"
+        echo "db-backup: every $${BACKUP_INTERVAL_SECONDS}s, retention $${BACKUP_RETENTION_DAYS}d"
+        while true; do
+          ts="$$(date +%Y%m%d-%H%M%S)"
+          out="/backups/db-$$ts.sql.gz"
+          if pg_dump --clean --if-exists -h postgres -U "$${DB_USERNAME:-helbaron}" "$${DB_DATABASE:-helbaron}" | gzip > "$$out"; then
+            echo "db-backup: wrote $$out ($$(wc -c < "$$out") bytes)"
+          else
+            echo "db-backup: FAILED at $$ts" >&2
+            rm -f "$$out"
+          fi
+          find /backups -name 'db-*.sql.gz' -mtime +"$${BACKUP_RETENTION_DAYS}" -print -delete
+          sleep "$${BACKUP_INTERVAL_SECONDS}"
+        done
 
   redis:
     image: redis:7-alpine

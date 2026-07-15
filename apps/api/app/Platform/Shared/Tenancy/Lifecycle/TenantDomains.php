@@ -14,8 +14,7 @@ final class TenantDomains
     public function __construct(
         public readonly ?string $primary = null,
         public readonly array $aliases = [],
-    ) {
-    }
+    ) {}
 
     /** @return list<string> */
     public function all(): array

@@ -2,7 +2,6 @@
 
 namespace App\Platform\Notifications\Services;
 
-use App\Platform\Identity\Models\User;
 use App\Platform\Notifications\Enums\Channel;
 use App\Platform\Notifications\Enums\NotificationCategory;
 use App\Platform\Notifications\Models\AutomationRule;
@@ -17,7 +16,7 @@ class WorkflowEngine extends BaseService
     public function __construct(private readonly NotificationDispatcher $dispatcher) {}
 
     /** @param array<string, mixed> $payload */
-    public function handleEvent(string $triggerKey, User $user, array $payload = []): void
+    public function handleEventForUserId(string $triggerKey, int $userId, array $payload = []): void
     {
         $rules = AutomationRule::query()
             ->where('is_active', true)
@@ -33,8 +32,8 @@ class WorkflowEngine extends BaseService
 
             foreach ($rule->actions as $action) {
                 $channels = array_map(fn (string $c) => Channel::from($c), (array) ($action->channels ?? ['in_app']));
-                $this->dispatcher->dispatch(
-                    $user,
+                $this->dispatcher->dispatchToUserId(
+                    $userId,
                     NotificationCategory::from($action->category),
                     $action->template_key,
                     $payload,

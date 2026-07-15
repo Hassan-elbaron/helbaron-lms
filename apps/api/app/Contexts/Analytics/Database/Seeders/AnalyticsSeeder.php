@@ -3,11 +3,11 @@
 namespace App\Contexts\Analytics\Database\Seeders;
 
 use App\Contexts\Analytics\Enums\AnalyticsPermission;
+use App\Contexts\Analytics\Enums\InsightReport;
 use App\Contexts\Analytics\Enums\ReportType;
 use App\Contexts\Analytics\Models\DashboardDefinition;
 use App\Contexts\Analytics\Models\MetricDefinition;
 use App\Contexts\Analytics\Models\ReportDefinition;
-use App\Platform\Identity\Enums\Role;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;
@@ -25,7 +25,7 @@ class AnalyticsSeeder extends Seeder
         foreach (AnalyticsPermission::values() as $permission) {
             Permission::findOrCreate($permission, 'web');
         }
-        SpatieRole::findByName(Role::Admin->value, 'web')->givePermissionTo(AnalyticsPermission::values());
+        SpatieRole::findByName('admin', 'web')->givePermissionTo(AnalyticsPermission::values());
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         foreach ((array) config('analytics.metrics') as $key => $def) {
@@ -48,5 +48,20 @@ class AnalyticsSeeder extends Seeder
             ['name' => 'Learning Overview'],
             ['type' => ReportType::Metric->value, 'metric_keys' => ['enrollments', 'completions'], 'visibility' => 'shared'],
         );
+
+        // Register a ReportDefinition per operational report so the full report catalog is visible
+        // and manageable from the existing Filament ReportDefinition resource. The `insight` filter
+        // links each definition to its /api/v1/reports/insights/* endpoint.
+        foreach (InsightReport::cases() as $report) {
+            ReportDefinition::firstOrCreate(
+                ['name' => $report->label().' Report'],
+                [
+                    'type' => ReportType::Table->value,
+                    'metric_keys' => [],
+                    'filters' => ['insight' => $report->value],
+                    'visibility' => 'shared',
+                ],
+            );
+        }
     }
 }

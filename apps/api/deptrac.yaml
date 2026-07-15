@@ -63,6 +63,9 @@ deptrac:
     - name: Notifications
       collectors:
         - { type: directory, value: app/Platform/Notifications/.* }
+    - name: Homepage
+      collectors:
+        - { type: directory, value: app/Platform/Homepage/.* }
     - name: Administration        # future (redesign 05) — currently empty
       collectors:
         - { type: directory, value: app/Platform/Administration/.* }
@@ -126,6 +129,9 @@ deptrac:
 
     # Platform services & capabilities: Shared + Identity CONTRACTS only (never Identity impl).
     Notifications:
+      - Shared
+      - IdentityContracts
+    Homepage:
       - Shared
       - IdentityContracts
     Administration:

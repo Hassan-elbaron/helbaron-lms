@@ -3,7 +3,6 @@
 namespace App\Contexts\Commerce\Models;
 
 use App\Contexts\Commerce\Enums\ContractStatus;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,11 +20,6 @@ class Contract extends Model
             'status' => ContractStatus::class,
             'accepted_at' => 'datetime',
         ];
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function order(): BelongsTo

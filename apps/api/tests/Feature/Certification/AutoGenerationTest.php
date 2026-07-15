@@ -1,11 +1,11 @@
 <?php
 
+use App\Contexts\Learning\Events\CourseCompleted;
+use App\Contexts\Learning\Models\Enrollment;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Models\CertificateTemplate;
 use App\Platform\Identity\Models\User;
-use App\Contexts\Learning\Events\CourseCompleted;
-use App\Contexts\Learning\Models\Enrollment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

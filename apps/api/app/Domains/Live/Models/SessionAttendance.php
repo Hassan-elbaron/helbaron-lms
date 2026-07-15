@@ -2,7 +2,6 @@
 
 namespace App\Domains\Live\Models;
 
-use App\Platform\Identity\Models\User;
 use App\Domains\Live\Enums\AttendanceSource;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
@@ -27,10 +26,5 @@ class SessionAttendance extends Model
     public function session(): BelongsTo
     {
         return $this->belongsTo(LiveSession::class, 'session_id');
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }

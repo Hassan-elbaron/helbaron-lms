@@ -8,7 +8,6 @@ use App\Domains\Crm\Concerns\HasTags;
 use App\Domains\Crm\Concerns\HasTasks;
 use App\Domains\Crm\Database\Factories\LeadFactory;
 use App\Domains\Crm\Enums\LeadStatus;
-use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,9 +49,18 @@ class Lead extends Model
         return $this->belongsTo(Stage::class);
     }
 
+    /**
+     * Owning user. Resolved via auth config (not a concrete Identity import) so CRM keeps
+     * no compile-time dependency on the Identity context.
+     *
+     * @return BelongsTo<Model, $this>
+     */
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        /** @var class-string<Model> $userModel */
+        $userModel = config('auth.providers.users.model');
+
+        return $this->belongsTo($userModel, 'owner_id');
     }
 
     public function scopeStatus(Builder $query, string $status): Builder

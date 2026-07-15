@@ -33,6 +33,13 @@ class UserResource extends Resource
             TextInput::make('email')->email()->required()->unique(ignoreRecord: true),
             TextInput::make('phone')->tel()->maxLength(20),
             Select::make('locale')->options(['en' => 'English', 'ar' => 'العربية'])->default('en'),
+            // Role assignment via the spatie roles relationship (HasRoles on User).
+            Select::make('roles')
+                ->relationship('roles', 'name')
+                ->multiple()
+                ->preload()
+                ->searchable()
+                ->label('Roles'),
             Toggle::make('is_active')->default(true),
         ]);
     }
@@ -44,6 +51,7 @@ class UserResource extends Resource
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('email')->searchable(),
                 TextColumn::make('phone')->toggleable(),
+                TextColumn::make('roles.name')->badge()->label('Roles')->toggleable(),
                 IconColumn::make('is_active')->boolean(),
                 IconColumn::make('mfa_enabled')->boolean()->label('MFA'),
                 TextColumn::make('created_at')->dateTime()->sortable()->toggleable(),

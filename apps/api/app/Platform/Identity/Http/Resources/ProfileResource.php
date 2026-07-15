@@ -21,6 +21,8 @@ class ProfileResource extends BaseResource
             'bio' => $this->resource->bio,
             'gender' => $this->resource->gender,
             'date_of_birth' => $this->resource->date_of_birth?->toDateString(),
+            'country' => $this->resource->country,
+            'city' => $this->resource->city,
         ];
     }
 }

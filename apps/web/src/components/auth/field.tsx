@@ -1,6 +1,5 @@
-import type { ReactNode } from "react";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { isValidElement, type ReactElement, type ReactNode } from "react";
+import { FormField } from "@/components/ui/form-field";
 
 export interface FieldProps {
   id: string;
@@ -9,20 +8,24 @@ export interface FieldProps {
   children: ReactNode;
   className?: string;
   hint?: string;
+  /** Additive: renders a required marker + wires aria-required. */
+  required?: boolean;
 }
 
-/** Labelled form control with inline validation message (accessible: aria-describedby). */
-export function Field({ id, label, error, children, className, hint }: FieldProps) {
+/**
+ * Labelled form control with inline validation. Thin back-compat wrapper over the canonical
+ * `FormField` (label + control + hint + error + required + aria wiring). Props are unchanged so
+ * every existing auth/checkout/crm form keeps working; new code can use `FormField` directly.
+ */
+export function Field({ id, label, error, children, className, hint, required }: FieldProps) {
+  // Single element → let FormField clone the aria wiring onto it; otherwise render as-is.
+  const control = isValidElement(children)
+    ? (children as ReactElement<Record<string, unknown>>)
+    : () => children;
+
   return (
-    <div className={cn("space-y-1.5", className)}>
-      <Label htmlFor={id}>{label}</Label>
-      {children}
-      {hint && !error ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-xs font-medium text-destructive">
-          {error}
-        </p>
-      ) : null}
-    </div>
+    <FormField id={id} label={label} error={error} hint={hint} required={required} className={className}>
+      {control}
+    </FormField>
   );
 }

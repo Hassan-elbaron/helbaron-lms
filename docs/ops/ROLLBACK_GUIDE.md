@@ -6,11 +6,14 @@ migrations follow **expand/contract** so the previous app version stays compatib
 current schema.
 
 ## App rollback (no schema change)
+CI pushes every main/tag build to GHCR as `ghcr.io/<org>/<repo>/api:sha-<commit>`, so the
+previous image is always one pull away:
 ```bash
-HELBARON_IMAGE=helbaron-api:<previous> docker compose -f docker-compose.prod.yml up -d api nginx horizon scheduler
-php artisan optimize:clear && php artisan optimize
+./scripts/rollback.sh ghcr.io/<org>/<repo>/api:sha-<previous-commit>   # registry (preferred)
+./scripts/rollback.sh helbaron-api:<previous-tag>                      # local image fallback
 ```
-Verify `GET /api/v1/health/ready` = 200 and error rate normal.
+The script rolls api/nginx/horizon/scheduler, clears+rewarms caches, and verifies
+`GET /api/v1/health/ready` = 200. Also check error rate is back to normal.
 
 ## If a migration must be reverted
 - Only if the migration is contractive/destructive and the new code is fully removed.

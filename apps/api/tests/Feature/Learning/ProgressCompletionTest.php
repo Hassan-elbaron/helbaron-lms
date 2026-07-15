@@ -1,9 +1,9 @@
 <?php
 
-use App\Platform\Identity\Models\User;
 use App\Contexts\Learning\Actions\Enrollment\GrantEnrollmentAction;
 use App\Contexts\Learning\Enums\EnrollmentSource;
 use App\Contexts\Learning\Events\CourseCompleted;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;
@@ -16,7 +16,7 @@ it('completes the course when the only lesson is completed and emits CourseCompl
     $lesson = $lessons->first();
 
     $user = User::factory()->create();
-    app(GrantEnrollmentAction::class)->execute($user, $course, EnrollmentSource::Free);
+    app(GrantEnrollmentAction::class)->executeByUserId($user->id, $course->id, EnrollmentSource::Free);
     Sanctum::actingAs($user);
 
     Event::fake([CourseCompleted::class]);
@@ -30,7 +30,7 @@ it('completes the course when the only lesson is completed and emits CourseCompl
 it('is idempotent when re-recording completion', function () {
     [$course, $section, $lessons] = publishedCourseWithLessons(2);
     $user = User::factory()->create();
-    app(GrantEnrollmentAction::class)->execute($user, $course, EnrollmentSource::Free);
+    app(GrantEnrollmentAction::class)->executeByUserId($user->id, $course->id, EnrollmentSource::Free);
     Sanctum::actingAs($user);
 
     $first = $lessons->first();

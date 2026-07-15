@@ -2,8 +2,8 @@
 
 namespace App\Domains\Certification\Listeners;
 
-use App\Domains\Certification\Actions\GenerateCertificateAction;
 use App\Contexts\Learning\Events\CourseCompleted;
+use App\Domains\Certification\Actions\GenerateCertificateAction;
 
 /**
  * The key integration: when Learning reports a completed course, issue a certificate. Idempotent
@@ -15,10 +15,10 @@ class GenerateCertificateOnCourseCompleted
 
     public function handle(CourseCompleted $event): void
     {
-        $enrollment = $event->enrollment->loadMissing(['user', 'course']);
+        $enrollment = $event->enrollment->loadMissing(['course']);
 
-        if ($enrollment->user !== null && $enrollment->course !== null) {
-            $this->generate->execute($enrollment->user, $enrollment->course, $enrollment->id);
+        if ($enrollment->user_id !== null && $enrollment->course !== null) {
+            $this->generate->executeByUserId($enrollment->user_id, $enrollment->course, $enrollment->id);
         }
     }
 }

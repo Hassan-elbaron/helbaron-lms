@@ -17,7 +17,10 @@ use App\Contexts\Commerce\Policies\ContractPolicy;
 use App\Contexts\Commerce\Policies\OrderPolicy;
 use App\Contexts\Commerce\Policies\ProductPolicy;
 use App\Platform\Shared\Providers\BaseDomainServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * Wires the Commerce module: config, migrations, routes, policies, the PaymentGateway binding
@@ -49,9 +52,18 @@ class CommerceServiceProvider extends BaseDomainServiceProvider
 
     protected function bootDomain(): void
     {
+        $this->registerRateLimiters();
+
         // Fulfillment is gated on BOTH payment and contract acceptance.
         Event::listen(OrderPaid::class, FulfillOnOrderPaid::class);
         Event::listen(ContractAccepted::class, FulfillOnContractAccepted::class);
         Event::listen(OrderRefunded::class, RevokeEnrollmentsOnRefund::class);
+    }
+
+    private function registerRateLimiters(): void
+    {
+        // Checkout keyed by user (falls back to IP): bounds gateway calls + order creation.
+        RateLimiter::for('commerce-checkout', fn (Request $r) => Limit::perMinute(10)
+            ->by('checkout|'.($r->user()?->getAuthIdentifier() ?? $r->ip())));
     }
 }

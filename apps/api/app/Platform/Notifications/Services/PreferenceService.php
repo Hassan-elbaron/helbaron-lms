@@ -2,7 +2,6 @@
 
 namespace App\Platform\Notifications\Services;
 
-use App\Platform\Identity\Models\User;
 use App\Platform\Notifications\Enums\Channel;
 use App\Platform\Notifications\Enums\NotificationCategory;
 use App\Platform\Notifications\Models\NotificationPreference;
@@ -14,13 +13,13 @@ use App\Platform\Shared\Services\BaseService;
  */
 class PreferenceService extends BaseService
 {
-    public function isEnabled(User $user, NotificationCategory $category, Channel $channel): bool
+    public function isEnabledForUserId(int $userId, NotificationCategory $category, Channel $channel): bool
     {
         if ($channel === Channel::InApp) {
             return true;
         }
 
-        $pref = NotificationPreference::where('user_id', $user->id)
+        $pref = NotificationPreference::where('user_id', $userId)
             ->where('category', $category->value)
             ->where('channel', $channel->value)
             ->first();
@@ -32,8 +31,8 @@ class PreferenceService extends BaseService
      * @param  array<int, Channel>  $candidateChannels
      * @return array<int, Channel>
      */
-    public function enabledChannels(User $user, NotificationCategory $category, array $candidateChannels): array
+    public function enabledChannelsForUserId(int $userId, NotificationCategory $category, array $candidateChannels): array
     {
-        return array_values(array_filter($candidateChannels, fn (Channel $c) => $this->isEnabled($user, $category, $c)));
+        return array_values(array_filter($candidateChannels, fn (Channel $c) => $this->isEnabledForUserId($userId, $category, $c)));
     }
 }

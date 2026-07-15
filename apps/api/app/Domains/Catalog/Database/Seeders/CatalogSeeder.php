@@ -2,6 +2,10 @@
 
 namespace App\Domains\Catalog\Database\Seeders;
 
+use App\Domains\Authoring\Enums\LessonType;
+use App\Domains\Authoring\Enums\PublishState;
+use App\Domains\Authoring\Models\Lesson;
+use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Enums\CourseStatus;
 use App\Domains\Catalog\Models\Category;
 use App\Domains\Catalog\Models\Course;
@@ -9,7 +13,6 @@ use App\Domains\Catalog\Models\CourseLanguage;
 use App\Domains\Catalog\Models\CourseLevel;
 use App\Domains\Catalog\Models\CourseTag;
 use App\Platform\Identity\Database\Seeders\RolePermissionSeeder;
-use App\Platform\Identity\Enums\Role;
 use App\Platform\Identity\Models\User;
 use App\Platform\Shared\Enums\Visibility;
 use App\Platform\Shared\Helpers\Slug;
@@ -69,7 +72,7 @@ class CatalogSeeder extends Seeder
                 ['email' => $email],
                 ['name' => $name, 'password' => Hash::make('password'), 'is_active' => true, 'email_verified_at' => now()],
             );
-            $user->assignRole(Role::Instructor->value);
+            $user->assignRole('instructor');
             [$first, $last] = array_pad(explode(' ', $name, 2), 2, '');
             $user->profile()->firstOrCreate([], ['first_name' => $first, 'last_name' => $last, 'bio' => $headline]);
 
@@ -110,7 +113,72 @@ class CatalogSeeder extends Seeder
                 'language_id' => $languages['en']->id,
             ]);
             $course->categories()->sync([$categories[$catSlug]->id]);
-            $course->trainers()->sync([$trainers[$i % $trainers->count()]->id]);
+            $course->syncTrainers([$trainers[$i % $trainers->count()]->id]);
+
+            // Publish invariant: a Published course must have >=1 section and >=1 published lesson
+            // (see CurriculumValidator::validateForPublish). Seed a minimal, valid curriculum so the
+            // Published status above is legitimate. If for any reason curriculum can't be attached,
+            // fall back to Draft rather than leaving an un-publishable "Published" course.
+            $this->seedMinimalCurriculum($course);
+            if (! $this->hasPublishableCurriculum($course)) {
+                $course->forceFill([
+                    'status' => CourseStatus::Draft->value,
+                    'published_at' => null,
+                ])->save();
+            }
         }
+    }
+
+    /**
+     * Attach one section with two published lessons (a preview video + an article) to a course,
+     * unless it already has sections. Idempotent and deterministic.
+     */
+    private function seedMinimalCurriculum(Course $course): void
+    {
+        if (Section::where('course_id', $course->id)->exists()) {
+            return;
+        }
+
+        $section = Section::create([
+            'course_id' => $course->id,
+            'title' => 'Getting Started',
+            'summary' => 'Orientation and the core ideas of this program.',
+            'position' => 1,
+            'publish_state' => PublishState::Published->value,
+        ]);
+
+        Lesson::create([
+            'section_id' => $section->id,
+            'title' => 'Welcome & Course Overview',
+            'type' => LessonType::Video->value,
+            'content' => 'An introduction to what this course covers and how to get the most from it.',
+            'position' => 1,
+            'publish_state' => PublishState::Published->value,
+            'is_preview' => true,
+        ]);
+
+        Lesson::create([
+            'section_id' => $section->id,
+            'title' => 'Core Concepts',
+            'type' => LessonType::Article->value,
+            'content' => 'The foundational framework you will apply throughout the program.',
+            'position' => 2,
+            'publish_state' => PublishState::Published->value,
+            'is_preview' => false,
+        ]);
+    }
+
+    /** True when the course satisfies the minimum publish invariant (>=1 section + >=1 published lesson). */
+    private function hasPublishableCurriculum(Course $course): bool
+    {
+        $sectionIds = Section::where('course_id', $course->id)->pluck('id');
+
+        if ($sectionIds->isEmpty()) {
+            return false;
+        }
+
+        return Lesson::whereIn('section_id', $sectionIds)
+            ->where('publish_state', PublishState::Published->value)
+            ->exists();
     }
 }

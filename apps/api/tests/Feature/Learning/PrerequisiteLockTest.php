@@ -1,8 +1,8 @@
 <?php
 
-use App\Platform\Identity\Models\User;
 use App\Contexts\Learning\Actions\Enrollment\GrantEnrollmentAction;
 use App\Contexts\Learning\Enums\EnrollmentSource;
+use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 
@@ -16,7 +16,7 @@ it('locks a lesson until its prerequisite is completed', function () {
     $b->prerequisites()->attach($a->id);
 
     $user = User::factory()->create();
-    app(GrantEnrollmentAction::class)->execute($user, $course, EnrollmentSource::Free);
+    app(GrantEnrollmentAction::class)->executeByUserId($user->id, $course->id, EnrollmentSource::Free);
     Sanctum::actingAs($user);
 
     $this->getJson("/api/v1/lessons/{$b->public_id}")

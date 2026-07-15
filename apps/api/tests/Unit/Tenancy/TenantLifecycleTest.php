@@ -28,14 +28,14 @@ it('resolves tenant columns from metadata (default + override), no hardcoded def
     ]);
 
     expect($metadata->defaultColumn())->toBe('organization_id')
-        ->and($metadata->columnFor(new stdClass()))->toBe('workspace_id')
-        ->and($metadata->columnFor(new Exception()))->toBe('organization_id') // falls back to default
+        ->and($metadata->columnFor(new stdClass))->toBe('workspace_id')
+        ->and($metadata->columnFor(new Exception))->toBe('organization_id') // falls back to default
         ->and($metadata->supports('school_id'))->toBeFalse()
         ->and($metadata->supports('workspace_id'))->toBeTrue();
 });
 
 it('defaults to no bypass', function (): void {
-    expect((new NullTenancyBypassPolicy())->shouldBypassTenancy())->toBeFalse();
+    expect((new NullTenancyBypassPolicy)->shouldBypassTenancy())->toBeFalse();
 });
 
 it('models tenant limits and usage', function (): void {

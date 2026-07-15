@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Platform\Identity\Http\Middleware\EnforceAdminMfa;
 use App\Filament\Widgets\PlatformOverview;
+use App\Platform\Identity\Http\Middleware\EnforceAdminMfa;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -31,11 +31,17 @@ class AdminPanelProvider extends PanelProvider
     /**
      * Domains whose Filament/Resources are auto-discovered into the panel, in navigation order.
      *
-     * @var array<int, string>
+     * @var array<string, string>
      */
     private const RESOURCE_PATHS = [
         'App\\Platform\\Identity\\Filament\\Resources' => 'Platform/Identity/Filament/Resources',
         'App\\Platform\\Notifications\\Filament\\Resources' => 'Platform/Notifications/Filament/Resources',
+        'App\\Platform\\Homepage\\Filament\\Resources' => 'Platform/Homepage/Filament/Resources',
+        'App\\Platform\\Branding\\Filament\\Resources' => 'Platform/Branding/Filament/Resources',
+        'App\\Platform\\Navigation\\Filament\\Resources' => 'Platform/Navigation/Filament/Resources',
+        'App\\Platform\\Pages\\Filament\\Resources' => 'Platform/Pages/Filament/Resources',
+        'App\\Platform\\Features\\Filament\\Resources' => 'Platform/Features/Filament/Resources',
+        'App\\Platform\\Seo\\Filament\\Resources' => 'Platform/Seo/Filament/Resources',
         'App\\Contexts\\Learning\\Filament\\Resources' => 'Contexts/Learning/Filament/Resources',
         'App\\Contexts\\Commerce\\Filament\\Resources' => 'Contexts/Commerce/Filament/Resources',
         'App\\Contexts\\Analytics\\Filament\\Resources' => 'Contexts/Analytics/Filament/Resources',
@@ -44,6 +50,7 @@ class AdminPanelProvider extends PanelProvider
         'App\\Domains\\Certification\\Filament\\Resources' => 'Domains/Certification/Filament/Resources',
         'App\\Domains\\Live\\Filament\\Resources' => 'Domains/Live/Filament/Resources',
         'App\\Domains\\Crm\\Filament\\Resources' => 'Domains/Crm/Filament/Resources',
+        'App\\Platform\\Shared\\Filament\\Resources' => 'Platform/Shared/Filament/Resources',
     ];
 
     public function panel(Panel $panel): Panel
@@ -66,6 +73,9 @@ class AdminPanelProvider extends PanelProvider
                 'CRM',
                 'Analytics',
                 'Notifications',
+                'Branding',
+                'Navigation',
+                'System',
             ])
             ->pages([Dashboard::class])
             ->widgets([PlatformOverview::class])

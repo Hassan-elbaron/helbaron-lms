@@ -3,8 +3,12 @@
 /*
  | Shared foundation configuration. Cross-cutting defaults consumed by the shared kernel
  | (locales, money, pagination, ids). No business/domain values here.
+ | (Branding/white-label defaults live in the BrandSetting singleton, not here.)
  */
 return [
+    // Public web (Next.js) origin — used e.g. by admin "preview" links back to the marketing site.
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
+
     // Locales
     'locales' => ['en', 'ar'],
     'default_locale' => env('APP_LOCALE', 'en'),

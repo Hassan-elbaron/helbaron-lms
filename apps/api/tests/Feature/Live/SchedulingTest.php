@@ -1,8 +1,8 @@
 <?php
 
+use App\Domains\Live\Models\LiveSession;
 use App\Platform\Identity\Database\Seeders\RolePermissionSeeder;
 use App\Platform\Identity\Models\User;
-use App\Domains\Live\Models\LiveSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 

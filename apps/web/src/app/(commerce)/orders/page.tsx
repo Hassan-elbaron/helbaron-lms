@@ -21,7 +21,7 @@ export default function OrdersPage() {
       <QueryState query={query} isEmpty={(d) => d.data.length === 0} empty={<EmptyState icon={<Receipt className="size-8" />} title={t("commerce.orders.empty")} />}>
         {(data) => (
           <div className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="stagger-in grid gap-4 sm:grid-cols-2">
               {data.data.map((o) => <OrderCard key={o.id} order={o} />)}
             </div>
             <Pagination page={data.meta.current_page} lastPage={data.meta.last_page} onPageChange={setPage} />

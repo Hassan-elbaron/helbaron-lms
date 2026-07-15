@@ -24,13 +24,13 @@ use Illuminate\Database\Eloquent\Model;
  * Composes cleanly with SoftDeletes (multiple global scopes) and is a natural hook point for
  * future auditing. Adoption is per-model and controlled — no model is scoped until it opts in.
  *
- * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin Model
  */
 trait BelongsToTenant
 {
     protected static function bootBelongsToTenant(): void
     {
-        static::addGlobalScope(new TenantScope());
+        static::addGlobalScope(new TenantScope);
 
         static::creating(static function (Model $model): void {
             if (method_exists($model, 'assignTenantOnCreate')) {
@@ -66,4 +66,19 @@ trait BelongsToTenant
         $column = $this->getTenantColumn();
 
         if ($tenantId !== null && $this->getAttribute($column) === null) {
-            $this->setAttri
+            $this->setAttribute($column, $tenantId->value);
+        }
+    }
+
+    /** True when this record belongs to the given tenant. */
+    public function belongsToTenant(TenantId $tenantId): bool
+    {
+        return (string) $this->getAttribute($this->getTenantColumn()) === $tenantId->toString();
+    }
+
+    /** Explicit per-tenant query scope: Model::forTenant($tenantId). */
+    public function scopeForTenant(Builder $query, TenantId $tenantId): Builder
+    {
+        return $query->where($this->getTenantColumn(), $tenantId->value);
+    }
+}

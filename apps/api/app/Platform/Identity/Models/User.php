@@ -2,6 +2,8 @@
 
 namespace App\Platform\Identity\Models;
 
+use App\Platform\Identity\Contracts\Actor;
+use App\Platform\Identity\Contracts\Data\UserRef;
 use App\Platform\Identity\Database\Factories\UserFactory;
 use App\Platform\Identity\Notifications\ResetPasswordNotification;
 use App\Platform\Shared\Traits\HasPublicId;
@@ -21,7 +23,7 @@ use Spatie\Permission\Traits\HasRoles;
  * Identity aggregate root. Owns account state, verification flags, lockout, and MFA storage.
  * External references use `public_id`; the bigint id is internal only.
  */
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable implements Actor, FilamentUser, HasName
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens;
@@ -95,6 +97,30 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function getFilamentName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * Actor: stable internal id. Mirrors `$user->id` used across ownership checks (the bigint key).
+     * `hasRole()` (also part of Actor) is already provided by the Spatie HasRoles trait.
+     */
+    public function actorId(): int
+    {
+        return (int) $this->getKey();
+    }
+
+    /**
+     * Actor: boundary-safe projection. Reads only public display fields; never exposes the
+     * $hidden secrets or account/PII internals. Uses the loaded profile relation when available.
+     */
+    public function toUserRef(): UserRef
+    {
+        return new UserRef(
+            id: (int) $this->getKey(),
+            publicId: (string) $this->public_id,
+            name: (string) $this->name,
+            avatarPath: $this->profile?->avatar_path,
+            headline: $this->profile?->bio,
+        );
     }
 
     public function canAccessPanel(Panel $panel): bool

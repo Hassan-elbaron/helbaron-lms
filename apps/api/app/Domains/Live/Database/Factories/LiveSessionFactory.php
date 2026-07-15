@@ -52,4 +52,13 @@ class LiveSessionFactory extends Factory
     {
         return $this->state(fn () => ['status' => LiveSessionStatus::Cancelled->value]);
     }
+
+    public function completed(): static
+    {
+        return $this->state(fn () => [
+            'status' => LiveSessionStatus::Completed->value,
+            'starts_at' => now()->subDays(2)->setTime(14, 0),
+            'ends_at' => now()->subDays(2)->setTime(15, 0),
+        ]);
+    }
 }

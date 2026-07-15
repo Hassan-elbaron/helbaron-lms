@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { api, setToken, getToken, type ApiRequestError } from "@/lib/api/client";
-import type { ApiSuccess, AuthUser } from "@/types/api";
+import { api, hasSession, sessionLogin, sessionLogout, type ApiRequestError } from "@/lib/api/client";
+import type { AuthUser } from "@/types/api";
 
 type AuthState = {
   user: AuthUser | null;
@@ -16,7 +16,11 @@ const AuthContext = createContext<AuthState | null>(null);
 
 const CACHE_KEY = "helbaron.user";
 
-/** Optimistic cache so reloads don't flash a full-page loader while /profile revalidates. */
+/**
+ * Optimistic profile cache (non-credential data) so reloads don't flash a full-page loader
+ * while /profile revalidates. The auth token itself lives in an httpOnly cookie and is never
+ * readable from JS.
+ */
 function readCachedUser(): AuthUser | null {
   if (typeof window === "undefined") return null;
   try {
@@ -41,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthState["status"]>("loading");
 
   const refresh = useCallback(async () => {
-    if (!getToken()) {
+    if (!hasSession()) {
       writeCachedUser(null);
       setStatus("guest");
       setUser(null);
@@ -53,7 +57,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       writeCachedUser(me);
       setStatus("authenticated");
     } catch {
-      setToken(null);
+      // Invalid/expired session: clear local state AND the non-httpOnly session marker cookie.
+      // Without clearing the marker, hasSession() keeps returning true after the token expires,
+      // so guest-guards (e.g. on /login) treat the user as authenticated and redirect away — the
+      // user gets trapped and can never reach the sign-in form to re-authenticate.
+      if (typeof document !== "undefined") {
+        document.cookie = "helbaron_authed=; path=/; max-age=0; SameSite=Lax";
+      }
       writeCachedUser(null);
       setUser(null);
       setStatus("guest");
@@ -62,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Hydrate optimistically from cache (avoids the full-page loading flash), then revalidate.
-    if (getToken()) {
+    if (hasSession()) {
       const cached = readCachedUser();
       if (cached) {
         setUser(cached);
@@ -73,22 +83,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refresh]);
 
   const login = useCallback(async (email: string, password: string, mfaCode?: string) => {
-    const res = await api.post<ApiSuccess<{ user: AuthUser; token: string }>>(
-      "auth/login",
-      { email, password, mfa_code: mfaCode, device_name: "web" },
-      { auth: false },
-    );
-    setToken(res.data.token);
-    setUser(res.data.user);
-    writeCachedUser(res.data.user);
+    const { user: me } = await sessionLogin({
+      email,
+      password,
+      mfa_code: mfaCode,
+      device_name: "web",
+    });
+    setUser(me);
+    writeCachedUser(me);
     setStatus("authenticated");
   }, []);
 
   const logout = useCallback(async () => {
     try {
-      await api.post("auth/logout");
+      await sessionLogout();
     } finally {
-      setToken(null);
       writeCachedUser(null);
       setUser(null);
       setStatus("guest");

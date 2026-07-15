@@ -8,7 +8,7 @@ export default function PlayerLayout({ children }: { children: ReactNode }) {
     <div className="flex min-h-dvh flex-col">
       <AnnouncementBar />
       <LandingHeader />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">{children}</main>
       <LandingFooter />
     </div>
   );

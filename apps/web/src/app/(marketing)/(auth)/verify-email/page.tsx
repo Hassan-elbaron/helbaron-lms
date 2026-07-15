@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { getToken } from "@/lib/api/client";
+import { hasSession } from "@/lib/api/client";
 import { applyApiFieldErrors, errorMessage } from "@/lib/api/errors";
 import { verifyEmail } from "@/lib/auth/api";
 import { useAuth } from "@/lib/auth/auth-context";
@@ -31,7 +31,7 @@ export default function VerifyEmailPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
-    setAuthed(Boolean(getToken()));
+    setAuthed(hasSession());
     setReady(true);
   }, []);
 

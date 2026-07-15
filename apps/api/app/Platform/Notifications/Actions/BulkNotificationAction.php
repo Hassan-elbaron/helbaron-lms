@@ -2,11 +2,9 @@
 
 namespace App\Platform\Notifications\Actions;
 
-use App\Platform\Identity\Models\User;
 use App\Platform\Notifications\Enums\NotificationCategory;
 use App\Platform\Notifications\Services\NotificationDispatcher;
 use App\Platform\Shared\Actions\BaseAction;
-use Illuminate\Support\Collection;
 
 /**
  * Fans a notification out to many users (each delivery is queued independently).
@@ -16,14 +14,14 @@ class BulkNotificationAction extends BaseAction
     public function __construct(private readonly NotificationDispatcher $dispatcher) {}
 
     /**
-     * @param  Collection<int, User>  $users
+     * @param  array<int, int>  $userIds
      * @param  array<string, mixed>  $data
      */
-    public function execute(Collection $users, NotificationCategory $category, string $templateKey, array $data = []): int
+    public function executeForUserIds(array $userIds, NotificationCategory $category, string $templateKey, array $data = []): int
     {
         $count = 0;
-        foreach ($users as $user) {
-            $this->dispatcher->dispatch($user, $category, $templateKey, $data);
+        foreach ($userIds as $userId) {
+            $this->dispatcher->dispatchToUserId($userId, $category, $templateKey, $data);
             $count++;
         }
 

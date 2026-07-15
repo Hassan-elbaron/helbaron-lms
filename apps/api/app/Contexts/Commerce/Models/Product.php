@@ -2,10 +2,10 @@
 
 namespace App\Contexts\Commerce\Models;
 
-use App\Domains\Catalog\Models\Course;
 use App\Contexts\Commerce\Database\Factories\ProductFactory;
 use App\Contexts\Commerce\Enums\ProductStatus;
 use App\Contexts\Commerce\Enums\ProductType;
+use App\Domains\Catalog\Models\Course;
 use App\Platform\Shared\Traits\HasPublicId;
 use App\Platform\Shared\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Builder;

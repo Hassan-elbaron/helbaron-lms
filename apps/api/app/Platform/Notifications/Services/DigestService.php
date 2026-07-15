@@ -2,7 +2,6 @@
 
 namespace App\Platform\Notifications\Services;
 
-use App\Platform\Identity\Models\User;
 use App\Platform\Notifications\Models\Notification;
 use App\Platform\Shared\Services\BaseService;
 use Illuminate\Support\Collection;
@@ -13,9 +12,9 @@ use Illuminate\Support\Collection;
  */
 class DigestService extends BaseService
 {
-    public function pendingFor(User $user, int $sinceHours = 24): Collection
+    public function pendingForUserId(int $userId, int $sinceHours = 24): Collection
     {
-        return Notification::where('user_id', $user->id)
+        return Notification::where('user_id', $userId)
             ->unread()
             ->where('created_at', '>=', now()->subHours($sinceHours))
             ->latest('id')

@@ -14,7 +14,7 @@ it('lets an admin revoke and reissue a certificate', function () {
     $this->seed(RolePermissionSeeder::class);
     CertificateTemplate::factory()->create(['is_active' => true]);
 
-    $cert = app(GenerateCertificateAction::class)->execute(User::factory()->create(), Course::factory()->published()->create());
+    $cert = app(GenerateCertificateAction::class)->executeByUserId(User::factory()->create()->id, Course::factory()->published()->create());
 
     $admin = User::factory()->create();
     $admin->assignRole('super_admin');

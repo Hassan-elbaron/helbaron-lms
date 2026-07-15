@@ -12,6 +12,8 @@ const { useLesson, progressMutate, bookmarkMutate, noteMutate } = vi.hoisted(() 
 vi.mock("next/navigation", () => ({
   useParams: () => ({ public_id: "les1" }),
   useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+  usePathname: () => "/learn",
+  useSearchParams: () => new URLSearchParams(),
 }));
 vi.mock("@/lib/auth/auth-context", () => ({ useAuth: () => ({ status: "authenticated", user: { id: "u1" } }) }));
 vi.mock("@/lib/learning/hooks", () => ({
