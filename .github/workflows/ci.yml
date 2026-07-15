@@ -189,9 +189,21 @@ jobs:
         with:
           image-ref: ${{ env.IMAGE }}:sha-${{ github.sha }}
           format: table
+          output: trivy-api.txt
           exit-code: '1'
           severity: CRITICAL,HIGH
           ignore-unfixed: true
+      # Surface the full findings in the job summary (visibility only — the blocking scan above is
+      # unchanged: it still fails the job on any CRITICAL/HIGH). Runs even when the scan fails.
+      - name: Publish Trivy report to job summary
+        if: always()
+        run: |
+          {
+            echo '### Trivy — API image (CRITICAL/HIGH, ignore-unfixed)';
+            echo '```';
+            cat trivy-api.txt 2>/dev/null || echo '(no report produced)';
+            echo '```';
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Push to GHCR (main/tags only)
         if: env.DO_PUSH == 'true'
         run: |
@@ -234,9 +246,21 @@ jobs:
         with:
           image-ref: ${{ env.IMAGE }}:sha-${{ github.sha }}
           format: table
+          output: trivy-web.txt
           exit-code: '1'
           severity: CRITICAL,HIGH
           ignore-unfixed: true
+      # Surface the full findings in the job summary (visibility only — the blocking scan above is
+      # unchanged: it still fails the job on any CRITICAL/HIGH). Runs even when the scan fails.
+      - name: Publish Trivy report to job summary
+        if: always()
+        run: |
+          {
+            echo '### Trivy — Web image (CRITICAL/HIGH, ignore-unfixed)';
+            echo '```';
+            cat trivy-web.txt 2>/dev/null || echo '(no report produced)';
+            echo '```';
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Push to GHCR (main/tags only)
         if: env.DO_PUSH == 'true'
         run: |

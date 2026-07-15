@@ -5,7 +5,10 @@
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --no-interaction
+# Download-only stage: the composer:2 image ships a minimal PHP without ext-intl/ext-pcntl (required
+# by filament/support and laravel/horizon), so platform checks are ignored HERE. The runtime stage
+# below installs those extensions (intl, pcntl, …), so the actual image satisfies every requirement.
+RUN composer install --no-dev --prefer-dist --no-scripts --no-autoloader --no-interaction --ignore-platform-reqs
 
 # ---- Stage 2: runtime ----
 FROM php:8.3-fpm-alpine AS runtime
