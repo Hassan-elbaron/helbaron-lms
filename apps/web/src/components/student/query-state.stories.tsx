@@ -49,6 +49,12 @@ const meta = {
   title: "States/QueryState",
   component: QueryState,
   tags: ["autodocs"],
+  // Default args satisfy QueryState's required `query`/`children`. Every story below overrides
+  // them via its own `render`, so these defaults only make the render-only stories type-safe.
+  args: {
+    query: makeQuery({ data: sampleCourses }),
+    children: renderList,
+  },
   decorators: [(Story: () => import("react").ReactElement) => (
     <I18nProvider>
       {Story()}
@@ -77,7 +83,7 @@ export const Loading: Story = {
 /** `isError: true` → ErrorState with a retry button wired to `refetch()`. */
 export const Error: Story = {
   render: () => (
-    <QueryState query={makeQuery({ isError: true, error: new Error("Network request failed") })}>
+    <QueryState query={makeQuery({ isError: true, error: new globalThis.Error("Network request failed") })}>
       {renderList}
     </QueryState>
   ),

@@ -13,3 +13,6 @@ next-env.d.ts
 /playwright-report
 /playwright/.cache
 /blob-report
+
+# Storybook build output (generated)
+/storybook-static

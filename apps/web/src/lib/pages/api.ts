@@ -70,11 +70,17 @@ export async function getStaticPage(slug: string, preview = false): Promise<Stat
   }
 }
 
-/** Fetch the list of published pages (for the sitemap). Returns [] on any failure. */
+/**
+ * Fetch the list of published pages (for the sitemap). Returns [] on any failure.
+ * Defensive: only accepts a real `pages` array and drops rows missing a `slug`, so a malformed
+ * payload can never make the sitemap build crash. A genuine API error still surfaces as [] via the
+ * catch (the documented fail-safe).
+ */
 export async function listPublishedPages(): Promise<StaticPageSummary[]> {
   try {
-    const { pages } = await api.data<{ pages: StaticPageSummary[] }>("pages", { auth: false });
-    return pages ?? [];
+    const payload = await api.data<{ pages?: StaticPageSummary[] } | null>("pages", { auth: false });
+    const pages = payload && Array.isArray(payload.pages) ? payload.pages : [];
+    return pages.filter((p): p is StaticPageSummary => Boolean(p) && typeof p.slug === "string" && p.slug.length > 0);
   } catch {
     return [];
   }

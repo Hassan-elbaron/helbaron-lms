@@ -14,6 +14,12 @@ const meta = {
     error: { control: "text" },
     success: { control: "text" },
   },
+  // Default args satisfy FormField's required `label`/`children`. The render-only `AllStates`
+  // story inherits them (its render ignores args); the arg-based stories override as needed.
+  args: {
+    label: "Field label",
+    children: <Input placeholder="Type here..." />,
+  },
 } satisfies Meta<typeof FormField>;
 
 export default meta;

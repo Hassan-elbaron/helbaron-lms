@@ -11,6 +11,18 @@ const meta = {
   title: "Primitives/Tooltip",
   component: Tooltip,
   tags: ["autodocs"],
+  // Tooltip requires `children`. Both stories below override via their own `render`; this default
+  // makes the render-only stories type-safe (and gives autodocs a representative default tree).
+  args: {
+    children: (
+      <>
+        <TooltipTrigger asChild>
+          <Button variant="outline">Hover me</Button>
+        </TooltipTrigger>
+        <TooltipContent>Add to your library</TooltipContent>
+      </>
+    ),
+  },
 } satisfies Meta<typeof Tooltip>;
 
 export default meta;

@@ -133,7 +133,11 @@ jobs:
   e2e:
     name: E2E (Playwright + axe)
     runs-on: ubuntu-latest
-    continue-on-error: true            # non-blocking scaffold; promote once stable
+    # Blocking gate. The Playwright webServer boots a deterministic mock API
+    # (apps/web/e2e/support/mock-api.mjs) + the Next app, so no external backend is needed; the
+    # public smoke journeys and WCAG a11y checks (with an independent oklch/alpha contrast recheck)
+    # must pass. The visual-regression project is intentionally excluded here — it is baseline-
+    # dependent and advisory, not a correctness gate.
     defaults: { run: { working-directory: apps/web } }
     steps:
       - uses: actions/checkout@v4
@@ -142,8 +146,8 @@ jobs:
       - run: npm ci
       - name: Install Playwright browser (chromium)
         run: npx playwright install --with-deps chromium
-      - name: Run smoke journey (headless)
-        run: npx playwright test
+      - name: Run smoke + a11y (chromium, headless)    # blocking
+        run: npx playwright test --project=chromium
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -181,7 +185,7 @@ jobs:
             ${{ env.IMAGE }}:sha-${{ github.sha }}
             ${{ env.IMAGE }}:latest
       - name: Trivy scan (CRITICAL/HIGH block)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ env.IMAGE }}:sha-${{ github.sha }}
           format: table
@@ -226,7 +230,7 @@ jobs:
             ${{ env.IMAGE }}:sha-${{ github.sha }}
             ${{ env.IMAGE }}:latest
       - name: Trivy scan (CRITICAL/HIGH block)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ env.IMAGE }}:sha-${{ github.sha }}
           format: table

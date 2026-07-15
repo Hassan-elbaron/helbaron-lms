@@ -30,7 +30,7 @@ function InteractivePagination(args: import("react").ComponentProps<typeof Pagin
 }
 
 export const Interactive: Story = {
-  args: { page: 3, lastPage: 10 },
+  args: { page: 3, lastPage: 10, onPageChange: () => {} },
   render: (args: import("react").ComponentProps<typeof Pagination>) => <InteractivePagination {...args} />,
 };
 

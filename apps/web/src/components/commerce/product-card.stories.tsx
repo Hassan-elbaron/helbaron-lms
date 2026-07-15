@@ -29,7 +29,7 @@ const meta = {
     onAdd: { action: "add-to-cart" },
     adding: { control: { type: "boolean" } },
   },
-  args: { product: base, adding: false },
+  args: { product: base, adding: false, onAdd: () => {} },
 } satisfies Meta<typeof ProductCard>;
 
 export default meta;

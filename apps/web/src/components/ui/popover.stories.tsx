@@ -11,6 +11,20 @@ const meta = {
   title: "Primitives/Popover",
   component: Popover,
   tags: ["autodocs"],
+  // Popover requires `children`. Both stories below override via their own `render`; this default
+  // makes the render-only stories type-safe (and gives autodocs a representative default tree).
+  args: {
+    children: (
+      <>
+        <PopoverTrigger asChild>
+          <Button variant="outline">Open popover</Button>
+        </PopoverTrigger>
+        <PopoverContent align="start">
+          <p className="text-sm">Popover content.</p>
+        </PopoverContent>
+      </>
+    ),
+  },
 } satisfies Meta<typeof Popover>;
 
 export default meta;

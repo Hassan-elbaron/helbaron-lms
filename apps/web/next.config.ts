@@ -47,7 +47,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  output: "standalone",
+  // Standalone output powers the Docker runtime image (see apps/web/Dockerfile) and is the
+  // default. The Playwright harness sets NEXT_DISABLE_STANDALONE=1 so its build can be served by
+  // `next start`, which is incompatible with standalone output. Production/Docker is unchanged.
+  output: process.env.NEXT_DISABLE_STANDALONE === "1" ? undefined : "standalone",
   // Linting runs as a dedicated CI gate (`npm run lint`); Next 15's in-build lint is
   // incompatible with eslint-config-next >= 16 and Next 16 removes it entirely.
   eslint: { ignoreDuringBuilds: true },

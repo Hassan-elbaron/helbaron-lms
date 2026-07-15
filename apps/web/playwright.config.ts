@@ -57,13 +57,35 @@ export default defineConfig({
       },
     },
   ],
-  // Only manage a local server when a base URL was not provided externally.
+  // Only manage local servers when a base URL was not provided externally. Two servers:
+  //  1) a deterministic mock of the public API (e2e/support/mock-api.mjs) so the SSR shell's
+  //     branding/feature-flags/homepage fetches resolve INSTANTLY instead of stalling on the 20s
+  //     apiFetch timeout when no real API is running;
+  //  2) the Next app, built without standalone output (so `next start` can serve it) and pointed
+  //     at the mock for both server-side (NEXT_PUBLIC_API_BASE_URL) and BFF (API_INTERNAL_URL) fetches.
+  // Set PLAYWRIGHT_BASE_URL to run the full authenticated journeys against a real API+web instead.
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
-    : {
-        command: "npm run build && npm run start",
-        url: "http://localhost:3000",
-        timeout: 120_000,
-        reuseExistingServer: !process.env.CI,
-      },
+    : [
+        {
+          command: "node e2e/support/mock-api.mjs",
+          url: "http://127.0.0.1:8787/api/v1/health",
+          timeout: 30_000,
+          reuseExistingServer: !process.env.CI,
+          env: { MOCK_API_PORT: "8787", MOCK_API_HOST: "127.0.0.1" },
+        },
+        {
+          command: "npm run build && npm run start",
+          url: "http://localhost:3000",
+          timeout: 180_000,
+          reuseExistingServer: !process.env.CI,
+          // `next start` cannot serve a standalone build, so build without it; point SSR + the BFF
+          // proxy at the mock API. (Playwright merges env over process.env, so PATH etc. survive.)
+          env: {
+            NEXT_DISABLE_STANDALONE: "1",
+            NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:8787/api/v1",
+            API_INTERNAL_URL: "http://127.0.0.1:8787/api/v1",
+          },
+        },
+      ],
 });

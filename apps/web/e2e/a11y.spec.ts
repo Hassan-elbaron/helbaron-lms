@@ -1,5 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
-import AxeBuilder from "@axe-core/playwright";
+import { test, expect } from "@playwright/test";
+import { expectNoSeriousA11y } from "./support/a11y";
 
 /**
  * Accessibility (WCAG 2.2 AA) spec — Part 7.
@@ -9,17 +9,15 @@ import AxeBuilder from "@axe-core/playwright";
  * a11y contract added in this pass: a skip link, a single <main> landmark, and a labelled
  * primary navigation. Requires a running server (Playwright's webServer builds/starts it in CI);
  * it is NOT executed in the repository sandbox.
+ *
+ * `expectNoSeriousA11y` (see ./support/a11y) independently re-verifies axe color-contrast findings
+ * against the browser's real rendering to filter out axe's oklch/alpha false positives without
+ * disabling the rule or excluding elements.
  */
 
 const EMAIL = process.env.E2E_EMAIL;
 const PASSWORD = process.env.E2E_PASSWORD;
 const hasCreds = Boolean(EMAIL && PASSWORD);
-
-async function expectNoSeriousA11y(page: Page, context: string): Promise<void> {
-  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag22aa"]).analyze();
-  const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
-  expect(serious, `serious/critical a11y violations on ${context}`).toEqual([]);
-}
 
 test.describe("a11y: public surfaces", () => {
   test("homepage exposes a skip link + main landmark and passes axe", async ({ page }) => {

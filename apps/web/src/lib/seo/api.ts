@@ -69,11 +69,18 @@ export async function getSeo(entityType: SeoEntityType, key: string): Promise<Re
   }
 }
 
-/** Fetch the managed sitemap entries (GET /api/v1/seo/sitemap). Returns [] on any failure. */
+/**
+ * Fetch the managed sitemap entries (GET /api/v1/seo/sitemap). Returns [] on any failure.
+ * Defensive: only accepts a real `entries` array and drops rows missing a `url`, so a malformed
+ * payload (e.g. an array, which would otherwise expose `Array.prototype.entries`) can never make
+ * the sitemap build crash with a non-iterable value. A genuine API error still surfaces as [] via
+ * the catch (the documented fail-safe) — this does not silently swallow errors it can act on.
+ */
 export async function getSeoSitemap(): Promise<SeoSitemapEntry[]> {
   try {
-    const { entries } = await api.data<{ entries: SeoSitemapEntry[] }>("seo/sitemap", { auth: false });
-    return entries ?? [];
+    const payload = await api.data<{ entries?: SeoSitemapEntry[] } | null>("seo/sitemap", { auth: false });
+    const entries = payload && Array.isArray(payload.entries) ? payload.entries : [];
+    return entries.filter((e): e is SeoSitemapEntry => Boolean(e) && typeof e.url === "string" && e.url.length > 0);
   } catch {
     return [];
   }

@@ -1,5 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
-import AxeBuilder from "@axe-core/playwright";
+import { test, expect } from "@playwright/test";
+import { expectNoSeriousA11y } from "./support/a11y";
 
 /**
  * Sprint 0 / A1-S03 smoke journey: Home -> Login -> Dashboard -> Logout.
@@ -14,23 +14,14 @@ const EMAIL = process.env.E2E_EMAIL;
 const PASSWORD = process.env.E2E_PASSWORD;
 const hasCreds = Boolean(EMAIL && PASSWORD);
 
-// Serious-content note: none. Generic accessibility assertion helper.
-async function expectNoSeriousA11y(page: Page, context: string): Promise<void> {
-  const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa"])
-    .analyze();
-  const serious = results.violations.filter(
-    (v) => v.impact === "serious" || v.impact === "critical",
-  );
-  expect(serious, `serious/critical a11y violations on ${context}`).toEqual([]);
-}
+const SMOKE_TAGS = ["wcag2a", "wcag2aa"];
 
 test.describe("smoke: home -> login -> dashboard -> logout", () => {
   test("home renders and is accessible", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(/.+/);
     await expect(page.locator("body")).toBeVisible();
-    await expectNoSeriousA11y(page, "home");
+    await expectNoSeriousA11y(page, "home", SMOKE_TAGS);
   });
 
   test("login page renders and is accessible", async ({ page }) => {
@@ -39,7 +30,7 @@ test.describe("smoke: home -> login -> dashboard -> logout", () => {
     await expect(
       page.getByRole("textbox").first(),
     ).toBeVisible();
-    await expectNoSeriousA11y(page, "login");
+    await expectNoSeriousA11y(page, "login", SMOKE_TAGS);
   });
 
   test("authenticated journey: login -> dashboard -> logout", async ({ page }) => {
@@ -56,7 +47,7 @@ test.describe("smoke: home -> login -> dashboard -> logout", () => {
     // Land on the authenticated dashboard.
     await page.waitForURL(/\/(dashboard|my-learning)/, { timeout: 15_000 });
     await expect(page.locator("body")).toBeVisible();
-    await expectNoSeriousA11y(page, "dashboard");
+    await expectNoSeriousA11y(page, "dashboard", SMOKE_TAGS);
 
     // Log out and return to a public/login surface.
     await page.getByRole("button", { name: /log ?out|sign ?out/i }).click();

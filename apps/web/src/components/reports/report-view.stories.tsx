@@ -46,6 +46,14 @@ const meta = {
   title: "Widgets/ReportView",
   component: ReportView,
   tags: ["autodocs"],
+  // Default args satisfy ReportView's required props; the interactive stories below override via
+  // their own `render` (PagedReport owns the page state).
+  args: {
+    payload: fullPayload,
+    meta: { from: "2026-01-01", to: "2026-06-30" },
+    page: 1,
+    onPageChange: () => {},
+  },
   decorators: [(Story: () => import("react").ReactElement) => (
     <I18nProvider>
       {Story()}

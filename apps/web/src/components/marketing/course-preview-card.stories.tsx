@@ -32,7 +32,7 @@ const meta = {
   argTypes: {
     onPlay: { action: "play-preview" },
   },
-  args: { course: base },
+  args: { course: base, onPlay: () => {} },
 } satisfies Meta<typeof CoursePreviewCard>;
 
 export default meta;

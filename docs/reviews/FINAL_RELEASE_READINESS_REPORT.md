@@ -10,10 +10,12 @@
 | **SEC-01** Open redirect via login `redirect` param | High | **FIXED** (`safeRedirect` in `lib/utils.ts`; logic-verified) |
 | (prior) A11Y-AUTH-01 progress-bar name | Serious | FIXED |
 | (prior) A11Y-EVENTS-01 pagination name | Critical | FIXED |
-| (prior) DATA-01 seeder publish invariant | Low | FIXED (+ tests) |
+| DATA-01 seeder publish invariant | Low | **REOPENED — not fixed** (attempted fix reverted; see below) |
 | (prior) CSP-01, D1–D3, LB-01…05, OBS-01/02 | — | FIXED |
 
 **Open Critical: 0. Open High: 0.** Remaining items are Low/Medium hardening notes (JSON-LD `</script>` escaping; explicit upload-rule tests; coupon-state fixtures; contract-expiry product decision) — all documented, none release-blocking.
+
+> **DATA-01 (Low) — REOPENED, non-blocking.** Some Catalog courses are seeded in a `Published` state without a publishable curriculum. The attempted fix (making `CatalogSeeder` build minimal curriculum) was **reverted** because it introduced a forbidden **Catalog → Authoring** dependency and failed the API architecture test (`NoCrossContextEloquentAccessRule`) and Deptrac. The regression test added alongside it (`CatalogSeederPublishInvariantTest.php`) was **deleted** with the revert and no longer exists. Demo-data consistency is therefore **not** fully resolved. The compliant future fix must live in an **application-level / architecture-exempt composition seeder** (e.g. `database/seeders/DatabaseSeeder`/`DemoSeeder`), never inside the Catalog bounded context. This is Low severity and does not block release.
 
 ## Evidence-based scorecard
 
@@ -25,7 +27,7 @@
 | **Instructor** | **9 / 10** | Dashboard/listing/analytics/roster + publish/unpublish/archive + announcements **browser-verified**. Authoring (course/section/lesson/media/live-session) is **Missing** (documented gap, product decision). |
 | **CMS / White-Label** | **8 / 10** | All surfaces present + wired admin→API→frontend; branding data-flow verified end-to-end + full field coverage; page/section version history + rollback exist. −2: live Livewire CRUD + live rebrand cycle handed to Dusk + seeded fixtures. |
 | **Filament admin** | **7.5 / 10** | 36 resources present + render; Course + Category **create** and required-validation proven; delete-action availability mapped. −2.5: exhaustive per-resource CRUD not browser-automatable (Livewire) → Dusk/Pest. |
-| **Demo data** | **9 / 10** | Publish-invariant inconsistency fixed + regression tests; idempotent/deterministic seeder. |
+| **Demo data** | **8 / 10** | Idempotent/deterministic seeder across all product areas. **DATA-01 (Low) is REOPENED**: the publish-invariant inconsistency is **not** fixed — the attempted `CatalogSeeder` fix was reverted (forbidden Catalog→Authoring dependency) and its regression test deleted. Compliant fix belongs in an app-level/architecture-exempt seeder. Non-blocking. |
 | **Frontend / UX** | **8.5 / 10** | Every reachable route renders with real seeded data, EN/AR + light/dark; design-system adoption; states/RTL correct. Client-fetch "Loading…" latency is a dev artifact — confirm SSR/streaming for above-the-fold on prod. |
 | **Performance** | **Not measured here** | Modern stack (Next 15 / React 19, code-split, SSR-capable). LCP/CLS/INP/TBT + Lighthouse **require a prod build + runner** → PERFORMANCE_HARDENING_REPORT.md has the exact commands. **Must be scored in CI.** |
 | **Responsive** | **Partial** | Tailwind breakpoints + RTL logical properties; no overflow at observed widths. Exact 7-viewport matrix **needs Playwright** → RESPONSIVE_HARDENING_REPORT.md. |
@@ -36,7 +38,7 @@
 - **Progress bars** labeled (`aria-label`) ✅ ; **Pagination** labeled ✅
 - **Session redirect** on expiry → `/login` ✅ ; **Branding** `GET /branding` 200 + "HElbaron" consistent ✅
 - **Open redirect** blocked by `safeRedirect` ✅ ; **Commerce** idempotency ✅
-- **Seeder fix** code-verified (+ tests) — run on host to confirm green.
+- DATA-01 remains REOPENED (Low). The attempted CatalogSeeder fix and its regression test were removed after CI proved they violated the Catalog → Authoring boundary. No regression claim is made.
 No regression observed in browser-verifiable fixes.
 
 ## REQUIRED COMMANDS — execution status (honest)
@@ -49,7 +51,7 @@ composer dump-autoload
 vendor/bin/pint --test
 vendor/bin/phpstan analyse
 vendor/bin/deptrac analyse
-php artisan test              # incl. the new CatalogSeederPublishInvariantTest
+php artisan test
 php artisan migrate:fresh --seed   # also clears residual QA data (ZZ temp course/category, QA announcement, Business AI status)
 ```
 Frontend (`apps/web`):
@@ -100,7 +102,8 @@ Per the release-qualification directive, the gates were **actually attempted** i
 | Responsive matrix (7 viewports) | **No** | Needs Playwright device viewports | Host / CI | Advisory |
 | Security regression (headers/cookies/CSP/rate-limit/open-redirect) | **Yes (browser)** | Live-verified last phase; SEC-01 fixed | — | No |
 | A11y fixes (progress-bar, pagination) | **Yes (browser)** | Live axe re-verified | — | No |
-| Defect regression (CSP-01, SEC-01, LB-01…05, OBS-01/02, DATA-01, A11Y-*) | **Yes (browser)** where browser-observable; DATA-01 via code + tests | See UI_DEFECT_REGISTER.md | — | No |
+| Defect regression (CSP-01, SEC-01, LB-01…05, OBS-01/02, A11Y-*) | **Yes (browser)** where browser-observable | See UI_DEFECT_REGISTER.md | — | No |
+| DATA-01 (seeder publish invariant) | **No — REOPENED** | Attempted fix reverted (Catalog→Authoring violation); regression test deleted. Compliant fix owed to an app-level seeder. | Host | No (Low) |
 
 **Command execution log:** the only command actually executed this attempt was `npm run typecheck`, which returned 6 errors — **diagnosed and dismissed as a sandbox-mount corruption artifact, not code** (host source Read-verified complete + valid; the changes compiled and ran live in the browser via the host dev server's SWC). No other gate produced real output. No fabricated results are included.
 
@@ -125,34 +128,50 @@ The repository was pushed to GitHub and CI (`.github/workflows/ci.yml`) executed
 
 These fixes are **not yet CI-verified**: they must be committed, pushed, and the CI re-run. No claim of green is made.
 
+## CI Run #6 — real evidence (2026-07-15, commit 44b8537, after ARCH-01 + CI-01 fixes)
+
+Read job-by-job in the browser from [run 29385071572](https://github.com/Hassan-elbaron/helbaron-lms/actions/runs/29385071572). **Run status: FAILURE (3m 5s)** — but 3 jobs flipped to green.
+
+| Mandatory job | Status | First real error / cause | Classification |
+|---|---|---|---|
+| **API (Laravel)** | ✅ **succeeded** | Pint, PHPStan/Larastan, Migrate, Pest all pass. (The "exit 2" annotation was the **non-blocking** Rector report-only step.) | — (ARCH-01 fixed) |
+| **Architecture (Deptrac)** | ✅ **succeeded** | Deptrac boundaries pass — **zero violations** (Catalog no longer depends on Authoring). | — (ARCH-01 fixed) |
+| **Secret scan (gitleaks)** | ✅ **succeeded** | "No leaks detected." | — |
+| **Web (Next.js)** | ❌ **failed** | Lint **passes** (CI-01 fixed); fails at `tsc --noEmit` with ~20 **pre-existing Storybook type errors** (`args`/`onAdd`/`onPlay`/`onPageChange` missing; `render`-only stories) in `product-card`, `course-preview-card`, `report-view`, `query-state`, `confirm-dialog`, `form-field`, `pagination`, `popover`, `tooltip` `.stories.tsx`. | **Repository defect (pre-existing typecheck debt, surfaced now lint passes)** |
+| **E2E (Playwright + axe)** | ❌ **failed** | "config.webServer was not able to start" — its `next build` fails on the same story type errors. | **Repository defect (cascade of Web typecheck)** |
+| **API image** | ❌ **failed** | `Unable to resolve action aquasecurity/trivy-action@0.28.0` — version doesn't exist. | **CI configuration defect** |
+| **Web image** | ⏭ skipped | gated behind failing jobs. | — |
+
+### Fixes applied this round (staged, pending host verify + push + re-run)
+- **CI-02 — Trivy action version (CI-config).** Both Trivy steps in `.github/workflows/ci.yml` (API image + Web image) now pin the action to an **immutable commit SHA**: `aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0`. This is **not** a floating `@master` ref (per policy). All scan settings are preserved (`format: table`, `exit-code: '1'`, `severity: CRITICAL,HIGH`, `ignore-unfixed: true`) — vulnerability scanning is **not** disabled or weakened.
+- **CI-03 — Web typecheck / Storybook story types (repository).** Fixed every failing `tsc --noEmit` error by supplying the components' real required props — **no** `any`, `@ts-ignore`, `@ts-expect-error`, unsafe casts, tsconfig weakening, or Storybook-file exclusions:
+  - `commerce/product-card.stories.tsx` → `meta.args.onAdd`.
+  - `marketing/course-preview-card.stories.tsx` → `meta.args.onPlay`.
+  - `reports/report-view.stories.tsx` → `meta.args` (`payload`, `meta`, `page`, `onPageChange`).
+  - `ui/pagination.stories.tsx` → `onPageChange` on the `Interactive` story (render still owns page state via the extracted `InteractivePagination` component from CI-01).
+  - `student/query-state.stories.tsx` → `meta.args` (`query`, `children`) **and** `new globalThis.Error(...)` so the `export const Error` story no longer shadows the global `Error` constructor (was TS2351 "not constructable").
+  - `ui/confirm-dialog.stories.tsx` → `meta.args` (`open`, `onOpenChange`, `onConfirm`); both stories keep their `render`-owned `useState` in named function components.
+  - `ui/form-field.stories.tsx` → `meta.args` (`label`, `children`) so the render-only `AllStates` story is type-safe.
+  - `ui/popover.stories.tsx` and `ui/tooltip.stories.tsx` → `meta.args.children` (required prop) with a representative default tree.
+
+  Rationale: in Storybook 8 CSF3, a render-only story still must satisfy the component's **required** props via `meta.args`; providing them as meta defaults makes the render-only stories type-check without altering any story's runtime render or interaction behavior.
+
+### Remaining blocker (the only thing between here and GO)
+The staged fixes above are believed to clear the **Web** (typecheck) + **E2E** (cascade) + **API image** (Trivy) jobs, but this is **not yet verified against real output**. This QA environment **cannot** produce trustworthy verification: it has no push access (cannot trigger CI, the authoritative gate), and the sandbox mount serves **truncated file views**, so sandbox `tsc --noEmit` returns phantom JSX parse errors and is unusable. Verification therefore requires the host to run `cd apps/web && npm run typecheck` (and `lint` / `test` / `build` / `build-storybook`), then push, after which CI is re-read job-by-job. **No job will be marked green until its real CI output is read.**
+
 ## Release recommendation
 
-**NO GO.**
+# NO GO — PENDING CI RE-RUN
 
-Per the decision rules — "NO GO: any mandatory job fails because of a repository defect" — the executed CI run **failed on repository defects** (API architecture, Deptrac, Web lint, E2E). That is an unambiguous **NO GO** as of the last executed run. It is **not** GO (CI is red) and **not** "pending CI validation" (the jobs executed and failed; the cause is code, not environment).
+This is the **single current release decision**. Per the decision rules — "NO GO: any mandatory job is failed, skipped, cancelled, or unexecuted because of a repository, test, CI-configuration, or image-vulnerability issue" — the last authoritative run, **#6 (`44b8537`), is FAILURE**: **Web** (typecheck) and **E2E** (cascade) were red on a repository defect (Storybook story types) and **API image** was red on a CI-config defect (`trivy-action@0.28.0`). Fixes for all three are now **staged** (story types resolved without suppression; both Trivy steps pinned to the immutable SHA `ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0`), but they are **unverified against real output**: this environment has no push access (cannot trigger CI, the authoritative gate) and its sandbox mount serves truncated file views (so sandbox `tsc` is unusable). It is therefore **not GO** (CI is not green) and **not** a "RELEASE CANDIDATE — PENDING CI VALIDATION" (that status is reserved for a mandatory gate blocked by a proven external GitHub outage — not the case here; the jobs executed and failed on code/config).
 
-**Path to GO:** commit + push the two fixes above, let CI re-run, and confirm every mandatory job is green. If the seeder revert + story-lint fixes clear all four failing jobs (expected, but unverified), the run goes green and the decision becomes **GO**. If any job still fails, repeat the diagnose-fix-rerun loop on the new real output.
-
----
-
-_(Superseded by the CI evidence above:)_ **RELEASE CANDIDATE — PENDING CI VALIDATION.**
-
-Per the decision rules: the product **appears ready** on all executed (browser + code) evidence — **0 open Critical/High defects**, verified commerce integrity, strong security posture (incl. SEC-01 open-redirect fixed), and accessibility fixes live-verified — **but one or more automated release gates could not actually be executed** in this environment (no host shell available; sandbox is untrustworthy). This is therefore **not GO** and **not NO-GO**: it is a **Release Candidate pending the CI gate run**.
-
-**The single action that resolves this:** run `.github/workflows/ci.yml` on the host/CI (push, open a PR, or `gh workflow run ci.yml`). If every job is green, the decision becomes **GO**. If any job fails, fix the repository per the failure and re-run. The report below (superseded framing) lists the same gates.
+**Path to GO:** on the host, run `cd apps/web && npm run lint && npm run typecheck && npm test && npm run build && npm run build-storybook` (then Playwright); if all pass, `git add -A && git commit -m "fix(ci): resolve story types and pin Trivy action" && git push origin main`; then read the newest CI run job-by-job. GO is declared **only** when all seven mandatory jobs (API, Architecture, Web, E2E, Secret scan, API image, Web image) execute and pass — including both image jobs building + Trivy-scanning (CRITICAL/HIGH, exit-code 1) rather than skipping.
 
 ---
 
-_(Superseded framing from attempt #1 — retained for traceability:)_ **GO WITH KNOWN LIMITATIONS.** (Basis: only executed evidence.)
+## Historical decisions (superseded — retained for traceability)
 
-**What executed evidence supports:** the product is functionally strong and secure on everything browser-verifiable — **0 open Critical/High defects**, verified commerce integrity (idempotent payments, no double-charge, safe concurrent checkout), strong security posture (headers/cookies/rate-limits/DOMPurify + **open-redirect SEC-01 fixed**), accessibility fixes landed and re-verified live, and all edited source Read-verified valid + browser-compiled.
+These earlier framings are **no longer in effect**; the only current decision is **NO GO — PENDING CI RE-RUN** above. Full evidence for each is in Git history and the CI-run sections of this report.
 
-**Known limitation (the gating one):** the **automated release gates were not executable in this QA environment** — backend gates need PHP (absent here), and the frontend gates cannot be trusted because the sandbox mount serves stale/truncated file views. Therefore this is **not** a fully-certified GO; the following must be run **green on the host/CI** before shipping (this is the release gate, and this report does not substitute for it):
-1. Backend suite + static analysis green (`php artisan test`, pint, phpstan, deptrac).
-2. Frontend `build` + `lint` + `typecheck` + `vitest` green.
-3. Lighthouse budgets on a prod build (Performance/LCP/CLS/INP).
-4. Playwright responsive (7 viewports) + `@axe-core/playwright` (authenticated × EN/AR × light/dark) green.
-5. Visual baselines reviewed/approved.
-6. Dusk/Filament-Pest CRUD matrix green.
-
-When those six are green on the host/CI, this is a **GO**. All findings, fixes, and exact commands to reach that state are captured across the `docs/reviews/` report set.
+- **RELEASE CANDIDATE — PENDING CI VALIDATION** (before any CI run existed): asserted the product looked ready on browser/code evidence but the automated gate had not been executed. Superseded once CI actually ran (#5, #6) and returned real FAILURE output — the correct status became NO GO, not "pending validation."
+- **GO WITH KNOWN LIMITATIONS** (attempt #1, executed-evidence only): asserted a conditional GO contingent on host/CI gates. Superseded for the same reason — the gates ran and were red, so a conditional GO is invalid.

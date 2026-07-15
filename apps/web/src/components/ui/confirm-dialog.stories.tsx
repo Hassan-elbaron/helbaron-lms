@@ -16,6 +16,13 @@ const meta = {
       </I18nProvider>
     ),
   ],
+  // Default args satisfy ConfirmDialog's required controlled props. Both stories below own their
+  // real open state via `render`, so these defaults only make the render-only stories type-safe.
+  args: {
+    open: false,
+    onOpenChange: () => {},
+    onConfirm: () => {},
+  },
 } satisfies Meta<typeof ConfirmDialog>;
 
 export default meta;
