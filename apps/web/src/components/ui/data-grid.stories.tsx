@@ -151,9 +151,11 @@ export const Loading: Story = {
 };
 
 /** Controlled pagination wired through the `pagination` prop (uses local state). */
+function PaginatedGrid(args: import("react").ComponentProps<typeof CourseGrid>) {
+  const [page, setPage] = useState(1);
+  return <CourseGrid {...args} pagination={{ page, lastPage: 5, onPageChange: setPage }} />;
+}
+
 export const WithPagination: Story = {
-  render: (args: import("react").ComponentProps<typeof CourseGrid>) => {
-    const [page, setPage] = useState(1);
-    return <CourseGrid {...args} pagination={{ page, lastPage: 5, onPageChange: setPage }} />;
-  },
+  render: (args: import("react").ComponentProps<typeof CourseGrid>) => <PaginatedGrid {...args} />,
 };

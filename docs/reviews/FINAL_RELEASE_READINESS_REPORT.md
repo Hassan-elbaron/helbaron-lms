@@ -104,9 +104,38 @@ Per the release-qualification directive, the gates were **actually attempted** i
 
 **Command execution log:** the only command actually executed this attempt was `npm run typecheck`, which returned 6 errors — **diagnosed and dismissed as a sandbox-mount corruption artifact, not code** (host source Read-verified complete + valid; the changes compiled and ran live in the browser via the host dev server's SWC). No other gate produced real output. No fabricated results are included.
 
+## CI Run — real evidence (2026-07-15, commit acaae92)
+
+The repository was pushed to GitHub and CI (`.github/workflows/ci.yml`) executed. Results were **read directly in the browser** from the run page ([run 29384411393](https://github.com/Hassan-elbaron/helbaron-lms/actions/runs/29384411393)) — not inferred.
+
+**Run status: FAILURE (1m 46s).** Jobs:
+
+| Job | Result | Failing command / root cause | Classification |
+|---|---|---|---|
+| Secret scan (gitleaks) | ✅ Pass | "No leaks detected" | — |
+| **API (Laravel 12 / PHP 8.3)** | ❌ Fail (exit 1) | Architecture test `NoCrossContextEloquentAccessRule` — `CatalogSeeder` makes static calls on `Authoring\Models\Section`/`Lesson` from the Catalog context | **Repository defect (introduced by the DATA-01 fix)** |
+| **Architecture (Deptrac)** | ❌ Fail | `CatalogSeeder must not depend on Authoring\Models\Section`/`Lesson`/`Enums` (Catalog on Authoring) — 10 violations | **Repository defect (same root cause)** |
+| **Web (Next.js 15 / Node 20)** | ❌ Fail (exit 1) | ESLint `react-hooks/rules-of-hooks` — `useState` in a `render` arrow in `pagination.stories.tsx` + `data-grid.stories.tsx` | **Repository defect (pre-existing)** |
+| **E2E (Playwright + axe)** | ❌ Fail (exit 1) | "Process from config.webServer was not able to start" — `next build`/start failed (most likely on the same ESLint errors above) | **Repository defect (likely cascade of Web lint)** |
+| API image / Web image | ⏭ Skipped | gated behind the failing jobs | — |
+
+### Fixes applied this round (committed, pending re-push + CI re-run)
+1. **ARCH-01 — reverted the DATA-01 seeder change.** `CatalogSeeder` no longer imports/uses `Authoring\Models\Section`/`Lesson`/`Enums`; restored to its architecture-compliant original. Removed the added `CatalogSeederPublishInvariantTest`. This clears the **API architecture** + **Deptrac** failures. **DATA-01 is reopened** (Low, data-quality) — its compliant fix belongs in an app-level seeder, not the Catalog domain.
+2. **CI-01 — fixed the Storybook hooks lint.** Extracted the `useState` calls in `pagination.stories.tsx` and `data-grid.stories.tsx` into proper components (`InteractivePagination`, `PaginatedGrid`). This clears the **Web** lint job, and — because `next build` runs ESLint — is the most likely fix for the **E2E** web-server-start failure too. (`report-view.stories.tsx` already used the correct pattern.)
+
+These fixes are **not yet CI-verified**: they must be committed, pushed, and the CI re-run. No claim of green is made.
+
 ## Release recommendation
 
-**RELEASE CANDIDATE — PENDING CI VALIDATION.**
+**NO GO.**
+
+Per the decision rules — "NO GO: any mandatory job fails because of a repository defect" — the executed CI run **failed on repository defects** (API architecture, Deptrac, Web lint, E2E). That is an unambiguous **NO GO** as of the last executed run. It is **not** GO (CI is red) and **not** "pending CI validation" (the jobs executed and failed; the cause is code, not environment).
+
+**Path to GO:** commit + push the two fixes above, let CI re-run, and confirm every mandatory job is green. If the seeder revert + story-lint fixes clear all four failing jobs (expected, but unverified), the run goes green and the decision becomes **GO**. If any job still fails, repeat the diagnose-fix-rerun loop on the new real output.
+
+---
+
+_(Superseded by the CI evidence above:)_ **RELEASE CANDIDATE — PENDING CI VALIDATION.**
 
 Per the decision rules: the product **appears ready** on all executed (browser + code) evidence — **0 open Critical/High defects**, verified commerce integrity, strong security posture (incl. SEC-01 open-redirect fixed), and accessibility fixes live-verified — **but one or more automated release gates could not actually be executed** in this environment (no host shell available; sandbox is untrustworthy). This is therefore **not GO** and **not NO-GO**: it is a **Release Candidate pending the CI gate run**.
 

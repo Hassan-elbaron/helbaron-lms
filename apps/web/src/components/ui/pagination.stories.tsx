@@ -24,12 +24,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** Interactive, controlled pagination. Prev is disabled on the first page, Next on the last. */
+function InteractivePagination(args: import("react").ComponentProps<typeof Pagination>) {
+  const [page, setPage] = useState(args.page);
+  return <Pagination {...args} page={page} onPageChange={setPage} />;
+}
+
 export const Interactive: Story = {
   args: { page: 3, lastPage: 10 },
-  render: (args: import("react").ComponentProps<typeof Pagination>) => {
-    const [page, setPage] = useState(args.page);
-    return <Pagination {...args} page={page} onPageChange={setPage} />;
-  },
+  render: (args: import("react").ComponentProps<typeof Pagination>) => <InteractivePagination {...args} />,
 };
 
 /** First page — the Prev button is disabled. */
