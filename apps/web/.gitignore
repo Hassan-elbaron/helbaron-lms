@@ -16,3 +16,13 @@ next-env.d.ts
 
 # Storybook build output (generated)
 /storybook-static
+
+# Lighthouse reports (generated, local perf runs)
+/lighthouse.report.*
+/lighthouse.report.json
+/lighthouse.report.html
+
+# Playwright visual-regression snapshots are platform-specific (win32 locally vs linux in CI) and
+# the `visual` project is advisory/local (the blocking E2E gate runs --project=chromium). Regenerate
+# per-environment; do not commit host-generated baselines. Promote to a CI gate with linux baselines.
+/e2e/**/*-snapshots/

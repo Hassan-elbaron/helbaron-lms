@@ -68,4 +68,14 @@ describe("E2E mock API — sitemap contract", () => {
     expect(status).toBe(200);
     expect(body).toEqual({ data: [] });
   });
+
+  it("a single static-page lookup resolves to a null payload (not an array)", () => {
+    // Regression guard: a `{ data: [] }` fallback made getStaticPage return a truthy empty array,
+    // so `if (!page)` did not fire and /about, /contact crashed on `page.title.en`.
+    for (const p of ["/api/v1/pages/about", "/api/v1/pages/contact", "/api/v1/pages/getting-started/preview"]) {
+      const { status, body } = resolveMock(p);
+      expect(status).toBe(200);
+      expect(body).toEqual({ data: null });
+    }
+  });
 });

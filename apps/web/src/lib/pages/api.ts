@@ -56,15 +56,31 @@ export type StaticPageSummary = {
   updated_at: string | null;
 };
 
+/** Narrow an unknown payload to a StaticPage: a plain object carrying a non-empty string `slug`. */
+function isStaticPage(data: unknown): data is StaticPage {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    !Array.isArray(data) &&
+    typeof (data as { slug?: unknown }).slug === "string" &&
+    (data as { slug: string }).slug.length > 0
+  );
+}
+
 /**
  * Fetch a published page by slug. Returns null on any failure OR when the page is not live, so the
  * caller can render its hardcoded fallback. `preview` requests the admin draft (best-effort; needs
  * an authenticated admin session).
+ *
+ * Defensive: only a well-formed page object resolves to a page; any other payload (null, an array,
+ * or a malformed object) resolves to null so callers hit the `if (!page)` fallback instead of
+ * dereferencing missing localized fields (which threw `Cannot read properties of undefined (en)`).
  */
 export async function getStaticPage(slug: string, preview = false): Promise<StaticPage | null> {
   try {
     const path = preview ? `pages/${slug}/preview` : `pages/${slug}`;
-    return await api.data<StaticPage>(path, { auth: preview, cache: "no-store" });
+    const data = await api.data<StaticPage | null>(path, { auth: preview, cache: "no-store" });
+    return isStaticPage(data) ? data : null;
   } catch {
     return null;
   }

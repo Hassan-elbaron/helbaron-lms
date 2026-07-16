@@ -68,6 +68,10 @@ export function resolveMock(pathname, method = "GET") {
   const path = pathname.replace(/\/+$/, "") || "/";
   const handler = ROUTES.get(path);
   if (handler) return { status: 200, body: handler() };
+  // A single-resource lookup (GET /api/v1/pages/<slug>[/preview]) has no seeded record in the mock,
+  // so resolve to a null payload — getStaticPage() then renders the page's built-in fallback rather
+  // than dereferencing an array/empty object.
+  if (/^\/api\/v1\/pages\/[^/]+/.test(path)) return { status: 200, body: { data: null } };
   // Fail-open only where empty is contract-valid: client lists render empty (never error/hang).
   if (method === "GET" || method === "HEAD") return { status: 200, body: { data: [] } };
   return { status: 200, body: { data: {} } };
