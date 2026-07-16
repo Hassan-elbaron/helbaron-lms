@@ -33,6 +33,12 @@ COPY --from=build --chown=node:node /app/.next/standalone ./
 COPY --from=build --chown=node:node /app/.next/static ./.next/static
 COPY --from=build --chown=node:node /app/public ./public
 
+# Next's file tracing pulls esbuild's prebuilt Go binary (@esbuild/*) into the standalone bundle,
+# but the runtime server (`node server.js`) never executes esbuild — it's build-only tooling. Its
+# Go binary carries stdlib CVEs (e.g. CVE-2024-24790) that don't apply at runtime, so remove it to
+# keep the production image minimal and clean. Safe: nothing at runtime imports esbuild.
+RUN find ./node_modules -type d \( -name 'esbuild' -o -name '@esbuild' \) -prune -exec rm -rf {} + 2>/dev/null || true
+
 USER node
 EXPOSE 3000
 
