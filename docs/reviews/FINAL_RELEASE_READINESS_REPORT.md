@@ -156,22 +156,34 @@ Read job-by-job in the browser from [run 29385071572](https://github.com/Hassan-
 
   Rationale: in Storybook 8 CSF3, a render-only story still must satisfy the component's **required** props via `meta.args`; providing them as meta defaults makes the render-only stories type-check without altering any story's runtime render or interaction behavior.
 
-### Remaining blocker (the only thing between here and GO)
-The staged fixes above are believed to clear the **Web** (typecheck) + **E2E** (cascade) + **API image** (Trivy) jobs, but this is **not yet verified against real output**. This QA environment **cannot** produce trustworthy verification: it has no push access (cannot trigger CI, the authoritative gate), and the sandbox mount serves **truncated file views**, so sandbox `tsc --noEmit` returns phantom JSX parse errors and is unusable. Verification therefore requires the host to run `cd apps/web && npm run typecheck` (and `lint` / `test` / `build` / `build-storybook`), then push, after which CI is re-read job-by-job. **No job will be marked green until its real CI output is read.**
+## CI Run — final authoritative evidence (2026-07-16, commit 415a90a, run #13)
+
+Read job-by-job in the browser from CI run **#13** ([run 29465445521](https://github.com/Hassan-elbaron/helbaron-lms/actions/runs/29465445521)) on the pushed commit **415a90a**. **Run status: SUCCESS (5m 27s).** All seven mandatory jobs executed and passed:
+
+| Mandatory job | Status | Evidence |
+|---|---|---|
+| **API (Laravel 12 / PHP 8.3)** | ✅ succeeded (3m 11s) | Pint, PHPStan, Migrate, Pest pass (the "exit 2" annotation is the non-blocking Rector report-only step). |
+| **Architecture (Deptrac)** | ✅ succeeded (21s) | Zero bounded-context violations. |
+| **Web (Next.js 15 / Node 20)** | ✅ succeeded (2m 36s) | npm audit (prod), lint, typecheck, vitest, next build all pass. |
+| **E2E (Playwright + axe)** | ✅ succeeded (1m 57s) | **Blocking gate** (continue-on-error removed). 5 passed, 2 skipped (auth journeys). Deterministic mock API serves SSR; axe color-contrast findings independently re-verified as oklch/alpha false positives. |
+| **Secret scan (gitleaks)** | ✅ succeeded (10s) | No leaks detected. |
+| **API image** | ✅ succeeded (2m 0s) | Built + Trivy scan **clean** (alpine 0, composer-vendor 0) + pushed to GHCR. |
+| **Web image** | ✅ succeeded (2m 45s) | Built + Trivy scan **clean** + pushed to GHCR. One documented exception in `apps/web/.trivyignore` (CVE-2026-33671, picomatch ReDoS vendored inside `next/dist/compiled`, npm-unreachable, not runtime-exploitable); every other CRITICAL/HIGH still blocks. |
+
+Trajectory: runs #1–#12 FAILURE → **#13 SUCCESS (all seven green)**. The image-remediation trail: pinned Trivy to an immutable SHA; fixed the API image build (php config into context + `--ignore-platform-reqs`); hardened both images (`apk upgrade`); pruned build-only tooling from the web runtime (esbuild Go binary, unused npm/corepack) to clear real CVEs; and documented the single npm-unreachable picomatch finding. Trivy is fully enabled throughout (exit-code 1, CRITICAL/HIGH, ignore-unfixed).
 
 ## Release recommendation
 
-# NO GO — PENDING CI RE-RUN
+# GO
 
-This is the **single current release decision**. Per the decision rules — "NO GO: any mandatory job is failed, skipped, cancelled, or unexecuted because of a repository, test, CI-configuration, or image-vulnerability issue" — the last authoritative run, **#6 (`44b8537`), is FAILURE**: **Web** (typecheck) and **E2E** (cascade) were red on a repository defect (Storybook story types) and **API image** was red on a CI-config defect (`trivy-action@0.28.0`). Fixes for all three are now **staged** (story types resolved without suppression; both Trivy steps pinned to the immutable SHA `ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0`), but they are **unverified against real output**: this environment has no push access (cannot trigger CI, the authoritative gate) and its sandbox mount serves truncated file views (so sandbox `tsc` is unusable). It is therefore **not GO** (CI is not green) and **not** a "RELEASE CANDIDATE — PENDING CI VALIDATION" (that status is reserved for a mandatory gate blocked by a proven external GitHub outage — not the case here; the jobs executed and failed on code/config).
-
-**Path to GO:** on the host, run `cd apps/web && npm run lint && npm run typecheck && npm test && npm run build && npm run build-storybook` (then Playwright); if all pass, `git add -A && git commit -m "fix(ci): resolve story types and pin Trivy action" && git push origin main`; then read the newest CI run job-by-job. GO is declared **only** when all seven mandatory jobs (API, Architecture, Web, E2E, Secret scan, API image, Web image) execute and pass — including both image jobs building + Trivy-scanning (CRITICAL/HIGH, exit-code 1) rather than skipping.
+This is the **single current release decision**. Per the decision rules — "GO: all seven mandatory jobs execute and pass" — CI run **#13 (`415a90a`) is SUCCESS** with **API, Architecture, Web, E2E (blocking), Secret scan, API image, and Web image all green**. Both container images build, pass a fully-enabled Trivy scan (CRITICAL/HIGH, `exit-code 1`, `ignore-unfixed`), and push to GHCR. No mandatory job is failed, skipped, or unexecuted. The one accepted container finding is a single, documented, scoped `.trivyignore` exception (upstream-fixed, npm-unreachable, not runtime-exploitable) — the gate is not disabled.
 
 ---
 
 ## Historical decisions (superseded — retained for traceability)
 
-These earlier framings are **no longer in effect**; the only current decision is **NO GO — PENDING CI RE-RUN** above. Full evidence for each is in Git history and the CI-run sections of this report.
+These earlier framings are **no longer in effect**; the only current decision is **GO** above. Full evidence for each is in Git history and the CI-run sections of this report.
 
-- **RELEASE CANDIDATE — PENDING CI VALIDATION** (before any CI run existed): asserted the product looked ready on browser/code evidence but the automated gate had not been executed. Superseded once CI actually ran (#5, #6) and returned real FAILURE output — the correct status became NO GO, not "pending validation."
-- **GO WITH KNOWN LIMITATIONS** (attempt #1, executed-evidence only): asserted a conditional GO contingent on host/CI gates. Superseded for the same reason — the gates ran and were red, so a conditional GO is invalid.
+- **NO GO — PENDING CI RE-RUN** (runs #6–#12): each successive run cleared blockers (story types, Trivy pin, sitemap mock contract, E2E backend, API-image build, image vulnerabilities). Superseded by run #13, where all seven mandatory jobs passed.
+- **RELEASE CANDIDATE — PENDING CI VALIDATION** (before any CI run existed): asserted the product looked ready on browser/code evidence but the automated gate had not been executed. Superseded once CI actually ran and returned real output.
+- **GO WITH KNOWN LIMITATIONS** (attempt #1, executed-evidence only): asserted a conditional GO contingent on host/CI gates. Superseded — the gates now run green in CI, so the GO is unconditional.
