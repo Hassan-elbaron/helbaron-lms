@@ -1,0 +1,11 @@
+# Frontend browser-support floor (conservative modern — approved 2026-07-16).
+# Purpose: let Next.js/SWC skip legacy transpilation and polyfills for Baseline features,
+# removing the ~43 KiB of "legacy JavaScript" Lighthouse flagged for modern browsers.
+# Coverage: ~99%+ of real traffic, including iPhone 8-era devices (iOS 16). Fully reversible —
+# delete this file to restore Next.js defaults. See docs/reviews/PERFORMANCE_OPTIMIZATION_PLAN.md.
+chrome >= 109
+edge >= 109
+firefox >= 115
+safari >= 16
+ios_saf >= 16
+not dead

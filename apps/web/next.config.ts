@@ -47,6 +47,29 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Tree-shake named imports from these barrel packages into per-module imports. lucide-react,
+  // recharts, @headlessui, @mui/* etc. are ALREADY in Next's built-in default list, so only the
+  // packages absent from that default are listed here (verified against next/dist/server/config.js).
+  experimental: {
+    optimizePackageImports: [
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-label",
+      "@radix-ui/react-scroll-area",
+      "@radix-ui/react-select",
+      "@radix-ui/react-separator",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-tabs",
+      "vaul",
+      "sonner",
+    ],
+  },
+  // Strip console.* from the production client bundle, but keep error/warn (used for real diagnostics
+  // and asserted by the E2E "no console errors" checks). Dev is unaffected.
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
+  },
   // Standalone output powers the Docker runtime image (see apps/web/Dockerfile) and is the
   // default. The Playwright harness sets NEXT_DISABLE_STANDALONE=1 so its build can be served by
   // `next start`, which is incompatible with standalone output. Production/Docker is unchanged.

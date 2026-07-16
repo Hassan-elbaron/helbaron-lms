@@ -1,5 +1,24 @@
 # HElbaron — Release Notes
 
+## v1.0.0 (Release Ready) — 2026-07-16
+
+Hardening project **closed**; repository transitioning to product development. Mandatory CI gate green on `5048750` (run #16 — all 7 jobs: API, Web, Architecture, Secret scan, E2E, API image, Web image). Production container images scan clean in Trivy (0 CRITICAL/HIGH).
+
+### Fixed this cycle
+- `/about` + `/contact` SSR crash — `getStaticPage` hardened against malformed payloads (guard + mock contract + regression test).
+- `build-storybook` failure — pinned `webpack` to `5.100.2` (webpack 5.101 strict `Compilation` guard vs Next's bundled webpack). Preview builds green.
+- Perf Tier-1: `optimizePackageImports` (radix/vaul/sonner), production `removeConsole`, conservative-modern `.browserslistrc` (measured marginal, kept as safe hygiene).
+- Removed dead dependency `framer-motion` (0 source imports).
+
+### Quality snapshot (measured)
+- Web unit tests 114/114 green; backend suite green; typecheck + lint + build + build-storybook green.
+- Lighthouse: Accessibility **100**, SEO **100**, Best Practices **96**, Performance **72** (mobile throttled, API-down shell — LCP-bound).
+
+### Known limitations
+See `KNOWN_LIMITATIONS.md` (consolidated). None block production; all are additive enhancements or low-priority polish. Full status in `FINAL_PROJECT_STATUS.md`; deployment in `DEPLOYMENT.md`.
+
+---
+
 ## v1.0.0-rc.1 (Release Candidate) — 2026-07-05
 
 First tagged Release Candidate of **HElbaron**, a bilingual (AR/EN) enterprise Learning
