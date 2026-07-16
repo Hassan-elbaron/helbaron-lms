@@ -22,7 +22,12 @@ FROM node:22-alpine AS runtime
 WORKDIR /app
 # Patch OS packages to their latest security-fixed versions (addresses fixable CRITICAL/HIGH OS
 # CVEs the base image may lag on; Trivy scans the final image with ignore-unfixed).
-RUN apk --no-cache upgrade
+# The production server runs `node server.js` and never invokes npm/npx/corepack; the base image's
+# bundled package managers vendor libraries (e.g. sigstore) that carry CVEs irrelevant at runtime,
+# so strip them to shrink the image and clear those findings.
+RUN apk --no-cache upgrade \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
+       /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
