@@ -1,0 +1,19 @@
+# Trivy ignore file for the apps/web container image scan.
+# Scope: a SINGLE, documented, justified exception. Trivy still fails the build on every other
+# CRITICAL/HIGH finding — the gate is NOT disabled and no rule is turned off.
+#
+# CVE-2026-33671 — picomatch: Regular Expression Denial of Service (ReDoS), HIGH.
+#
+# Why it is accepted here and cannot be remediated via dependencies:
+#   * The vulnerable picomatch@4.0.3 is VENDORED inside Next.js at
+#     `next/dist/compiled/picomatch` — a copy Next bundles into its own distribution and ships in
+#     the standalone output. Our own dependency tree is already patched: apps/web/package.json
+#     pins picomatch via `overrides` to 4.0.4 and package-lock.json resolves 4.0.4 / 4.0.5. npm
+#     overrides cannot reach a copy bundled inside Next's compiled output.
+#   * picomatch is a build-time glob matcher. The ReDoS requires an attacker-controlled glob
+#     pattern; at runtime the production server matches only trusted, developer-authored patterns
+#     (next.config / middleware matchers), so untrusted input never reaches picomatch. It is not
+#     exploitable by the running web server.
+#   * Fixed upstream in picomatch >= 4.0.4. This exception clears automatically once Next ships a
+#     release that bundles a patched picomatch — re-verify on every Next upgrade.
+CVE-2026-33671

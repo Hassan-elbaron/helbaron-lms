@@ -250,6 +250,10 @@ jobs:
           exit-code: '1'
           severity: CRITICAL,HIGH
           ignore-unfixed: true
+          # Single documented exception (see apps/web/.trivyignore): picomatch ReDoS vendored inside
+          # next/dist/compiled, unreachable by npm overrides, not runtime-exploitable. Every other
+          # CRITICAL/HIGH still blocks — the gate is not disabled.
+          trivyignores: apps/web/.trivyignore
       # Surface the full findings in the job summary (visibility only — the blocking scan above is
       # unchanged: it still fails the job on any CRITICAL/HIGH). Runs even when the scan fails.
       - name: Publish Trivy report to job summary
