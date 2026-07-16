@@ -258,7 +258,10 @@ jobs:
           {
             echo '### Trivy — Web image (CRITICAL/HIGH, ignore-unfixed)';
             echo '```';
-            cat trivy-web.txt 2>/dev/null || echo '(no report produced)';
+            # Compact, greppable: per-package totals + each vulnerable row (pkg | CVE | severity |
+            # installed | fixed). Keeps the blocking scan above unchanged.
+            grep -E 'Total: [0-9]|CRITICAL|HIGH' trivy-web.txt 2>/dev/null | grep -v 'Legend' | head -200 \
+              || echo '(no report produced)';
             echo '```';
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Push to GHCR (main/tags only)
