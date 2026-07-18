@@ -144,13 +144,18 @@ export interface UpdateBlockInput {
   kind?: BlockKind;
   content?: BlockContent;
 }
+/**
+ * Payload for `PUT /admin/lessons/{lesson}/media`. Every field is `nullable` in
+ * `UpsertLessonMediaRequest`, so an explicit `null` clears that column — which is how the
+ * media editor detaches an asset (there is no DELETE endpoint).
+ */
 export interface UpsertMediaInput {
-  mux_asset_id?: string;
-  mux_playback_id?: string;
-  s3_key?: string;
-  mime_type?: string;
-  duration?: number;
-  filesize?: number;
+  mux_asset_id?: string | null;
+  mux_playback_id?: string | null;
+  s3_key?: string | null;
+  mime_type?: string | null;
+  duration?: number | null;
+  filesize?: number | null;
 }
 
 /** Whole-tree reorder payload (backend PUT .../curriculum/order). */

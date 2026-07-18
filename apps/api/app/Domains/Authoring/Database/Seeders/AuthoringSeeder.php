@@ -27,10 +27,12 @@ class AuthoringSeeder extends Seeder
             Permission::findOrCreate($permission, 'web');
         }
 
-        foreach (['admin', 'instructor'] as $role) {
-            $model = SpatieRole::findByName($role, 'web');
-            $model->givePermissionTo(AuthoringPermission::values());
-        }
+        // Curriculum management is an ADMIN-level global grant only. Instructors are intentionally
+        // NOT given the global permission — otherwise they could manage every course's curriculum,
+        // bypassing ownership. Instructors manage curriculum solely for courses they are assigned to
+        // train, via the ownership branch of the authoring.manage-curriculum gate (see
+        // AuthoringServiceProvider). Removing the instructor grant is what scopes their access.
+        SpatieRole::findByName('admin', 'web')->givePermissionTo(AuthoringPermission::values());
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 

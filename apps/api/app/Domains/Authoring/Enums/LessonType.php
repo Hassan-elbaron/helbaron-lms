@@ -15,6 +15,12 @@ enum LessonType: string
     case Download = 'download';
     case ExternalLink = 'external_link';
     case QuizPlaceholder = 'quiz_placeholder';
+    /**
+     * A lesson backed by a real Assessment record, referenced via `lessons.assessment_id`.
+     * Distinct from QuizPlaceholder, which is inert authored text with no engine behind it and is
+     * retained for existing content.
+     */
+    case Quiz = 'quiz';
 
     public function label(): string
     {
@@ -26,7 +32,14 @@ enum LessonType: string
             self::Download => 'Download',
             self::ExternalLink => 'External Link',
             self::QuizPlaceholder => 'Quiz (placeholder)',
+            self::Quiz => 'Quiz',
         };
+    }
+
+    /** Types whose payload is an attached Assessment rather than `content` or media. */
+    public function usesAssessment(): bool
+    {
+        return $this === self::Quiz;
     }
 
     /** Types that carry media metadata (Mux/S3). */

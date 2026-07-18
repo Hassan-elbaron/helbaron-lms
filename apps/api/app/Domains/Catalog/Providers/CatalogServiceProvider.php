@@ -2,6 +2,7 @@
 
 namespace App\Domains\Catalog\Providers;
 
+use App\Domains\Catalog\Access\CourseAccessAdapter;
 use App\Domains\Catalog\Contracts\CoursePublishGuard;
 use App\Domains\Catalog\Contracts\NullCoursePublishGuard;
 use App\Domains\Catalog\Models\Category;
@@ -10,12 +11,13 @@ use App\Domains\Catalog\Models\CourseAnnouncement;
 use App\Domains\Catalog\Policies\CategoryPolicy;
 use App\Domains\Catalog\Policies\CourseAnnouncementPolicy;
 use App\Domains\Catalog\Policies\CoursePolicy;
-use App\Platform\Shared\Providers\BaseDomainServiceProvider;
-
 /**
  * Wires the Catalog module: config, migrations, public routes, policies, and the default
  * CoursePublishGuard binding (a downstream domain may override it later).
  */
+use App\Platform\Identity\Contracts\CourseAccessPort;
+use App\Platform\Shared\Providers\BaseDomainServiceProvider;
+
 class CatalogServiceProvider extends BaseDomainServiceProvider
 {
     protected array $routeFiles = ['routes/catalog.php', 'routes/teach.php'];
@@ -38,5 +40,10 @@ class CatalogServiceProvider extends BaseDomainServiceProvider
 
         // Default publish guard; standalone Catalog always allows publishing.
         $this->app->bind(CoursePublishGuard::class, NullCoursePublishGuard::class);
+
+        // Catalog owns Course, so it answers course-ownership questions on behalf of contexts that
+        // may not import the model (Assessment). The adapter delegates to the existing
+        // authoring.manage-curriculum gate rather than restating the rule.
+        $this->app->bind(CourseAccessPort::class, CourseAccessAdapter::class);
     }
 }

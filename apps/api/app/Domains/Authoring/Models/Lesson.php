@@ -26,7 +26,12 @@ class Lesson extends Model
     use HasPublicId;
     use SoftDeletes;
 
-    protected $fillable = ['section_id', 'title', 'type', 'content', 'position', 'publish_state', 'is_preview'];
+    /**
+     * `assessment_id` is a REFERENCE, not ownership: the Assessment lives in its own context and
+     * may be reused. Authoring never imports an Assessment class — it resolves the reference
+     * through LessonAssessmentPort.
+     */
+    protected $fillable = ['section_id', 'title', 'type', 'content', 'assessment_id', 'position', 'publish_state', 'is_preview'];
 
     protected function casts(): array
     {

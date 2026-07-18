@@ -53,9 +53,23 @@ class AuthoringServiceProvider extends BaseDomainServiceProvider
 
     protected function bootDomain(): void
     {
-        // Authoring 'manage' ability on a Catalog Course (used by curriculum/section endpoints).
+        // The single source of truth for "may this actor manage this course's curriculum".
+        // Every section/lesson policy resolves to this gate via the parent course, so ownership
+        // logic lives in exactly one place.
+        //
+        //   1. super_admin              — global bypass (preserved).
+        //   2. authoring.curriculum.manage permission — admin-level global access (preserved).
+        //   3. assigned trainer         — instructor scoped to courses they train, and only while
+        //                                 the course is not archived (business rule).
         Gate::define('authoring.manage-curriculum', function (Actor $user, Course $course): bool {
-            return $user->hasRole('super_admin') || $user->can('authoring.curriculum.manage');
+            // Privileged bypass mirrors InstructorController::ownedCourse — super_admin + admin are
+            // authorized by role (role checks are guard-robust under Sanctum). An explicit global
+            // authoring.curriculum.manage grant is also honoured for any other principal.
+            if ($user->hasRole(['super_admin', 'admin']) || $user->can('authoring.curriculum.manage')) {
+                return true;
+            }
+
+            return ! $course->isArchived() && $course->isTrainedBy($user->actorId());
         });
     }
 }

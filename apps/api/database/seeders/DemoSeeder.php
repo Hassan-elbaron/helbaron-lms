@@ -720,6 +720,9 @@ class DemoSeeder extends Seeder
             LessonType::Download => 'Resource pack',
             LessonType::ExternalLink => 'Further reading (external)',
             LessonType::QuizPlaceholder => 'Knowledge check',
+            // Assessment-backed quiz. The demo seeder does not yet build Assessment records, so
+            // this arm exists to keep the match exhaustive rather than because it is generated.
+            LessonType::Quiz => 'Quiz: check your understanding',
             LessonType::Article => $this->pick(['The core framework', 'Common pitfalls to avoid', 'Your practice checklist', 'A deeper dive', 'Applying it this week']),
         };
     }

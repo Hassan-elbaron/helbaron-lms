@@ -16,10 +16,12 @@ import type {
   CreateBlockInput,
   CreateSectionInput,
   Curriculum,
+  LessonMedia,
   PublishState,
   Section,
   UpdateBlockInput,
   UpdateSectionInput,
+  UpsertMediaInput,
 } from "./types";
 
 export function curriculumKey(courseId: string): QueryKey {
@@ -55,6 +57,8 @@ export interface AuthoringActions {
   removeBlock: (sectionId: string, blockId: string) => Promise<void>;
   publishBlock: (sectionId: string, blockId: string, state: PublishState) => Promise<void>;
   previewBlock: (sectionId: string, blockId: string) => Promise<void>;
+  /** Upsert the lesson's `lesson_media` row. Explicit nulls clear columns (see UpsertMediaInput). */
+  setMedia: (sectionId: string, blockId: string, input: UpsertMediaInput) => Promise<void>;
   reorderBlocks: (sectionId: string, orderedIds: string[]) => Promise<void>;
   moveBlockAcross: (
     fromSectionId: string,
@@ -170,6 +174,16 @@ export function useAuthoringController(courseId: string) {
           () => apiClient.toggleBlockPreview(blockId),
         );
       },
+      setMedia(sectionId, blockId, input) {
+        return optimistic(
+          (c) =>
+            mapSection(c, sectionId, (s) => ({
+              ...s,
+              blocks: s.blocks.map((b) => (b.id === blockId ? { ...b, media: mediaFromInput(input) } : b)),
+            })),
+          () => apiClient.upsertMedia(blockId, input),
+        );
+      },
       reorderBlocks(sectionId, orderedIds) {
         return optimistic(
           (c) => mapSection(c, sectionId, (s) => ({ ...s, blocks: reindex(orderBy(s.blocks, orderedIds)) })),
@@ -211,6 +225,22 @@ export function useAuthoringController(courseId: string) {
   }, [qc, key, courseId]);
 
   return { query, actions };
+}
+
+/**
+ * Optimistic projection of an upsert payload onto the cached media row. The editor always submits
+ * the complete field set, so an omitted field genuinely means "cleared" — matching the backend,
+ * where every column is nullable and the request replaces the row.
+ */
+function mediaFromInput(input: UpsertMediaInput): LessonMedia {
+  return {
+    mux_asset_id: input.mux_asset_id ?? null,
+    mux_playback_id: input.mux_playback_id ?? null,
+    s3_key: input.s3_key ?? null,
+    mime_type: input.mime_type ?? null,
+    duration: input.duration ?? null,
+    filesize: input.filesize ?? null,
+  };
 }
 
 function insertId(ids: string[], id: string, index: number): string[] {

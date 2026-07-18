@@ -31,6 +31,7 @@ import type {
   Section,
   Selection,
   SaveStatus,
+  UpsertMediaInput,
   ValidationIssue,
 } from "./types";
 
@@ -78,6 +79,7 @@ export interface BuilderContextValue {
   addBlock: (sectionId: string, kind: BlockKind) => Promise<void>;
   renameBlock: (sectionId: string, blockId: string, title: string) => Promise<void>;
   setBlockContent: (sectionId: string, blockId: string, content: BlockContent) => Promise<void>;
+  setMedia: (sectionId: string, blockId: string, input: UpsertMediaInput) => Promise<void>;
   deleteBlock: (sectionId: string, blockId: string) => Promise<void>;
   publishBlock: (sectionId: string, blockId: string, state: PublishState) => Promise<void>;
   previewBlock: (sectionId: string, blockId: string) => Promise<void>;
@@ -302,6 +304,30 @@ export function BuilderProvider({ courseId, children }: { courseId: string; chil
     [actions, findBlock, runCommand],
   );
 
+  /**
+   * Attach / detach the lesson's media row. Undoable like every other authoring edit: the previous
+   * `lesson_media` values are replayed as an upsert (nulls clear columns, per UpsertMediaInput).
+   */
+  const setMedia = useCallback(
+    async (sectionId: string, blockId: string, input: UpsertMediaInput) => {
+      const previous = findBlock(sectionId, blockId)?.media ?? null;
+      const restore: UpsertMediaInput = {
+        mux_asset_id: previous?.mux_asset_id ?? null,
+        mux_playback_id: previous?.mux_playback_id ?? null,
+        s3_key: previous?.s3_key ?? null,
+        mime_type: previous?.mime_type ?? null,
+        duration: previous?.duration ?? null,
+        filesize: previous?.filesize ?? null,
+      };
+      await runCommand({
+        label: "edit media",
+        redo: () => actions.setMedia(sectionId, blockId, input),
+        undo: () => actions.setMedia(sectionId, blockId, restore),
+      });
+    },
+    [actions, findBlock, runCommand],
+  );
+
   const deleteBlock = useCallback(
     async (sectionId: string, blockId: string) => {
       await run(async () => {
@@ -438,6 +464,7 @@ export function BuilderProvider({ courseId, children }: { courseId: string; chil
     addBlock,
     renameBlock,
     setBlockContent,
+    setMedia,
     deleteBlock,
     publishBlock,
     previewBlock,

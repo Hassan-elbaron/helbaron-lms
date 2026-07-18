@@ -91,6 +91,9 @@ deptrac:
     - name: Authoring
       collectors:
         - { type: directory, value: app/Domains/Authoring/.* }
+    - name: Assessment
+      collectors:
+        - { type: directory, value: app/Domains/Assessment/.* }
     - name: Certification
       collectors:
         - { type: directory, value: app/Domains/Certification/.* }
@@ -166,6 +169,12 @@ deptrac:
       - Shared
       - IdentityContracts
     Authoring:
+      - Shared
+      - IdentityContracts
+    # Assessment is a greenfield context and carries NO baseline: it must satisfy the intended
+    # architecture from day one. It reaches Authoring (lessons) and Catalog (courses) only through
+    # LessonAssessmentPort / CourseAccessPort in Shared, and never imports their models.
+    Assessment:
       - Shared
       - IdentityContracts
     Certification:

@@ -172,6 +172,8 @@ export async function reorderTree(courseId: string, input: ReorderTreeInput): Pr
  * cleanly; persistence is disabled until they exist. (No fake implementations.)
  */
 export const REMAINING_BACKEND: readonly string[] = [
+  "Direct media upload — there is no endpoint that returns an upload target, so the builder can only reference assets that already exist. Needed: POST /admin/lessons/{lesson}/media/upload returning either a Mux direct-upload URL ({ upload_id, upload_url }) or an S3 presigned POST ({ url, fields, key }), plus a way to learn when Mux finishes ingesting (webhook → lesson_media.mux_playback_id, or GET /admin/lessons/{lesson}/media/status returning { state: 'waiting'|'ready'|'errored' }). Until both exist the builder will NOT display upload progress or claim an asset is ready.",
+  "Media delete — DELETE /admin/lessons/{lesson}/media. Detaching currently works by PUTting explicit nulls, which relies on every column being nullable.",
   "Instructor-scoped curriculum access — expose the /admin curriculum endpoints under the `teach` scope (or grant `authoring.curriculum.manage`) so instructors, not just admins, can author.",
   "Block kinds not in LessonType enum: scorm, xapi, cmi5, quiz (full), assignment, discussion, live_session, certificate, survey — need create/update support + content schemas.",
   "Sub-section nesting — curriculum is a flat Section→Lesson tree; nested sub-sections need a schema + endpoints.",

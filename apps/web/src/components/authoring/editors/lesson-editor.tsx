@@ -1,28 +1,39 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Clapperboard, Info, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { readString, withValue } from "@/lib/authoring/block-content";
 import { blockDef } from "@/lib/authoring/block-registry";
 import { useAuthoringI18n } from "@/lib/authoring/authoring-i18n";
 import { useBuilder } from "@/lib/authoring/builder-store";
-import type { Block, BlockContent } from "@/lib/authoring/types";
+import type { BlockContent } from "@/lib/authoring/types";
 import { BlockIcon } from "../block-icon";
 import { useFieldAutosave } from "../field-autosave";
 import { StatusBadge } from "../status-badge";
+import { ExternalLinkEditor } from "./external-link-editor";
+import { MediaEditor } from "./media-editor";
+import { RichTextEditor } from "./rich-text-editor";
 
-function str(v: unknown): string {
-  return typeof v === "string" ? v : "";
-}
-
+/**
+ * Center-pane lesson authoring surface.
+ *
+ * Content edits flow through the SAME debounced `setBlockContent` path the builder already used, so
+ * autosave, undo/redo and the save indicator are unchanged. Only the controls differ per lesson
+ * type. Media lives outside `content` (its own `lesson_media` row) and therefore has its own
+ * explicit save — see `MediaEditor`.
+ */
 export function LessonEditor({ sectionId, blockId }: { sectionId: string; blockId: string }) {
   const { t } = useAuthoringI18n();
   const builder = useBuilder();
   const block = builder.curriculum?.sections.find((s) => s.id === sectionId)?.blocks.find((b) => b.id === blockId);
 
-  const commitTitle = useCallback((v: string) => builder.renameBlock(sectionId, blockId, v), [builder, sectionId, blockId]);
+  const commitTitle = useCallback(
+    (v: string) => builder.renameBlock(sectionId, blockId, v),
+    [builder, sectionId, blockId],
+  );
   const title = useFieldAutosave(block?.title ?? "", commitTitle);
 
   const [content, setContent] = useState<BlockContent>(block?.content ?? {});
@@ -30,12 +41,30 @@ export function LessonEditor({ sectionId, blockId }: { sectionId: string; blockI
   useEffect(() => {
     if (!block) return;
     if (contentJson === JSON.stringify(block.content)) return;
-    const id = setTimeout(() => void builder.setBlockContent(sectionId, blockId, JSON.parse(contentJson) as BlockContent), 700);
+    const id = setTimeout(
+      () => void builder.setBlockContent(sectionId, blockId, JSON.parse(contentJson) as BlockContent),
+      700,
+    );
     return () => clearTimeout(id);
   }, [contentJson, block, builder, sectionId, blockId]);
 
   if (!block) return null;
   const def = blockDef(block.kind);
+  // Not wrapped in FormField: the rich-text surface is a contenteditable region, not a labellable
+  // control, so it carries its own aria-label instead of a dangling <label for>.
+  const richText = (
+    <div className="space-y-1.5">
+      <p className="text-sm font-medium">{t("field.article.body")}</p>
+      <RichTextEditor
+        // Remount on lesson switch so the ProseMirror document is rebuilt from the new value.
+        key={block.id}
+        value={readString(content, "html")}
+        onChange={(html) => setContent((prev) => withValue(prev, "html", html))}
+        ariaLabel={t("field.article.body")}
+      />
+      <p className="text-xs text-muted-foreground">{t("field.article.hint")}</p>
+    </div>
+  );
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-6">
@@ -58,65 +87,32 @@ export function LessonEditor({ sectionId, blockId }: { sectionId: string; blockI
       {!def.supported ? (
         <UnsupportedPanel kindLabel={t(def.labelKey)} />
       ) : def.usesMedia ? (
-        <MediaPanel block={block} />
-      ) : block.kind === "article" ? (
-        <FormField label={t("field.article.body")} hint={t("field.article.hint")}>
-          <Textarea rows={12} value={str(content.html)} onChange={(e) => setContent({ ...content, html: e.target.value })} />
-        </FormField>
+        <>
+          <MediaEditor key={block.id} sectionId={sectionId} block={block} />
+          {block.kind === "audio" ? (
+            <FormField label={t("field.audio.transcript")} hint={t("field.audio.transcriptHint")}>
+              <Textarea
+                rows={8}
+                value={readString(content, "transcript")}
+                onChange={(e) => setContent((prev) => withValue(prev, "transcript", e.target.value))}
+              />
+            </FormField>
+          ) : null}
+          {richText}
+        </>
       ) : block.kind === "external_link" ? (
-        <div className="space-y-4">
-          <FormField label={t("field.link.url")} required error={isUrl(str(content.url)) ? undefined : t("validation.linkUrl")}>
-            <Input
-              type="url"
-              inputMode="url"
-              value={str(content.url)}
-              onChange={(e) => setContent({ ...content, url: e.target.value })}
-              placeholder="https://"
-            />
-          </FormField>
-          <FormField label={t("field.link.label")}>
-            <Input value={str(content.label)} onChange={(e) => setContent({ ...content, label: e.target.value })} />
-          </FormField>
-        </div>
+        <ExternalLinkEditor content={content} onChange={setContent} />
       ) : block.kind === "quiz_placeholder" ? (
         <FormField label={t("field.quiz.note")} hint={t("field.quiz.hint")}>
-          <Textarea rows={5} value={str(content.note)} onChange={(e) => setContent({ ...content, note: e.target.value })} />
+          <Textarea
+            rows={5}
+            value={readString(content, "note")}
+            onChange={(e) => setContent((prev) => withValue(prev, "note", e.target.value))}
+          />
         </FormField>
-      ) : null}
-    </div>
-  );
-}
-
-function isUrl(v: string): boolean {
-  if (!v) return false;
-  try {
-    const u = new URL(v);
-    return u.protocol === "http:" || u.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
-
-function MediaPanel({ block }: { block: Block }) {
-  const { t } = useAuthoringI18n();
-  const media = block.media;
-  const summary = media?.mux_playback_id
-    ? `Mux · ${media.mux_playback_id}`
-    : media?.s3_key
-      ? `S3 · ${media.s3_key}`
-      : null;
-
-  return (
-    <div className="rounded-lg border border-dashed border-border bg-muted/30 p-5">
-      <div className="flex items-center gap-2 text-sm font-medium">
-        <Clapperboard className="size-4 text-muted-foreground" aria-hidden />
-        {t("field.media.title")}
-      </div>
-      <p className="mt-2 text-sm text-muted-foreground">{summary ?? t("field.media.none")}</p>
-      <p className="mt-3 flex items-start gap-1.5 text-xs text-muted-foreground">
-        <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-        {t("field.media.hint")}
-      </p>
+      ) : (
+        richText
+      )}
     </div>
   );
 }

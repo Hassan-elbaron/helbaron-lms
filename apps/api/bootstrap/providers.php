@@ -3,6 +3,7 @@
 use App\Contexts\Analytics\Providers\AnalyticsServiceProvider;
 use App\Contexts\Commerce\Providers\CommerceServiceProvider;
 use App\Contexts\Learning\Providers\LearningServiceProvider;
+use App\Domains\Assessment\Providers\AssessmentServiceProvider;
 use App\Domains\Authoring\Providers\AuthoringServiceProvider;
 use App\Domains\Catalog\Providers\CatalogServiceProvider;
 use App\Domains\Certification\Providers\CertificationServiceProvider;
@@ -35,6 +36,8 @@ return [
     IdentityServiceProvider::class,
     CatalogServiceProvider::class,
     AuthoringServiceProvider::class,
+    // After Authoring: the assessment.manage gate delegates to authoring.manage-curriculum.
+    AssessmentServiceProvider::class,
     LearningServiceProvider::class,
     CommerceServiceProvider::class,
     CertificationServiceProvider::class,

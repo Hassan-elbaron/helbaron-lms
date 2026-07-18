@@ -30,6 +30,12 @@ function BuilderShell() {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (!(e.metaKey || e.ctrlKey)) return;
+      // Let text editing surfaces own their own history: inside an input, textarea or the rich-text
+      // editor (contenteditable), Ctrl/Cmd+Z must undo the keystroke, not the last curriculum command.
+      const target = e.target;
+      if (target instanceof HTMLElement && (target.isContentEditable || target.closest("input, textarea"))) {
+        return;
+      }
       const key = e.key.toLowerCase();
       if (key === "z" && !e.shiftKey) {
         e.preventDefault();

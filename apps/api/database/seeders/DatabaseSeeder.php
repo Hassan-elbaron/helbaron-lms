@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Contexts\Analytics\Database\Seeders\AnalyticsSeeder;
 use App\Contexts\Commerce\Database\Seeders\CommerceSeeder;
 use App\Contexts\Learning\Database\Seeders\LearningSeeder;
+use App\Domains\Assessment\Database\Seeders\AssessmentSeeder;
 use App\Domains\Authoring\Database\Seeders\AuthoringSeeder;
 use App\Domains\Catalog\Database\Seeders\CatalogSeeder;
 use App\Domains\Certification\Database\Seeders\CertificationSeeder;
@@ -28,6 +29,7 @@ class DatabaseSeeder extends Seeder
             IdentitySeeder::class,
             CatalogSeeder::class,
             AuthoringSeeder::class,
+            AssessmentSeeder::class,
             LearningSeeder::class,
             CommerceSeeder::class,
             CertificationSeeder::class,

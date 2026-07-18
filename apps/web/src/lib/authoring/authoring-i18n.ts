@@ -128,6 +128,38 @@ const en: Dict = {
   "validation.emptyCourse": "Add at least one section",
   "validation.emptySection": "Section “{title}” has no lessons",
 
+  "richtext.toolbar": "Formatting",
+  "richtext.h1": "Heading 1", "richtext.h2": "Heading 2", "richtext.h3": "Heading 3",
+  "richtext.bold": "Bold", "richtext.italic": "Italic", "richtext.underline": "Underline", "richtext.strike": "Strikethrough",
+  "richtext.bulletList": "Bulleted list", "richtext.orderedList": "Numbered list", "richtext.blockquote": "Quote",
+  "richtext.inlineCode": "Inline code", "richtext.codeBlock": "Code block", "richtext.hr": "Divider",
+  "richtext.link": "Add link", "richtext.unlink": "Remove link",
+  "richtext.undo": "Undo", "richtext.redo": "Redo", "richtext.clearFormatting": "Clear formatting",
+  "richtext.words": "{n} words", "richtext.characters": "{n} characters", "richtext.readingTime": "~{n} min read",
+  "richtext.linkDialog.title": "Add a link",
+  "richtext.linkDialog.desc": "Only http and https links are allowed.",
+  "richtext.linkDialog.apply": "Apply",
+
+  "field.audio.transcript": "Transcript",
+  "field.audio.transcriptHint": "Plain text only — transcripts are stored unsanitised, so HTML is not accepted.",
+
+  "media.title": "Media",
+  "media.desc": "Reference an already-uploaded asset. Uploading files from the builder needs a backend upload endpoint that does not exist yet.",
+  "media.playbackId": "Mux playback ID",
+  "media.storageKey": "Storage key (S3)",
+  "media.mimeType": "MIME type",
+  "media.duration": "Duration (seconds)",
+  "media.filesize": "File size (bytes)",
+  "media.attached": "Attached",
+  "media.none": "No media attached yet.",
+  "media.remove": "Remove media",
+  "media.save": "Save media",
+  "media.needsSource": "Provide a Mux playback ID or a storage key.",
+  "media.numberInvalid": "Enter a whole number of 0 or more.",
+
+  "link.test": "Test link",
+  "link.unsafe": "Only http and https links are allowed.",
+
   "new.section": "Untitled section",
   "new.block": "Untitled {kind}",
 
@@ -267,6 +299,38 @@ const ar: Dict = {
   "validation.emptyCourse": "أضف قسمًا واحدًا على الأقل",
   "validation.emptySection": "القسم “{title}” بلا دروس",
 
+  "richtext.toolbar": "التنسيق",
+  "richtext.h1": "عنوان 1", "richtext.h2": "عنوان 2", "richtext.h3": "عنوان 3",
+  "richtext.bold": "عريض", "richtext.italic": "مائل", "richtext.underline": "تسطير", "richtext.strike": "يتوسطه خط",
+  "richtext.bulletList": "قائمة نقطية", "richtext.orderedList": "قائمة مرقّمة", "richtext.blockquote": "اقتباس",
+  "richtext.inlineCode": "كود مضمّن", "richtext.codeBlock": "كتلة كود", "richtext.hr": "فاصل",
+  "richtext.link": "إضافة رابط", "richtext.unlink": "إزالة الرابط",
+  "richtext.undo": "تراجع", "richtext.redo": "إعادة", "richtext.clearFormatting": "مسح التنسيق",
+  "richtext.words": "{n} كلمة", "richtext.characters": "{n} حرف", "richtext.readingTime": "~{n} دقيقة قراءة",
+  "richtext.linkDialog.title": "إضافة رابط",
+  "richtext.linkDialog.desc": "يُسمح بروابط http و https فقط.",
+  "richtext.linkDialog.apply": "تطبيق",
+
+  "field.audio.transcript": "النص المكتوب",
+  "field.audio.transcriptHint": "نص عادي فقط — لا تُعقّم النصوص المكتوبة، لذا لا يُقبل HTML.",
+
+  "media.title": "الوسائط",
+  "media.desc": "أشر إلى ملف مرفوع مسبقًا. رفع الملفات من المنشئ يحتاج نقطة رفع في الخادم غير متوفرة بعد.",
+  "media.playbackId": "معرّف التشغيل (Mux)",
+  "media.storageKey": "مفتاح التخزين (S3)",
+  "media.mimeType": "نوع الملف",
+  "media.duration": "المدة (بالثواني)",
+  "media.filesize": "الحجم (بايت)",
+  "media.attached": "مرفق",
+  "media.none": "لا توجد وسائط بعد.",
+  "media.remove": "إزالة الوسائط",
+  "media.save": "حفظ الوسائط",
+  "media.needsSource": "أدخل معرّف تشغيل Mux أو مفتاح تخزين.",
+  "media.numberInvalid": "أدخل رقمًا صحيحًا 0 أو أكثر.",
+
+  "link.test": "اختبار الرابط",
+  "link.unsafe": "يُسمح بروابط http و https فقط.",
+
   "new.section": "قسم بلا عنوان",
   "new.block": "{kind} بلا عنوان",
 
@@ -289,6 +353,9 @@ const ar: Dict = {
 };
 
 const DICTS: Record<string, Dict> = { en, ar };
+
+/** Exported for the EN/AR key-parity test — the builder ships bilingual, so drift is a defect. */
+export const AUTHORING_DICTS: Readonly<Record<string, Dict>> = DICTS;
 
 export type AuthoringT = (key: string, vars?: Record<string, string | number>) => string;
 

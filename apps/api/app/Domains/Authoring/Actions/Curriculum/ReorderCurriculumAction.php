@@ -7,6 +7,7 @@ use App\Domains\Authoring\Models\Lesson;
 use App\Domains\Authoring\Models\Section;
 use App\Domains\Catalog\Models\Course;
 use App\Platform\Shared\Actions\BaseAction;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Applies a full drag-and-drop reorder of a course's curriculum in one transaction:
@@ -32,10 +33,15 @@ class ReorderCurriculumAction extends BaseAction
                 $section->update(['position' => $sectionPosition]);
 
                 foreach ($node['lessons'] ?? [] as $lessonPosition => $lessonPublicId) {
-                    Lesson::where('public_id', $lessonPublicId)->update([
-                        'section_id' => $section->id,
-                        'position' => $lessonPosition,
-                    ]);
+                    // Anti-tampering: only re-parent a lesson that already belongs to a section
+                    // within THIS course. A foreign lesson id (from another course) matches nothing
+                    // and is silently ignored — it can never be moved into this course.
+                    Lesson::where('public_id', $lessonPublicId)
+                        ->whereHas('section', fn (Builder $q) => $q->where('course_id', $course->id))
+                        ->update([
+                            'section_id' => $section->id,
+                            'position' => $lessonPosition,
+                        ]);
                 }
             }
         });

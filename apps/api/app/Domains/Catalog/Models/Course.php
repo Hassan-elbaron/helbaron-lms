@@ -135,6 +135,11 @@ class Course extends Model
         return $this->status === CourseStatus::Published;
     }
 
+    public function isArchived(): bool
+    {
+        return $this->status === CourseStatus::Archived;
+    }
+
     /** True when the given user id trains (is linked to) this course. */
     public function isTrainedBy(int $userId): bool
     {
