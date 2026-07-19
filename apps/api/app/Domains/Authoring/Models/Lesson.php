@@ -17,6 +17,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * A lesson within a section. Carries type + content metadata and (for media types) a single
  * LessonMedia metadata row. No playback, progress, or enrollment logic lives here.
+ *
+ * Only the columns added after this model was written are annotated. The rest predate the
+ * annotation convention and are covered by the PHPStan baseline; a full pass belongs in its own
+ * change rather than smuggled in with a feature.
+ *
+ * `$type` is annotated because the quiz wiring now branches on it in a second place, and an
+ * undeclared enum-cast property silently degrades to mixed — exactly the kind of blind spot that
+ * hid the multi-blank grading defect. The two baseline entries it covered are removed with it.
+ *
+ * @property LessonType $type
+ * @property int|null $assessment_id reference to an Assessment; resolved via LessonAssessmentPort
  */
 class Lesson extends Model
 {

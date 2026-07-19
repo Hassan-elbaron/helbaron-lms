@@ -17,6 +17,7 @@ import type {
   CreateBlockInput,
   CreateSectionInput,
   Curriculum,
+  LessonAssessmentRef,
   LessonMedia,
   PublishState,
   ReorderTreeInput,
@@ -54,6 +55,7 @@ interface RawLesson {
   media: RawMedia | null;
   prerequisites?: { id: string; title: string }[];
   estimated_minutes?: number | null;
+  assessment?: LessonAssessmentRef | null;
 }
 interface RawSection {
   id: string;
@@ -83,6 +85,7 @@ function toBlock(raw: RawLesson): Block {
     media: toMedia(raw.media),
     prerequisites: raw.prerequisites ?? [],
     estimated_minutes: raw.estimated_minutes ?? null,
+    assessment: raw.assessment ?? null,
   };
 }
 function toSection(raw: RawSection): Section {

@@ -10,6 +10,7 @@ import { blockDef } from "@/lib/authoring/block-registry";
 import { useAuthoringI18n } from "@/lib/authoring/authoring-i18n";
 import { useBuilder } from "@/lib/authoring/builder-store";
 import type { BlockContent } from "@/lib/authoring/types";
+import { QuizLessonPanel } from "../assessment/quiz-lesson-panel";
 import { BlockIcon } from "../block-icon";
 import { useFieldAutosave } from "../field-autosave";
 import { StatusBadge } from "../status-badge";
@@ -84,7 +85,12 @@ export function LessonEditor({ sectionId, blockId }: { sectionId: string; blockI
         <Input value={title.value} onChange={(e) => title.setValue(e.target.value)} onBlur={title.flush} />
       </FormField>
 
-      {!def.supported ? (
+      {block.kind === "quiz" ? (
+        // A quiz lesson's payload is an attached Assessment, not `content` or media — so it gets
+        // the assessment builder rather than a content editor. Everything above (title, status)
+        // stays identical to every other lesson type.
+        <QuizLessonPanel block={block} />
+      ) : !def.supported ? (
         <UnsupportedPanel kindLabel={t(def.labelKey)} />
       ) : def.usesMedia ? (
         <>

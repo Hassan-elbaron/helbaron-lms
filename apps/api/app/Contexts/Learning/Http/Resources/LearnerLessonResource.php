@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
  * Phase 3B: accepts either a Lesson model or a LessonRef in the `lesson` payload slot. Because
  * LessonRef does not carry `content`, the DTO path reads `content` from the payload (`content` key)
  * — the Phase-4 controller supplies it. The model path is unchanged (byte-identical).
+ *
+ * `assessment` follows the same convention: supplied by the controller, defaulting to null, so the
+ * model path and any other caller keep working without change.
  */
 class LearnerLessonResource extends BaseResource
 {
@@ -50,6 +53,10 @@ class LearnerLessonResource extends BaseResource
                 'status' => $this->resource['progress_status'],
                 'position_seconds' => $this->resource['position_seconds'],
             ],
+            // Learner-safe assessment reference for quiz lessons; null for every other type and for
+            // an unpublished assessment. Publish-gated and field-filtered by the controller, which
+            // is where the port lives — this resource only forwards what it was handed.
+            'assessment' => $this->resource['assessment'] ?? null,
             'bookmarked' => $this->resource['bookmarked'],
             'note' => $this->resource['note'],
             'navigation' => [

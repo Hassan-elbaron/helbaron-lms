@@ -2,6 +2,7 @@
 
 namespace App\Domains\Authoring\Http\Controllers\Api\V1\Admin;
 
+use App\Domains\Authoring\Actions\Lesson\AttachAssessmentAction;
 use App\Domains\Authoring\Actions\Lesson\CreateLessonAction;
 use App\Domains\Authoring\Actions\Lesson\DeleteLessonAction;
 use App\Domains\Authoring\Actions\Lesson\ReorderLessonsAction;
@@ -11,6 +12,7 @@ use App\Domains\Authoring\Actions\Lesson\TogglePreviewAction;
 use App\Domains\Authoring\Actions\Lesson\UpdateLessonAction;
 use App\Domains\Authoring\Actions\Lesson\UpsertLessonMediaAction;
 use App\Domains\Authoring\Enums\PublishState;
+use App\Domains\Authoring\Http\Requests\AttachAssessmentRequest;
 use App\Domains\Authoring\Http\Requests\CreateLessonRequest;
 use App\Domains\Authoring\Http\Requests\ReorderRequest;
 use App\Domains\Authoring\Http\Requests\SetPrerequisitesRequest;
@@ -79,6 +81,21 @@ class LessonAdminController extends Controller
         $lesson = $action->execute($lesson, $request->validated()['prerequisites']);
 
         return ApiResponse::updated(new LessonResource($lesson->load('prerequisites')));
+    }
+
+    /**
+     * Point a quiz lesson at an assessment, or clear the reference with an explicit null.
+     * Authorized like every other lesson mutation; the assessment itself is validated by the port.
+     */
+    public function assessment(AttachAssessmentRequest $request, Lesson $lesson, AttachAssessmentAction $action): JsonResponse
+    {
+        Gate::authorize('update', $lesson);
+
+        $assessmentId = $request->validated()['assessment_id'] ?? null;
+
+        return ApiResponse::updated(new LessonResource(
+            $action->execute($lesson, is_string($assessmentId) ? $assessmentId : null),
+        ));
     }
 
     public function media(UpsertLessonMediaRequest $request, Lesson $lesson, UpsertLessonMediaAction $action): JsonResponse

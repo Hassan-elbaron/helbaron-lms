@@ -72,6 +72,21 @@ export interface Block {
   prerequisites: PrerequisiteRef[];
   /** Estimated duration in minutes, when the backend can derive it (media duration / reading time). */
   estimated_minutes?: number | null;
+  /**
+   * Compact reference to the attached Assessment, for `quiz` lessons. Null when nothing is
+   * attached — and also when a previously-attached assessment has been deleted, so a stale
+   * reference degrades to "no quiz" instead of breaking the tree.
+   */
+  assessment?: LessonAssessmentRef | null;
+}
+
+/** Mirrors the `assessment` block emitted by the backend LessonResource. */
+export interface LessonAssessmentRef {
+  id: string;
+  title: string;
+  status: "draft" | "published" | "archived";
+  question_count: number;
+  version: number;
 }
 
 /** A curriculum section containing blocks (and, on the frontend, optional sub-sections). */

@@ -31,5 +31,17 @@ final readonly class LessonRef
         public int $position = 0,
         public array $prerequisiteLessonIds = [],
         public ?array $content = null,
+        /**
+         * Internal id of the Assessment this lesson references, for `quiz` lessons only.
+         *
+         * An INTERNAL id, not a public one, because this DTO stays inside the server: the consumer
+         * (Learning) turns it into a learner-safe reference through LessonAssessmentPort, which is
+         * also where publish-gating happens. Carrying the public id here would tempt a caller to
+         * hand it to a client without that gate.
+         *
+         * Defaulted and last in the signature so every existing positional and named construction
+         * keeps working untouched.
+         */
+        public ?int $assessmentId = null,
     ) {}
 }

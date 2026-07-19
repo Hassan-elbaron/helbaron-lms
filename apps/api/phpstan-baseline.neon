@@ -1747,12 +1747,6 @@ parameters:
 			path: app/Domains/Authoring/Curriculum/CurriculumReadAdapter.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$type\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Domains/Authoring/Curriculum/CurriculumReadAdapter.php
-
-		-
 			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Section\:\:\$public_id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1988,12 +1982,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Domains/Authoring/Http/Resources/LessonResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$type\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Authoring/Http/Resources/LessonResource.php

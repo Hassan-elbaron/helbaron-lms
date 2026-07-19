@@ -30,4 +30,6 @@ Route::prefix('v1/admin')->middleware('auth:sanctum')->group(function (): void {
     Route::post('lessons/{lesson}/preview', [LessonAdminController::class, 'preview']);
     Route::put('lessons/{lesson}/prerequisites', [LessonAdminController::class, 'prerequisites']);
     Route::put('lessons/{lesson}/media', [LessonAdminController::class, 'media']);
+    // Quiz lessons reference an Assessment; the body's assessment_id may be null to detach.
+    Route::put('lessons/{lesson}/assessment', [LessonAdminController::class, 'assessment']);
 });

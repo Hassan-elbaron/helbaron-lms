@@ -57,7 +57,9 @@ export const BLOCK_DEFS: readonly BlockDef[] = [
   def({ kind: "live_session", icon: Radio, labelKey: "block.live_session.label", descriptionKey: "block.live_session.desc", group: "media", supported: false, usesMedia: false, defaultContent: () => ({ starts_at: null, join_url: "" }) }),
   // ── Interactive / assessment ─────────────────────────────
   def({ kind: "quiz_placeholder", icon: ListChecks, labelKey: "block.quiz_placeholder.label", descriptionKey: "block.quiz_placeholder.desc", group: "interactive", supported: true, usesMedia: false, defaultContent: () => ({ note: "" }) }),
-  def({ kind: "quiz", icon: ListChecks, labelKey: "block.quiz.label", descriptionKey: "block.quiz.desc", group: "interactive", supported: false, usesMedia: false, defaultContent: () => ({ questions: [] }) }),
+  // Backed by a real Assessment record since Step 4a — the lesson references one rather than
+  // storing questions in `content`, which is why defaultContent is empty.
+  def({ kind: "quiz", icon: ListChecks, labelKey: "block.quiz.label", descriptionKey: "block.quiz.desc", group: "interactive", supported: true, usesMedia: false, defaultContent: () => ({}) }),
   def({ kind: "assignment", icon: ClipboardCheck, labelKey: "block.assignment.label", descriptionKey: "block.assignment.desc", group: "interactive", supported: false, usesMedia: false, defaultContent: () => ({ instructions: "", due_at: null }) }),
   def({ kind: "survey", icon: ClipboardList, labelKey: "block.survey.label", descriptionKey: "block.survey.desc", group: "interactive", supported: false, usesMedia: false, defaultContent: () => ({ questions: [] }) }),
   // ── Packages (e-learning standards) ──────────────────────

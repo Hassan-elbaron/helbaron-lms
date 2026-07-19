@@ -15,6 +15,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * A curriculum section belonging to a Catalog course. Holds ordered lessons.
+ *
+ * Only the column read across a context boundary is annotated here; the rest predate the
+ * annotation convention and are covered by the PHPStan baseline.
+ *
+ * @property int $course_id
  */
 class Section extends Model
 {

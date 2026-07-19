@@ -1,7 +1,16 @@
 import { api } from "@/lib/api/client";
 import type { ApiSuccess } from "@/types/api";
 
-export type LessonType = "video" | "audio" | "article" | "pdf" | "download" | "external_link" | "quiz_placeholder";
+export type LessonType =
+  | "video"
+  | "audio"
+  | "article"
+  | "pdf"
+  | "download"
+  | "external_link"
+  | "quiz_placeholder"
+  /** Backed by a real Assessment record; see `LessonPayload.assessment`. */
+  | "quiz";
 export type ProgressStatus = "not_started" | "in_progress" | "completed";
 
 export type LearnLesson = {
@@ -33,6 +42,15 @@ export type LessonPayload = {
   bookmarked: boolean;
   note: string | null;
   navigation: { previous: string | null; next: string | null };
+  /**
+   * Present only for `quiz` lessons whose assessment is PUBLISHED. Null covers both "no assessment
+   * attached" and "attached but still a draft" — the backend publish-gates it deliberately, so the
+   * client cannot tell the difference and has no draft id to act on.
+   *
+   * Carries no answer key, no grading configuration and no instructor settings: the server sends
+   * exactly these four fields.
+   */
+  assessment: { id: string; title: string; question_count: number; version: number } | null;
 };
 
 export const getLearnCourse = (courseId: string) => api.data<LearnCourse>(`courses/${courseId}/learn`);

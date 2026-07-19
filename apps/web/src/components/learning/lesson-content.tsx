@@ -6,6 +6,7 @@ import type { LessonPayload } from "@/lib/learning/api";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/states/empty-state";
+import { QuizPlayer } from "@/components/learning/quiz-player";
 
 /**
  * Sanitize API-provided article HTML before injection. Allows standard formatting,
@@ -133,6 +134,22 @@ export function LessonContent({
 
   if (lesson.type === "quiz_placeholder") {
     return <EmptyState title={t("learn.lesson.quizSoon")} />;
+  }
+
+  if (lesson.type === "quiz") {
+    // `assessment` is null when nothing is attached OR when the attached assessment is still a
+    // draft — the backend publish-gates it, so both cases look identical here by design and the
+    // learner simply sees "not available" rather than a broken player.
+    //
+    // Everything past this point is the player's own concern: it owns loading, start/resume,
+    // exhausted attempts and API failures, and surfaces the server's message verbatim. Lesson
+    // completion is NOT triggered here — mounting a quiz is not finishing it, and progress is
+    // recorded by the existing lesson flow, not by this branch.
+    return lesson.assessment ? (
+      <QuizPlayer assessmentId={lesson.assessment.id} />
+    ) : (
+      <EmptyState title={t("learn.lesson.quizUnavailable")} />
+    );
   }
 
   // article

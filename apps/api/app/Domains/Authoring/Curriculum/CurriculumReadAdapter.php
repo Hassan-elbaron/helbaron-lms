@@ -217,6 +217,10 @@ class CurriculumReadAdapter implements CurriculumReadPort
             position: (int) $lesson->position,
             prerequisiteLessonIds: $prerequisiteLessonIds,
             content: $withDetails ? $lesson->content : null,
+            // Only quiz lessons carry a reference. Every other type has the column null anyway,
+            // but gating on the type keeps the intent explicit: a stray assessment_id on, say, an
+            // article must never reach the learner payload.
+            assessmentId: $lesson->type->usesAssessment() ? $lesson->assessment_id : null,
         );
     }
 }

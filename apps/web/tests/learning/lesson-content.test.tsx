@@ -14,6 +14,7 @@ const articleLesson = (html: string): LessonPayload => ({
   bookmarked: false,
   note: null,
   navigation: { previous: null, next: null },
+  assessment: null,
 });
 
 describe("LessonContent article sanitization", () => {
