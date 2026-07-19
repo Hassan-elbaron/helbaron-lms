@@ -2,11 +2,30 @@
 
 use App\Contexts\Analytics\Models\MetricSnapshot;
 use App\Contexts\Analytics\Models\ReportDefinition;
+use App\Platform\Identity\Database\Seeders\IdentitySeeder;
 use App\Platform\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role as SpatieRole;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->seed(IdentitySeeder::class);
+});
+
+/**
+ * These endpoints used to be reachable by any authenticated user. They are now role-gated, so the
+ * caller needs a role that may read analytics — see AnalyticsAuthorizationTest for the boundary
+ * itself; this file is only asserting the report mechanics.
+ */
+function analyticsAdmin(): User
+{
+    $user = User::factory()->create();
+    $user->assignRole(SpatieRole::findByName('admin', 'web'));
+
+    return $user;
+}
 
 it('runs a report from the read model and returns metric totals', function () {
     MetricSnapshot::factory()->create(['metric_key' => 'enrollments', 'period' => now()->toDateString(), 'value' => 7]);
@@ -14,7 +33,7 @@ it('runs a report from the read model and returns metric totals', function () {
 
     $report = ReportDefinition::factory()->create(['metric_keys' => ['enrollments', 'completions']]);
 
-    Sanctum::actingAs(User::factory()->create());
+    Sanctum::actingAs(analyticsAdmin());
 
     $res = $this->postJson('/api/v1/reports/run', ['report' => $report->public_id])->assertOk();
 
@@ -25,7 +44,7 @@ it('runs a report from the read model and returns metric totals', function () {
 
 it('lists reports and shows one', function () {
     $report = ReportDefinition::factory()->create(['name' => 'My Report']);
-    Sanctum::actingAs(User::factory()->create());
+    Sanctum::actingAs(analyticsAdmin());
 
     $this->getJson('/api/v1/reports')->assertOk()->assertJsonPath('data.0.name', 'My Report');
     $this->getJson("/api/v1/reports/{$report->public_id}")->assertOk()->assertJsonPath('data.id', $report->public_id);

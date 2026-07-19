@@ -187,12 +187,6 @@ parameters:
 			path: app/Contexts/Analytics/Http/Resources/ExportJobResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$metric_keys\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Contexts/Analytics/Http/Resources/ReportDefinitionResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Contexts\\Analytics\\Models\\ReportDefinition\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1

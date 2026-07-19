@@ -2,6 +2,7 @@
 
 namespace App\Contexts\Analytics\Http\Controllers\Api\V1;
 
+use App\Contexts\Analytics\Http\Controllers\Concerns\AuthorizesAnalytics;
 use App\Contexts\Analytics\Http\Requests\KpiQueryRequest;
 use App\Contexts\Analytics\Services\KpiEngine;
 use App\Contexts\Analytics\Services\MetricsCatalog;
@@ -12,8 +13,16 @@ use Illuminate\Routing\Controller;
 
 class KpiController extends Controller
 {
+    use AuthorizesAnalytics;
+
+    /** Unit marking a metric as money; see config/analytics.php. */
+    private const MONEY_UNIT = 'currency_minor';
+
     public function index(KpiQueryRequest $request, KpiEngine $kpi, MetricsCatalog $catalog): JsonResponse
     {
+        $this->assertCanViewAnalytics($request);
+        $canSeeMoney = $this->canViewRevenue($request);
+
         $data = $request->validated();
         $from = isset($data['from']) ? CarbonImmutable::parse($data['from']) : CarbonImmutable::now()->subDays(30);
         $to = isset($data['to']) ? CarbonImmutable::parse($data['to']) : CarbonImmutable::now();
@@ -23,9 +32,19 @@ class KpiController extends Controller
             if (! $catalog->has($key)) {
                 continue;
             }
+
+            $unit = $catalog->definition($key)['unit'];
+
+            // Money is dropped, not refused: a caller asking for a mixed set still gets the
+            // metrics they are entitled to. Keyed on the unit rather than the metric name so a
+            // future currency metric is covered the day it is added to the catalog.
+            if ($unit === self::MONEY_UNIT && ! $canSeeMoney) {
+                continue;
+            }
+
             $kpis[] = [
                 'metric' => $key,
-                'unit' => $catalog->definition($key)['unit'],
+                'unit' => $unit,
                 'total' => $kpi->total($key, $from->startOfDay(), $to->endOfDay()),
                 'series' => $kpi->series($key, $from->startOfDay(), $to->endOfDay()),
             ];

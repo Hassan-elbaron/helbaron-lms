@@ -26,6 +26,14 @@ class AnalyticsSeeder extends Seeder
             Permission::findOrCreate($permission, 'web');
         }
         SpatieRole::findByName('admin', 'web')->givePermissionTo(AnalyticsPermission::values());
+
+        // Instructors read analytics but not money. Their own course figures come from the scoped
+        // /teach endpoints; this grant is what lets them reach the shared metric surface at all.
+        // Deliberately additive — an existing grant is left alone rather than re-synced, so the
+        // seeder stays idempotent and never revokes a permission an operator added by hand.
+        SpatieRole::findByName('instructor', 'web')
+            ->givePermissionTo(AnalyticsPermission::ViewAnalytics->value);
+
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         foreach ((array) config('analytics.metrics') as $key => $def) {
