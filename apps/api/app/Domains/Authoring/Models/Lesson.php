@@ -26,7 +26,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * undeclared enum-cast property silently degrades to mixed — exactly the kind of blind spot that
  * hid the multi-blank grading defect. The two baseline entries it covered are removed with it.
  *
+ * The properties read by publish-readiness evaluation are annotated for the same reason `$type`
+ * was: an undeclared cast property degrades to mixed, and readiness decides whether a course may
+ * ship. The remaining columns stay baselined pending a dedicated annotation pass.
+ *
  * @property LessonType $type
+ * @property PublishState $publish_state
+ * @property string $public_id
+ * @property string $title
+ * @property array<string, mixed>|null $content
  * @property int|null $assessment_id reference to an Assessment; resolved via LessonAssessmentPort
  */
 class Lesson extends Model

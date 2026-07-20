@@ -5,11 +5,14 @@ namespace App\Domains\Catalog\Http\Controllers\Api\V1\Instructor;
 use App\Domains\Catalog\Actions\Course\ArchiveCourseAction;
 use App\Domains\Catalog\Actions\Course\PublishCourseAction;
 use App\Domains\Catalog\Actions\Course\UnpublishCourseAction;
+use App\Domains\Catalog\Contracts\CoursePublishGuard;
 use App\Domains\Catalog\Enums\CourseStatus;
 use App\Domains\Catalog\Exceptions\CoursePublishBlockedException;
 use App\Domains\Catalog\Http\Resources\Instructor\InstructorCourseResource;
+use App\Domains\Catalog\Http\Resources\Instructor\ReadinessReportResource;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Catalog\Services\InstructorAnalyticsService;
+use App\Platform\Shared\Publishing\Data\CourseReadinessInput;
 use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -41,6 +44,31 @@ class CourseController extends InstructorController
         $course->setAttribute('stats_payload', $analytics->courseStats($course));
 
         return ApiResponse::success(new InstructorCourseResource($course));
+    }
+
+    /**
+     * GET /teach/courses/{course}/readiness — the explainable evaluation behind publishing.
+     *
+     * Reads the same guard the publish endpoint enforces, so the panel cannot tell an author their
+     * course is ready and then have the publish refused.
+     */
+    public function readiness(Request $request, Course $course, CoursePublishGuard $guard): JsonResponse
+    {
+        $course = $this->ownedCourse($request, $course);
+
+        // Catalog owns Course, so Catalog does the flattening — the evaluating domain is not
+        // allowed to reach in and read it.
+        // getAttribute() rather than property access: Course carries no @property annotations yet,
+        // and adding them here would unmatch baseline entries across unrelated files.
+        $report = $guard->report(new CourseReadinessInput(
+            courseId: (int) $course->getKey(),
+            coursePublicId: (string) $course->getAttribute('public_id'),
+            description: $course->getAttribute('description'),
+            thumbnailPath: $course->getAttribute('thumbnail_path'),
+            hasInstructor: $course->trainerLinks()->exists(),
+        ));
+
+        return ApiResponse::success(new ReadinessReportResource($report));
     }
 
     public function publish(Request $request, Course $course, PublishCourseAction $action, InstructorAnalyticsService $analytics): JsonResponse

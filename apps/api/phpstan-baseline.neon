@@ -1705,12 +1705,6 @@ parameters:
 			path: app/Domains/Authoring/Actions/Section/ReorderSectionsAction.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Domains/Authoring/Curriculum/CurriculumReadAdapter.php
-
-		-
 			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$is_preview\.$#'
 			identifier: property.notFound
 			count: 2
@@ -1723,21 +1717,9 @@ parameters:
 			path: app/Domains/Authoring/Curriculum/CurriculumReadAdapter.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$public_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Domains/Authoring/Curriculum/CurriculumReadAdapter.php
-
-		-
 			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$section_id\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Domains/Authoring/Curriculum/CurriculumReadAdapter.php
-
-		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 2
 			path: app/Domains/Authoring/Curriculum/CurriculumReadAdapter.php
 
 		-
@@ -1945,12 +1927,6 @@ parameters:
 			path: app/Domains/Authoring/Http/Resources/LessonMediaResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Domains/Authoring/Http/Resources/LessonResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$is_preview\.$#'
 			identifier: property.notFound
 			count: 1
@@ -1958,24 +1934,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$position\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Domains/Authoring/Http/Resources/LessonResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$public_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Domains/Authoring/Http/Resources/LessonResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$publish_state\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Domains/Authoring/Http/Resources/LessonResource.php
-
-		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$title\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Authoring/Http/Resources/LessonResource.php
@@ -2081,12 +2039,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: app/Domains/Authoring/Media/LessonMediaAssetPort.php
-
-		-
-			message: '#^Access to an undefined property App\\Domains\\Authoring\\Models\\Lesson\:\:\$publish_state\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Domains/Authoring/Models/Lesson.php
 
 		-
 			message: '#^Method App\\Domains\\Authoring\\Models\\Lesson\:\:media\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'

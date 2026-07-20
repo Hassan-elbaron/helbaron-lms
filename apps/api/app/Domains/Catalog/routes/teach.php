@@ -16,6 +16,7 @@ Route::prefix('v1/teach')->middleware('auth:sanctum')->group(function (): void {
 
     Route::get('courses', [CourseController::class, 'index']);
     Route::get('courses/{course}', [CourseController::class, 'show']);
+    Route::get('courses/{course}/readiness', [CourseController::class, 'readiness']);
     Route::post('courses/{course}/publish', [CourseController::class, 'publish']);
     Route::post('courses/{course}/unpublish', [CourseController::class, 'unpublish']);
     Route::post('courses/{course}/archive', [CourseController::class, 'archive']);
