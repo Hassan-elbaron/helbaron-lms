@@ -17,7 +17,7 @@ class InstructorCourseResource extends BaseResource
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
     {
-        /** @var array<string, int>|null $stats */
+        /** @var array<string, int|null>|null $stats */
         $stats = $this->resource->getAttribute('stats_payload');
 
         return [
@@ -36,6 +36,11 @@ class InstructorCourseResource extends BaseResource
                 'avg_progress' => (int) ($stats['avg_progress'] ?? 0),
                 'sections' => (int) ($stats['sections'] ?? 0),
                 'lessons' => (int) ($stats['lessons'] ?? 0),
+                // Passed through WITHOUT an int cast or a ?? 0 fallback: null means "no attempt has
+                // been graded", and collapsing that to 0 would report every quiz as universally
+                // failed. The client renders the null as an unavailable state.
+                'assessment_pass_rate' => $stats['assessment_pass_rate'] ?? null,
+                'graded_attempts' => (int) ($stats['graded_attempts'] ?? 0),
             ] : null,
         ];
     }

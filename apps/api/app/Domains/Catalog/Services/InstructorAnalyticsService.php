@@ -7,7 +7,11 @@ use App\Contexts\Learning\Models\Enrollment;
 use App\Domains\Catalog\Enums\CourseStatus;
 use App\Domains\Catalog\Models\Course;
 use App\Platform\Identity\Contracts\UserLookupPort;
+use App\Platform\Shared\Assessment\Contracts\AssessmentStatsPort;
 use App\Platform\Shared\Curriculum\Contracts\CurriculumReadPort;
+use App\Platform\Shared\Curriculum\Data\CourseRef;
+use App\Platform\Shared\Curriculum\Data\LessonRef;
+use App\Platform\Shared\Curriculum\Data\SectionRef;
 
 /**
  * Read-only analytics for the Instructor Portal. Concentrates the (baselined) cross-context
@@ -19,12 +23,16 @@ class InstructorAnalyticsService
     public function __construct(
         private readonly CurriculumReadPort $curriculum,
         private readonly UserLookupPort $users,
+        private readonly AssessmentStatsPort $assessments,
     ) {}
 
     /**
      * Per-course teaching stats.
      *
-     * @return array{enrollments:int,completions:int,avg_progress:int,sections:int,lessons:int}
+     * `assessment_pass_rate` is null when no attempt has been graded — that is "no data", not
+     * zero, and the UI must render it as such rather than telling an instructor everyone failed.
+     *
+     * @return array{enrollments:int,completions:int,avg_progress:int,sections:int,lessons:int,assessment_pass_rate:int|null,graded_attempts:int}
      */
     public function courseStats(Course $course): array
     {
@@ -40,13 +48,38 @@ class InstructorAnalyticsService
         $sections = count($tree['sections']);
         $lessons = array_sum(array_map(static fn (array $s): int => count($s['lessons']), $tree['sections']));
 
+        // Quiz outcomes come through a port: Catalog may not read Assessment's tables, and
+        // Assessment may not walk Authoring's curriculum. Each side answers only its own question.
+        $passRate = $this->assessments->passRateForLessons($this->lessonIds($tree));
+
         return [
             'enrollments' => (int) ($agg->total ?? 0),
             'completions' => (int) ($agg->completions ?? 0),
             'avg_progress' => (int) ($agg->avg_progress ?? 0),
             'sections' => $sections,
             'lessons' => $lessons,
+            'assessment_pass_rate' => $passRate->passRate(),
+            'graded_attempts' => $passRate->gradedAttempts,
         ];
+    }
+
+    /**
+     * Flatten a curriculum tree to its internal lesson ids.
+     *
+     * @param  array{course: ?CourseRef, sections: list<array{section: SectionRef, lessons: list<LessonRef>}>}  $tree
+     * @return list<int>
+     */
+    private function lessonIds(array $tree): array
+    {
+        $ids = [];
+
+        foreach ($tree['sections'] as $section) {
+            foreach ($section['lessons'] as $lesson) {
+                $ids[] = $lesson->id;
+            }
+        }
+
+        return $ids;
     }
 
     /**

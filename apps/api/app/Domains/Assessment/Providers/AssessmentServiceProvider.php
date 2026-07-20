@@ -2,6 +2,7 @@
 
 namespace App\Domains\Assessment\Providers;
 
+use App\Domains\Assessment\Analytics\AssessmentStatsAdapter;
 use App\Domains\Assessment\Enums\AssessmentPermission;
 use App\Domains\Assessment\Grading\AnswerNormalizer;
 use App\Domains\Assessment\Grading\GraderRegistry;
@@ -15,6 +16,7 @@ use App\Domains\Assessment\Policies\AssessmentPolicy;
 use App\Domains\Assessment\Support\LessonAssessmentAdapter;
 use App\Platform\Identity\Contracts\Actor;
 use App\Platform\Identity\Contracts\CourseAccessPort;
+use App\Platform\Shared\Assessment\Contracts\AssessmentStatsPort;
 use App\Platform\Shared\Assessment\Contracts\LessonAssessmentPort;
 use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -42,6 +44,11 @@ class AssessmentServiceProvider extends BaseDomainServiceProvider
         // Assessment owns the lesson↔assessment contract; Authoring consumes it without ever
         // importing an Assessment class.
         $this->app->bind(LessonAssessmentPort::class, LessonAssessmentAdapter::class);
+
+        // Reporting is a separate contract from authoring: LessonAssessmentPort is pinned to two
+        // methods by an ArchitectureTest, and widening it would turn a narrow authoring surface
+        // into a general repository.
+        $this->app->bind(AssessmentStatsPort::class, AssessmentStatsAdapter::class);
 
         // The grader registry is the single extension point for question types. Adding a type is:
         // add the enum case, write a grader, register it on the line below. Nothing else changes.
