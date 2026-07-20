@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Eye, PanelLeft, PanelRight, Redo2, TriangleAlert, Undo2 } from "lucide-react";
+import { ArrowLeft, Eye, PanelLeft, PanelRight, Redo2, Rocket, TriangleAlert, Undo2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuthoringI18n } from "@/lib/authoring/authoring-i18n";
@@ -9,12 +10,14 @@ import { useBuilder } from "@/lib/authoring/builder-store";
 import { errorCount } from "@/lib/authoring/validation";
 import { useTeachCourse } from "@/lib/teach/hooks";
 import { AutosaveIndicator } from "./autosave-indicator";
+import { PublishReadinessPanel } from "./publish-readiness-panel";
 
 export function BuilderToolbar({ onOpenTree, onOpenInspector }: { onOpenTree: () => void; onOpenInspector: () => void }) {
   const { t } = useAuthoringI18n();
   const builder = useBuilder();
   const { data } = useTeachCourse(builder.courseId);
   const errors = errorCount(builder.issues);
+  const [publishOpen, setPublishOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-1.5 border-b border-border bg-background/95 px-2 backdrop-blur sm:px-3">
@@ -56,9 +59,16 @@ export function BuilderToolbar({ onOpenTree, onOpenInspector }: { onOpenTree: ()
         </Link>
       </Button>
 
+      <Button size="sm" onClick={() => setPublishOpen(true)}>
+        <Rocket className="size-4" aria-hidden />
+        <span className="hidden sm:inline">{t("publish.title")}</span>
+      </Button>
+
       <Button variant="ghost" size="icon" className="xl:hidden" onClick={onOpenInspector} aria-label={t("inspector.title")}>
         <PanelRight className="size-4" aria-hidden />
       </Button>
+
+      <PublishReadinessPanel courseId={builder.courseId} open={publishOpen} onOpenChange={setPublishOpen} />
     </header>
   );
 }

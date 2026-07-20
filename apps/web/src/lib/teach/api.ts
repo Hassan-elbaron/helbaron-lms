@@ -58,6 +58,38 @@ export type TeachAnnouncement = {
 
 export type AnnouncementInput = { title: string; body: string };
 
+export type ReadinessSeverity = "blocker" | "warning";
+
+/**
+ * One publish-readiness finding. `code` is the stable identifier — key UI decisions and deep links
+ * off it, never off `title`, which is server-authored prose and may be reworded.
+ */
+export type ReadinessIssue = {
+  code: string;
+  severity: ReadinessSeverity;
+  title: string;
+  explanation: string;
+  recommended_action: string;
+  entity_type: "course" | "section" | "lesson" | null;
+  entity_id: string | null;
+};
+
+/**
+ * The server's verdict on whether a course may publish.
+ *
+ * `is_publishable` is read directly and never recomputed from `blockers`: the backend owns that
+ * decision and derives its own publish guard from the same evaluation. Deriving it again here
+ * would create a second rule set that can drift.
+ */
+export type ReadinessReport = {
+  is_publishable: boolean;
+  score: number;
+  evaluated_at: string;
+  blockers: ReadinessIssue[];
+  warnings: ReadinessIssue[];
+  passed_checks: string[];
+};
+
 // ---- Reads (unwrap `.data`) ----
 export const getTeachDashboard = () => api.data<TeachDashboard>("teach/dashboard");
 
@@ -71,6 +103,9 @@ export const getTeachStudents = (id: string, page = 1) =>
 
 export const getTeachAnnouncements = (id: string) =>
   api.data<TeachAnnouncement[]>(`teach/courses/${id}/announcements`);
+
+export const getCourseReadiness = (id: string) =>
+  api.data<ReadinessReport>(`teach/courses/${id}/readiness`);
 
 // ---- Writes ----
 export const publishCourse = (id: string) =>

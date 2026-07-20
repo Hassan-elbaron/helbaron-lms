@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   archiveCourse,
   createAnnouncement,
+  getCourseReadiness,
   getTeachAnnouncements,
   getTeachCourse,
   getTeachCourses,
@@ -38,6 +39,18 @@ export const useTeachAnnouncements = (id: string) =>
     enabled: !!id,
   });
 
+/**
+ * Publish readiness. Not cached beyond the session: an author edits the curriculum and comes
+ * straight back to this panel, so a stale report would tell them their fix did not work.
+ */
+export const useCourseReadiness = (id: string, enabled = true) =>
+  useQuery({
+    queryKey: ["teach", "readiness", id],
+    queryFn: () => getCourseReadiness(id),
+    enabled: !!id && enabled,
+    staleTime: 0,
+  });
+
 /** Invalidate the course lists + a single course view after a lifecycle change. */
 function useLifecycleMutation(fn: (id: string) => Promise<unknown>) {
   const qc = useQueryClient();
@@ -47,6 +60,10 @@ function useLifecycleMutation(fn: (id: string) => Promise<unknown>) {
       qc.invalidateQueries({ queryKey: ["teach", "courses"] });
       qc.invalidateQueries({ queryKey: ["teach", "course", id] });
       qc.invalidateQueries({ queryKey: ["teach", "dashboard"] });
+      // Publishing does not change readiness, but unpublishing and archiving can change what the
+      // panel should offer next — and a refetch after any lifecycle change is cheap insurance
+      // against showing an author a verdict that no longer applies.
+      qc.invalidateQueries({ queryKey: ["teach", "readiness", id] });
     },
   });
 }
