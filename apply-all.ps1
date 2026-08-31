@@ -37,8 +37,12 @@ if (-not $ready) { throw "API not ready. Check: docker compose logs api" }
 Step "3/8  composer install"
 docker compose exec -T api composer install --no-interaction --prefer-dist
 
-# 4) Migrations + demo data (creates admin@helbaron.local)
-Step "4/8  migrate --seed (creates a demo admin account)"
+# 4) Migrations + local development data
+#    NOTE: this is a LOCAL DEVELOPMENT bootstrap only. The seeded admin below is created by
+#    IdentitySeeder, which refuses to run outside local/testing. On a real customer instance run
+#    migrations without --seed and create the administrator with:
+#        php artisan identity:create-admin
+Step "4/8  migrate --seed (creates a LOCAL development admin account)"
 docker compose exec -T api php artisan migrate --seed --force
 
 # 5) Filament assets + storage link + clear caches
@@ -72,7 +76,8 @@ Write-Host " Done. URLs:" -ForegroundColor Green
 Write-Host "  Frontend (Next.js): http://localhost:3000" -ForegroundColor Green
 Write-Host "  API:                http://localhost:8000/api/v1" -ForegroundColor Green
 Write-Host "  Admin panel:        http://localhost:8000/admin" -ForegroundColor Green
-Write-Host "  Admin login:        admin@helbaron.local  /  password" -ForegroundColor Green
+Write-Host "  Admin login:        admin@helbaron.local  /  password   (LOCAL ONLY)" -ForegroundColor Green
+Write-Host "  On a real instance: php artisan identity:create-admin" -ForegroundColor Yellow
 Write-Host "============================================================" -ForegroundColor Green
 Write-Host ""
 npm run dev

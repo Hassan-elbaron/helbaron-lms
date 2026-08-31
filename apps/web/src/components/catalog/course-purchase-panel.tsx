@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Award, BookOpenCheck, Clock, Layers, ShoppingCart } from "lucide-react";
 import type { CoursePurchase } from "@/lib/catalog/api";
-import { errorMessage } from "@/lib/api/errors";
+import { errorMessage, isEmailVerificationRequired } from "@/lib/api/errors";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useAddToCart } from "@/lib/commerce/hooks";
 import { useEnroll } from "@/lib/catalog/hooks";
@@ -15,8 +15,14 @@ import { PriceTag } from "@/components/commerce/price-tag";
 import { toast } from "@/components/ui/toast";
 
 /**
- * The course action panel mirrors the backend entitlement rule: an active product uses checkout;
- * without one, the learner can enroll for free.
+ * The course action panel mirrors the backend entitlement rule, which has THREE outcomes:
+ * an active product uses checkout; no product of any status means free enrolment; a product that
+ * exists but is draft or archived means the course is not available yet — neither buyable nor free.
+ *
+ * The third case is why this panel branches on `purchase.free` and not on `!purchase.purchasable`.
+ * Deriving freeness from the absence of an ACTIVE product put a one-click "Enroll for free" button
+ * on every paid course for as long as an admin had its product parked in Draft, and the grant it
+ * produced was a lifetime one. The API refuses it with 402 now; the button must not appear either.
  *
  * A guest is sent to sign-in with a redirect back to this course, so the intent survives the round
  * trip and the buy button is still waiting on return.
@@ -38,6 +44,9 @@ export function CoursePurchasePanel({
   const authed = status === "authenticated";
 
   const sellable = purchase?.purchasable === true ? purchase : null;
+  // Only an explicit `free: true` authorises the payment-free path. An absent summary is treated as
+  // not-free, which fails closed rather than giving a course away on a payload we cannot read.
+  const free = purchase?.free === true;
   const price = coursePurchasePrice(purchase, locale);
 
   const requireAccount = () => {
@@ -52,7 +61,41 @@ export function CoursePurchasePanel({
     return true;
   };
 
-  // No active product means this is the API-supported free-enrollment path.
+  /*
+   * The client-side check above reads a CACHED profile, so it goes stale: a session that verified
+   * (or was un-verified) elsewhere still carries the old flag. When that happens the server is the
+   * one that refuses, with 403 EMAIL_VERIFICATION_REQUIRED — a code nothing on the client used to
+   * read, so it surfaced as a generic "something went wrong" toast with no way forward.
+   *
+   * Route it to the page that actually resolves it, carrying the course as the return target so the
+   * learner lands back on the button they pressed.
+   */
+  const onActionError = (e: unknown) => {
+    if (isEmailVerificationRequired(e)) {
+      router.push(`/verify-email?redirect=${encodeURIComponent(`/courses/${courseId}`)}`);
+      return;
+    }
+    toast.error(errorMessage(e, t("common.error")));
+  };
+
+  // Sold, but not on sale right now (draft or archived product). Not buyable, and emphatically not
+  // free — this is the state the previous `!sellable` branch silently handed out for nothing.
+  if (!sellable && !free) {
+    return (
+      <div className={compact ? "" : "space-y-2"}>
+        <Button className="w-full" size={compact ? "default" : "lg"} disabled>
+          {t("catalog.course.notAvailable")}
+        </Button>
+        {compact ? null : (
+          <p className="px-1 text-center text-xs text-muted-foreground">
+            {t("catalog.course.notAvailableHint")}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  // Nothing sells this course at any status — the API-supported free-enrollment path.
   if (!sellable) {
     const onEnroll = () => {
       if (!requireAccount()) return;
@@ -61,7 +104,7 @@ export function CoursePurchasePanel({
           toast.success(t("catalog.course.enrolled"));
           router.push(`/learn/${courseId}`);
         },
-        onError: (e) => toast.error(errorMessage(e, t("common.error"))),
+        onError: onActionError,
       });
     };
 
@@ -89,7 +132,7 @@ export function CoursePurchasePanel({
           toast.success(t("catalog.course.addedToCart"), {
             action: { label: t("catalog.course.goToCart"), onClick: () => router.push("/cart") },
           }),
-        onError: (e) => toast.error(errorMessage(e, t("common.error"))),
+        onError: onActionError,
       },
     );
   };

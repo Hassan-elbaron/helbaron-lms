@@ -28,13 +28,15 @@ it('updates notification preferences', function () {
     $user = User::factory()->create();
     Sanctum::actingAs($user);
 
+    // `digest_frequency` was removed from this payload in E2: the setting is withdrawn until
+    // something actually delivers a digest, and the API now refuses the field rather than pretending
+    // to save it. Its behaviour — in both directions — is covered by DigestSettingWithdrawnTest.
     $this->postJson('/api/v1/notifications/preferences', [
         'locale' => 'ar',
-        'digest_frequency' => 'daily',
         'preferences' => [['category' => 'commerce', 'channel' => 'email', 'enabled' => false]],
     ])->assertOk()->assertJsonPath('data.locale', 'ar');
 
-    expect(UserNotificationSetting::where('user_id', $user->id)->first()->digest_frequency->value)->toBe('daily')
+    expect(UserNotificationSetting::where('user_id', $user->id)->first()->locale)->toBe('ar')
         ->and($user->fresh())->not->toBeNull();
 });
 

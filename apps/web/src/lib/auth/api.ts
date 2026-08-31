@@ -53,6 +53,17 @@ export function verifyEmail(code: string) {
   return api.post("auth/verify-email", { code });
 }
 
+/**
+ * POST /auth/resend-email-otp — reissues the email verification code.
+ *
+ * Requires a bearer token and is reachable while UNVERIFIED (the API's verification gate allows it
+ * explicitly). The response is deliberately generic — it does not reveal whether a code was sent —
+ * so the UI must not infer account state from it.
+ */
+export function resendEmailOtp() {
+  return api.post("auth/resend-email-otp", {});
+}
+
 /** POST /auth/mfa/verify — step-up verification for an authenticated session. */
 export function verifyMfa(code: string) {
   return api.post("auth/mfa/verify", { code });

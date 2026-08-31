@@ -4,18 +4,20 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { api, hasSession, sessionLogin, sessionLogout, type ApiRequestError } from "@/lib/api/client";
 import { useHydrated } from "@/hooks/use-hydrated";
 import type { AuthUser } from "@/types/api";
+import { MARKER_COOKIE } from "@/lib/auth/session-cookies";
 
 type AuthState = {
   user: AuthUser | null;
   status: "loading" | "authenticated" | "guest";
-  login: (email: string, password: string, mfaCode?: string) => Promise<void>;
+  login: (email: string, password: string, mfaCode?: string, remember?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthState | null>(null);
 
-const CACHE_KEY = "helbaron.user";
+// Neutral key: this is visible in devtools on every customer instance.
+const CACHE_KEY = "lms.user";
 
 /**
  * Optimistic profile cache (non-credential data) so reloads don't flash a full-page loader
@@ -59,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // so guest-guards (e.g. on /login) treat the user as authenticated and redirect away — the
       // user gets trapped and can never reach the sign-in form to re-authenticate.
       if (typeof document !== "undefined") {
-        document.cookie = "helbaron_authed=; path=/; max-age=0; SameSite=Lax";
+        document.cookie = `${MARKER_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
       }
       writeCachedUser(null);
       setUser(null);
@@ -112,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch {
         if (cancelled) return;
         if (typeof document !== "undefined") {
-          document.cookie = "helbaron_authed=; path=/; max-age=0; SameSite=Lax";
+          document.cookie = `${MARKER_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
         }
         writeCachedUser(null);
         setUser(null);
@@ -124,17 +126,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = useCallback(async (email: string, password: string, mfaCode?: string) => {
-    const { user: me } = await sessionLogin({
-      email,
-      password,
-      mfa_code: mfaCode,
-      device_name: "web",
-    });
-    setUser(me);
-    writeCachedUser(me);
-    setStatus("authenticated");
-  }, []);
+  const login = useCallback(
+    async (email: string, password: string, mfaCode?: string, remember = false) => {
+      const { user: me } = await sessionLogin({
+        email,
+        password,
+        mfa_code: mfaCode,
+        device_name: "web",
+        // Defaults to false. Defaulting the other way would silently restore the old behaviour for
+        // any caller that has not been updated.
+        remember,
+      });
+
+      setUser(me);
+      writeCachedUser(me);
+      setStatus("authenticated");
+    },
+    [],
+  );
 
   const logout = useCallback(async () => {
     try {

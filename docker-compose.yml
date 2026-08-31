@@ -7,6 +7,23 @@ services:
     image: postgres:16-alpine
     container_name: helbaron-postgres
     restart: unless-stopped
+    # RefreshDatabase runs `migrate:fresh`, which drops all 189 tables CASCADE in ONE transaction.
+    # The public schema holds ~988 relations (tables + their indexes, sequences and constraints), so
+    # a single drop takes ~1000 locks. Postgres does NOT cap locks per transaction; it sizes one
+    # shared lock table as
+    #     max_locks_per_transaction x (max_connections + max_prepared_transactions)
+    # which at stock settings is 64 x 100 = 6400 slots for the WHOLE server. One serial run needs
+    # ~1000 and fits. Eight parallel test workers each dropping their own schema need ~8000 and
+    # overflow it, failing with
+    #     SQLSTATE[53200] Out of memory: ERROR: out of shared memory
+    #     HINT: You might need to increase max_locks_per_transaction.
+    # The overflow lands in whichever tests happen to collide, so it presents as an intermittent
+    # flake with a different victim list every run — measured here as 9 failures at 8 workers and 26
+    # at 4, on identical code that is 100% green serially.
+    # 1024 x 100 = 102400 slots, roughly 17 MB of lock table, with headroom as the schema grows.
+    # This belongs in the repo, not in one developer's container: a hand-tuned local fix leaves the
+    # next clone and every new developer to rediscover it as unexplained flake.
+    command: ["postgres", "-c", "max_locks_per_transaction=1024"]
     environment:
       POSTGRES_DB: helbaron
       POSTGRES_USER: helbaron

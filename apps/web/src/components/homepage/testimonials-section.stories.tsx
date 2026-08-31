@@ -10,7 +10,7 @@ import { TestimonialsSection } from "@/components/homepage/testimonials-section"
  */
 const content: TestimonialsContent = {
   items: [
-    { quote: { en: "We rolled HElbaron out to 400 staff in a month. The bilingual catalog and team analytics made adoption effortless.", ar: "طرحنا الباذرون على 400 موظف خلال شهر. الدليل ثنائي اللغة وتحليلات الفريق جعلا التبنّي سهلاً." }, author: "Noura Al-Qahtani", role: { en: "L&D Director, Riyad Bank", ar: "مديرة التطوير، بنك الرياض" } },
+    { quote: { en: "We rolled {brand} out to 400 staff in a month. The bilingual catalog and team analytics made adoption effortless.", ar: "طرحنا الباذرون على 400 موظف خلال شهر. الدليل ثنائي اللغة وتحليلات الفريق جعلا التبنّي سهلاً." }, author: "Noura Al-Qahtani", role: { en: "L&D Director, Riyad Bank", ar: "مديرة التطوير، بنك الرياض" } },
     { quote: { en: "The PMP bootcamp was the reason I passed on my first attempt. Practical, focused, and taught in a way that stuck.", ar: "كان معسكر PMP سبب نجاحي من المحاولة الأولى. عملي ومركّز ومقدّم بطريقة تثبت في الذهن." }, author: "Omar Haddad", role: { en: "Program Manager, Careem", ar: "مدير برنامج، كريم" } },
     { quote: { en: "As a founder I needed AI fluency fast. The Business AI course paid for itself in the first week.", ar: "كمؤسس احتجت إتقان الذكاء الاصطناعي بسرعة. دورة الذكاء الاصطناعي للأعمال عوّضت تكلفتها في الأسبوع الأول." }, author: "Layla Mansour", role: { en: "Founder, Suhoor Labs", ar: "مؤسِّسة، سحور لابز" } },
   ],

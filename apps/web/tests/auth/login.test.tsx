@@ -38,6 +38,18 @@ describe("LoginPage", () => {
     await userEvent.type(screen.getByLabelText("Email"), "sara@example.com");
     await userEvent.type(screen.getByLabelText("Password"), "secret123");
     await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
-    expect(login).toHaveBeenCalledWith("sara@example.com", "secret123", undefined);
+    // The fourth argument is "remember me", threaded end to end in E1. It defaults to FALSE, and
+    // asserting that explicitly is the point: the checkbox was previously registered on the form and
+    // never sent, so unticking it on a shared machine still produced a fortnight-long credential.
+    expect(login).toHaveBeenCalledWith("sara@example.com", "secret123", undefined, false);
+  });
+
+  it("passes remember me through when the box is ticked", async () => {
+    renderAuth(<LoginPage />);
+    await userEvent.type(screen.getByLabelText("Email"), "sara@example.com");
+    await userEvent.type(screen.getByLabelText("Password"), "secret123");
+    await userEvent.click(screen.getByLabelText(/remember/i));
+    await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    expect(login).toHaveBeenCalledWith("sara@example.com", "secret123", undefined, true);
   });
 });

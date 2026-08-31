@@ -1,4 +1,4 @@
-/** The ONE standard success/error envelope returned by the HElbaron API. */
+/** The ONE standard success/error envelope returned by the the academy API. */
 export type ApiSuccess<T> = { data: T; message?: string; meta?: Record<string, unknown> };
 
 export type ApiError = {

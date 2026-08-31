@@ -139,6 +139,14 @@ class SeatProvisioningAdapter extends BaseService implements SeatProvisioningPor
         );
     }
 
+    /** The user behind an organization member, or null when the member has no account yet. */
+    public function userIdForMember(int $memberId): ?int
+    {
+        $userId = OrganizationMember::query()->whereKey($memberId)->value('user_id');
+
+        return $userId === null ? null : (int) $userId;
+    }
+
     /**
      * @return list<int>
      */

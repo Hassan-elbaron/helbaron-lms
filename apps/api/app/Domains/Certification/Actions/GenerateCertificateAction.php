@@ -5,6 +5,7 @@ namespace App\Domains\Certification\Actions;
 use App\Domains\Catalog\Models\Course;
 use App\Domains\Certification\Enums\CertificateStatus;
 use App\Domains\Certification\Events\CertificateIssued;
+use App\Domains\Certification\Jobs\GenerateCertificatePdf;
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Models\CertificateSetting;
 use App\Domains\Certification\Models\CertificateTemplate;
@@ -104,6 +105,11 @@ class GenerateCertificateAction extends BaseAction
             ));
 
             CertificateIssued::dispatch($certificate);
+
+            // Render the PDF now, off the request. The first download used to render it inline, so
+            // the learner who has just finished the course — the one most likely to click — paid the
+            // full render inside their own HTTP request, holding a worker for its duration.
+            GenerateCertificatePdf::dispatch((int) $certificate->id);
         }
 
         return $certificate;

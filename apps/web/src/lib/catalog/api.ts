@@ -2,15 +2,25 @@ import { api } from "@/lib/api/client";
 import type { Paginated } from "@/types/api";
 
 /**
- * How a course is sold, as returned by the course endpoints. `purchasable: false` means no active
- * product grants it, which is the only case where a payment-free enrol is accepted — the API refuses
- * self-enrolment into a purchasable course with 402. The sales UI that consumes the rest of this
- * shape (price, access and certificate terms, bundle cross-sell) lands in the public sales wave.
+ * How a course is sold, as returned by the course endpoints.
+ *
+ * THREE states, not two — `purchasable` and `free` are not complements:
+ *
+ *   purchasable: true,  free: false — an active product sells it; check out.
+ *   purchasable: false, free: true  — no product of any status grants it; free enrol is accepted.
+ *   purchasable: false, free: false — a product grants it but is draft/archived, so it is neither
+ *                                     buyable nor free. Render "not available yet".
+ *
+ * Branch on `free`, NEVER on `!purchasable`. Treating `purchasable === false` as free is what let a
+ * paid course be enrolled into for nothing (as a LIFETIME grant) during any window where an admin
+ * had moved its product to Draft to edit pricing. The API refuses that with 402 regardless, but the
+ * UI must not offer the button either.
  */
 export type CoursePurchase =
-  | { purchasable: false }
+  | { purchasable: false; free: boolean }
   | {
       purchasable: true;
+      free: false;
       product_id: string;
       product_type: "course" | "bundle";
       price: {

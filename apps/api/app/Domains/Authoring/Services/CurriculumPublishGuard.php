@@ -4,6 +4,7 @@ namespace App\Domains\Authoring\Services;
 
 use App\Domains\Catalog\Contracts\CoursePublishGuard;
 use App\Domains\Catalog\Models\Course;
+use App\Platform\Shared\Commerce\Contracts\PurchaseSummaryPort;
 use App\Platform\Shared\Publishing\Data\CourseReadinessInput;
 use App\Platform\Shared\Publishing\Data\ReadinessReport;
 
@@ -23,7 +24,13 @@ class CurriculumPublishGuard implements CoursePublishGuard
 {
     private ?string $reason = null;
 
-    public function __construct(private readonly CourseReadinessService $readiness) {}
+    /** @var list<string> */
+    private array $blockerCodes = [];
+
+    public function __construct(
+        private readonly CourseReadinessService $readiness,
+        private readonly PurchaseSummaryPort $purchases,
+    ) {}
 
     public function canPublish(Course $course): bool
     {
@@ -34,9 +41,16 @@ class CurriculumPublishGuard implements CoursePublishGuard
             thumbnailPath: $course->getAttribute('thumbnail_path'),
             hasInstructor: $course->trainerLinks()->exists(),
             visibility: $course->getAttribute('visibility')?->value,
+            isFree: (bool) $course->getAttribute('is_free'),
+            // Resolved through the Shared purchase-summary port so Authoring learns whether the
+            // course is on sale without importing anything from Commerce.
+            isSoldByActiveProduct: $this->purchases->forCourse((int) $course->getKey())->purchasable,
         ));
 
         $this->reason = $report->firstBlockerReason();
+        $this->blockerCodes = array_values(array_unique(
+            array_map(fn ($blocker): string => $blocker->code, $report->blockers()),
+        ));
 
         return $report->isPublishable();
     }
@@ -44,6 +58,14 @@ class CurriculumPublishGuard implements CoursePublishGuard
     public function reason(): ?string
     {
         return $this->reason;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function blockerCodes(): array
+    {
+        return $this->blockerCodes;
     }
 
     public function report(CourseReadinessInput $course): ReadinessReport

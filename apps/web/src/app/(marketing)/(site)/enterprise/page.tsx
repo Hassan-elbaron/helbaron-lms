@@ -1,20 +1,26 @@
+import { brandedMetadata } from "@/lib/branding/metadata";
 import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { jsonLdScript } from "@/lib/seo/json-ld";
 import { EnterprisePage } from "@/components/marketing/enterprise-page";
 import { ENTERPRISE_FAQ } from "@/components/marketing/enterprise-faq";
 
-const TITLE = "Enterprise learning for organizations — HElbaron";
+const TITLE = "Enterprise learning for organizations — {brand}";
 const DESCRIPTION =
   "Administer learners at scale, deliver courses and live cohorts, and prove completion with verifiable certificates — Arabic-first, for companies, academies, and public-sector programs.";
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  // `{brand}` resolves here, at request time, from the branding API. As a build-time
+  // constant this title/description was frozen into the bundle and identical on every
+  // instance — and it is the text search engines index.
+  return brandedMetadata({
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: "/enterprise" },
   openGraph: { title: TITLE, description: DESCRIPTION, url: "/enterprise", type: "website" },
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
-};
+});
+}
 
 export default function Page() {
   const breadcrumb = {

@@ -12,6 +12,7 @@ use App\Contexts\Commerce\Models\PaymentAttempt;
 use App\Contexts\Commerce\Models\PaymentTransaction;
 use App\Contexts\Commerce\Payments\Data\ChargeRequest;
 use App\Contexts\Commerce\Payments\Data\ChargeResult;
+use App\Contexts\Commerce\Support\PaymentDescriptor;
 use App\Platform\Shared\Actions\BaseAction;
 
 /**
@@ -45,7 +46,7 @@ class InitiatePaymentAction extends BaseAction
             reference: $order->public_id,
             amountMinor: $order->total_minor,
             currency: $order->currency,
-            description: 'HElbaron order '.$publicId,
+            description: PaymentDescriptor::forOrder((string) $publicId),
             idempotencyKey: $publicId.':r'.$attemptNo,
         ));
 

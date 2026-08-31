@@ -26,7 +26,11 @@ vi.mock("@/lib/catalog/api", () => ({ getCourse }));
 vi.mock("@/lib/commerce/api", () => ({ getProduct }));
 vi.mock("@/lib/seo/api", () => ({ getSeo: vi.fn().mockResolvedValue(null) }));
 vi.mock("@/lib/seo/locale", () => ({ resolveLocale: vi.fn().mockResolvedValue("en") }));
-vi.mock("@/lib/seo/metadata", () => ({ buildMetadata: (_s: unknown, f: unknown) => f }));
+vi.mock("@/lib/seo/metadata", () => ({
+  buildMetadata: (_s: unknown, f: unknown) => f,
+  // Pages now call the brand-aware async wrapper; the fallback still passes straight through.
+  buildBrandedMetadata: async (_s: unknown, f: unknown) => f,
+}));
 vi.mock("@/app/(marketing)/(site)/courses/[public_id]/course-details-client", () => ({
   CourseDetailsClient: () => null,
 }));

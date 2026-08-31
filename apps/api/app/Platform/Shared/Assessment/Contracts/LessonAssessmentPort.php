@@ -40,4 +40,18 @@ interface LessonAssessmentPort
      * breaking the curriculum tree.
      */
     public function describe(int $assessmentId): ?AssessmentRef;
+
+    /**
+     * Describe many attached assessments at once, keyed by id.
+     *
+     * Exists because the readiness report asks about EVERY quiz lesson in a course, and describe()
+     * per lesson is one query plus a count sub-select each — paid on every publish attempt and on
+     * every load of the instructor readiness panel. Ids with no surviving assessment are simply
+     * absent from the result, which keeps the caller's "stale reference degrades to no quiz"
+     * behaviour identical to describe()'s null.
+     *
+     * @param  list<int>  $assessmentIds
+     * @return array<int, AssessmentRef>
+     */
+    public function describeMany(array $assessmentIds): array;
 }

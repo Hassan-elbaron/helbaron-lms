@@ -37,8 +37,8 @@ export function ProofBand() {
   );
 }
 
-/* ── Why HElbaron ───────────────────────────────────────────────────── */
-export function WhyHelbaron() {
+/* ── Why the academy ───────────────────────────────────────────────────── */
+export function WhyUs() {
   const { locale } = useI18n();
   return (
     <Section id="why" className="bg-background">
@@ -236,7 +236,7 @@ export function EnterpriseTrust() {
             </div>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg"><Link href="/enterprise">{pickLocale({ en: "Book a demo", ar: "احجز عرضًا" }, locale)}<ArrowRight className="size-4 rtl:rotate-180" aria-hidden /></Link></Button>
-              <Button asChild size="lg" variant="outline"><Link href="/advisory">{pickLocale({ en: "HElbaron Advisory", ar: "استشارات HElbaron" }, locale)}</Link></Button>
+              <Button asChild size="lg" variant="outline"><Link href="/advisory">{pickLocale({ en: "{brand} Advisory", ar: "استشارات {brand}" }, locale)}</Link></Button>
             </div>
           </Reveal>
 

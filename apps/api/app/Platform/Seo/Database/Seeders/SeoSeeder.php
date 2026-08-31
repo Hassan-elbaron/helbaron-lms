@@ -7,6 +7,7 @@ use App\Domains\Live\Enums\LiveSessionStatus;
 use App\Platform\Pages\Enums\PageStatus;
 use App\Platform\Seo\Enums\SeoEntityType;
 use App\Platform\Seo\Models\SeoMeta;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -60,7 +61,7 @@ class SeoSeeder extends Seeder
      */
     private static function singletons(): array
     {
-        $name = (string) config('app.name', 'HElbaron');
+        $name = trim(app(BrandProfilePort::class)->profile()->name);
 
         return [
             [

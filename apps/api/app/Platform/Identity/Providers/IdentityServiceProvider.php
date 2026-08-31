@@ -6,6 +6,7 @@ use App\Platform\Identity\Adapters\CurrentUserAdapter;
 use App\Platform\Identity\Adapters\UserLookupAdapter;
 use App\Platform\Identity\Adapters\UserPermissionAdapter;
 use App\Platform\Identity\Adapters\UserRoleAdapter;
+use App\Platform\Identity\Console\Commands\CreateAdminUser;
 use App\Platform\Identity\Console\Commands\ExportOpenApiCommand;
 use App\Platform\Identity\Contracts\CurrentUserPort;
 use App\Platform\Identity\Contracts\UserLookupPort;
@@ -80,9 +81,15 @@ class IdentityServiceProvider extends BaseDomainServiceProvider
         $this->app->bind(UserPermissionPort::class, UserPermissionAdapter::class);
         $this->app->bind(UserRolePort::class, UserRoleAdapter::class);
 
-        // Public-API OpenAPI export. Registered explicitly (Identity has no auto-discovered
-        // console namespace) so `php artisan identity:openapi-export` is available.
-        $this->commands([ExportOpenApiCommand::class]);
+        // Registered explicitly: Identity has no auto-discovered console namespace, so both
+        // `php artisan identity:openapi-export` and `php artisan identity:create-admin` are wired here.
+        //
+        // CreateAdminUser lives in Identity rather than app/Console/Commands because it reads
+        // Identity's own User model and Role enum. app/Console/** is collected into the Platform
+        // layer by deptrac.yaml, which may depend only on Shared + IdentityContracts, so the command
+        // produced five DependsOnDisallowedLayer violations there. An Identity console command
+        // belongs to Identity, which may use its own models — the correct fix, not a baseline entry.
+        $this->commands([ExportOpenApiCommand::class, CreateAdminUser::class]);
     }
 
     protected function bootDomain(): void
@@ -157,6 +164,14 @@ class IdentityServiceProvider extends BaseDomainServiceProvider
 
         RateLimiter::for('identity-otp-verify', fn (Request $r) => Limit::perMinute(10)
             ->by(optional($r->user())->getAuthIdentifier() ?? $r->ip()));
+
+        // Resending a verification code SENDS AN EMAIL, so it is throttled far harder than verifying
+        // one. This is only the burst guard — the real budget is the per-hour ceiling
+        // (identity.otp.email.max_per_hour) that OtpService enforces against the persisted codes, and
+        // which survives a process restart. Keyed on the authenticated user: the route is
+        // auth:sanctum, so there is always one, and one account cannot consume another's budget.
+        RateLimiter::for('identity-otp-resend', fn (Request $r) => Limit::perMinute(3)
+            ->by('otp-resend|'.(optional($r->user())->getAuthIdentifier() ?? $r->ip())));
 
         // Social redirect/callback are public and unauthenticated; key on IP so one source cannot
         // spray provider round-trips (and consume upstream IdP rate budget).

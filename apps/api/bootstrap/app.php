@@ -47,22 +47,23 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Behind ALB/CloudFront: trust forwarded headers so isSecure()/host are correct.
-        // Fail CLOSED by default — trusting all proxies ('*') when the env var is unset lets a
-        // client spoof X-Forwarded-For and defeat every IP-keyed rate limiter. Trust nothing unless
-        // an explicit proxy list (CIDRs, or an explicit literal '*') is configured.
-        $trustedProxies = trim((string) env('TRUSTED_PROXIES', ''));
-        $middleware->trustProxies(
-            at: match (true) {
-                $trustedProxies === '' => [],
-                $trustedProxies === '*' => '*',
-                default => explode(',', $trustedProxies),
-            },
-        );
+        // TRUSTED PROXIES ARE NOT CONFIGURED HERE. See TrustedEdgeConfigurator (called from
+        // AppServiceProvider::boot) and the measurement recorded there.
+        //
+        // In short: this closure runs on afterResolving(HttpKernel::class), which is BEFORE the
+        // framework's bootstrappers. At this point `config` is not bound at all and
+        // LoadEnvironmentVariables has not run, so neither config() nor a .env value is reachable.
+        // `trustProxies(at:)` takes a value, not a closure, so it cannot be deferred either. The
+        // previous `env('TRUSTED_PROXIES')` here read only the real process environment and silently
+        // resolved to [] — trust nothing — on any deployment whose value lives in a .env file.
 
-        // Enforce Host allow-list in production only (avoids blocking local/test hosts).
+        // Host allow-list. This one CAN stay: trustHosts(at:) accepts a callable and TrustHosts
+        // invokes it per request (TrustHosts::hosts()), by which time config is loaded.
         $middleware->trustHosts(at: static function (): array {
-            $hosts = array_filter(array_map('trim', explode(',', (string) env('APP_TRUSTED_HOSTS', ''))));
+            $hosts = array_filter(array_map(
+                'trim',
+                explode(',', (string) config('security.trusted_hosts', '')),
+            ));
 
             return $hosts === [] ? [] : $hosts;
         }, subdomains: true);

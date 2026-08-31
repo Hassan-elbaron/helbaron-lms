@@ -16,7 +16,7 @@ class PublishCourseAction extends BaseAction
     public function execute(Course $course): Course
     {
         if (! $this->guard->canPublish($course)) {
-            throw new CoursePublishBlockedException($this->guard->reason());
+            throw new CoursePublishBlockedException($this->guard->reason(), $this->guard->blockerCodes());
         }
 
         $course = $this->transaction(function () use ($course): Course {

@@ -4,6 +4,7 @@ namespace App\Contexts\Commerce\Adapters;
 
 use App\Contexts\Commerce\Services\EntitlementService;
 use App\Platform\Shared\Commerce\Contracts\EntitlementPort;
+use App\Platform\Shared\Commerce\Data\CourseEntitlement;
 
 /**
  * Commerce's implementation of the Shared EntitlementPort. Deliberately thin: it is the seam other
@@ -22,6 +23,11 @@ class EntitlementAdapter implements EntitlementPort
         return $this->entitlements->hasCourseEntitlement($userId, $courseId);
     }
 
+    public function courseEntitlement(int $userId, int $courseId): ?CourseEntitlement
+    {
+        return $this->entitlements->courseEntitlement($userId, $courseId);
+    }
+
     /**
      * @return list<int>
      */
@@ -33,5 +39,15 @@ class EntitlementAdapter implements EntitlementPort
     public function isCoursePurchasable(int $courseId): bool
     {
         return $this->entitlements->isCoursePurchasable($courseId);
+    }
+
+    public function isCourseSold(int $courseId): bool
+    {
+        return $this->entitlements->isCourseSold($courseId);
+    }
+
+    public function isCourseFreeToEnroll(int $courseId): bool
+    {
+        return $this->entitlements->isCourseFreeToEnroll($courseId);
     }
 }

@@ -28,6 +28,7 @@ use App\Contexts\Commerce\Services\CartService;
 use App\Contexts\Commerce\Services\ContractService;
 use App\Contexts\Commerce\Services\CouponService;
 use App\Contexts\Commerce\Services\InvoiceNumberService;
+use App\Contexts\Commerce\Support\PaymentDescriptor;
 use App\Platform\Shared\Actions\BaseAction;
 use App\Platform\Shared\Analytics\AnalyticsEventName;
 use App\Platform\Shared\Analytics\Contracts\AnalyticsEventRecorder;
@@ -262,7 +263,7 @@ class CheckoutAction extends BaseAction
                 reference: $order->public_id,
                 amountMinor: $order->total_minor,
                 currency: $order->currency,
-                description: 'HElbaron order '.$order->public_id,
+                description: PaymentDescriptor::forOrder((string) $order->public_id),
                 idempotencyKey: $order->public_id,
             ));
         } catch (Throwable $e) {

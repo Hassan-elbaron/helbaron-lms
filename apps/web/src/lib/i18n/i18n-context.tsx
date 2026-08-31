@@ -2,6 +2,9 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { defaultBranding } from "@/lib/branding/api";
+import { useBranding } from "@/lib/branding/context";
+import { interpolate } from "./interpolate";
 import { defaultLocale, isLocale, isRtl, localeCookieName, type Locale } from "./config";
 import { dictionaries } from "./dictionaries";
 
@@ -15,7 +18,15 @@ function readLocaleCookie(): Locale | null {
   return isLocale(value) ? value : null;
 }
 
-type Translate = (key: string) => string;
+/**
+ * `t(key)` — and optionally `t(key, { name: "Sara" })` for per-call placeholders.
+ *
+ * `{brand}` is injected automatically from the branding context, so a dictionary string can name the
+ * academy without every call site threading the value through. This is what makes the copy
+ * white-labelable at RUNTIME: the brand arrives from the branding API, not from a build-time
+ * constant frozen into the bundle.
+ */
+type Translate = (key: string, vars?: Record<string, string | number>) => string;
 
 type I18nContextValue = {
   locale: Locale;
@@ -67,15 +78,26 @@ export function I18nProvider({ children, initialLocale = defaultLocale }: { chil
     document.documentElement.dir = isRtl(locale) ? "rtl" : "ltr";
   }, [locale]);
 
+  // BrandingProvider wraps I18nProvider (see providers.tsx), so the brand is available here and
+  // every translation can carry it without touching a single call site.
+  const branding = useBranding();
+  // Last resort is the generic default, never "" — an empty value would leave a literal
+  // "{brand}" visible in the UI.
+  const brandName =
+    branding.identity.brand_name[locale] ||
+    branding.identity.brand_name.en ||
+    defaultBranding.identity.brand_name.en;
+
   const value = useMemo<I18nContextValue>(() => {
     const dict = dictionaries[locale] as unknown as Record<string, unknown>;
     return {
       locale,
       dir: isRtl(locale) ? "rtl" : "ltr",
-      t: (key: string) => resolve(dict, key),
+      t: (key: string, vars?: Record<string, string | number>) =>
+        interpolate(resolve(dict, key), { brand: brandName, ...vars }),
       setLocale,
     };
-  }, [locale, setLocale]);
+  }, [locale, setLocale, brandName]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }

@@ -46,7 +46,18 @@ function timezoneOptions(): readonly string[] {
   }
 }
 
-type PrefValues = { locale: "en" | "ar"; digest_frequency: "none" | "daily" | "weekly"; timezone: string };
+/**
+ * DIGEST IS NOT OFFERED. `digest_frequency` still exists in the schema, the enum and the model, but
+ * nothing delivers a digest: DigestService::pendingForUserId() has zero callers and there is no
+ * scheduler entry. Offering the control let a user select "daily" and believe they had configured
+ * something that would never happen — a silent lie is worse than an absent feature.
+ *
+ * The API refuses the field while `notifications.digest.enabled` is false and omits it from its
+ * response, so this control cannot be restored on its own: turning the config flag on is what brings
+ * it back, once there is something behind it. See config/notifications.php for what "something"
+ * means.
+ */
+type PrefValues = { locale: "en" | "ar"; timezone: string };
 
 function PreferencesForm() {
   const { t } = useI18n();
@@ -56,7 +67,7 @@ function PreferencesForm() {
   const timezones = useMemo(() => timezoneOptions(), []);
 
   const { register, handleSubmit, control } = useForm<PrefValues>({
-    defaultValues: { locale: user?.locale ?? "en", digest_frequency: "daily", timezone: tz },
+    defaultValues: { locale: user?.locale ?? "en", timezone: tz },
   });
 
   // Quiet-hours window is local UI state (no read endpoint exposes it yet); it's merged into the
@@ -89,18 +100,11 @@ function PreferencesForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <Field id="pref-locale" label={t("student.profile.language")}>
               <select id="pref-locale" className={controlClass} {...register("locale")}>
                 <option value="en">English</option>
                 <option value="ar">العربية</option>
-              </select>
-            </Field>
-            <Field id="digest" label={t("student.notifications.digest")}>
-              <select id="digest" className={controlClass} {...register("digest_frequency")}>
-                <option value="daily">{t("student.notifications.digestDaily")}</option>
-                <option value="weekly">{t("student.notifications.digestWeekly")}</option>
-                <option value="none">{t("student.notifications.digestNever")}</option>
               </select>
             </Field>
             <Field id="timezone" label={t("student.notifications.timezone")}>

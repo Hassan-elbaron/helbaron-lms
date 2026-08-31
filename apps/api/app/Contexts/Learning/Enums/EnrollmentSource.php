@@ -18,10 +18,29 @@ enum EnrollmentSource: string
     case Grant = 'grant';
     case CompanySeat = 'company_seat';
 
+    /**
+     * Access granted by the learner's own active subscription, and ending with it.
+     *
+     * Added because there was no way to record it. A subscriber has no enrollment row until they
+     * enrol, and the payment-free path wrote `Free` with `expires_at = NULL` — a permanent grant to
+     * every course in the bundle that survived the subscription lapsing. Stored as a distinct source
+     * so it is greppable, revocable and never mistaken for a purchase the learner owns.
+     */
+    case Subscription = 'subscription';
+
     /** Was this access handed out from an organization's purchase rather than earned by the learner? */
     public function isCompanySeat(): bool
     {
         return $this === self::CompanySeat;
+    }
+
+    /**
+     * Is this access BORROWED — dependent on something that can lapse or be withdrawn — rather than
+     * owned outright? Borrowed access must always carry an expiry.
+     */
+    public function isBorrowed(): bool
+    {
+        return $this === self::Subscription || $this === self::CompanySeat;
     }
 
     /** @return array<int, string> */

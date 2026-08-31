@@ -72,11 +72,20 @@ it('never lets Assessment import another context', function () {
 it('keeps the lesson-assessment port narrow', function () {
     // Guards against the port drifting into a generic repository. If a new method is genuinely
     // needed, this assertion should be updated deliberately — not incidentally.
+    //
+    // `describeMany` was added deliberately in Phase E4 and is the batch form of a question the port
+    // already answered, not a new capability: the readiness report asks about every quiz lesson in a
+    // course, and describe() per lesson was a query plus a count sub-select each, paid on every
+    // publish attempt and every load of the instructor panel. It admits nothing new across the
+    // boundary — same AssessmentRef, same "unknown id yields nothing" contract.
+    //
+    // The line that would break the port is a list(), a find() or anything about grading, attempts
+    // or scoring. Those still belong in Assessment.
     $methods = get_class_methods(LessonAssessmentPort::class);
 
     sort($methods);
 
-    expect($methods)->toBe(['describe', 'resolveAttachable']);
+    expect($methods)->toBe(['describe', 'describeMany', 'resolveAttachable']);
 });
 
 it('exposes assessments across the boundary only as an immutable DTO', function () {

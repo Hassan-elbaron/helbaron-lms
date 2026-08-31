@@ -22,6 +22,12 @@ function safeProductionConfig(): void
         'commerce.payment.provider' => 'stripe',
         'commerce.payment.webhook_secret' => 'whsec_test',
         'media.ingestion.default' => 'mux',
+        // A production-safe config must also name a real PLAYBACK provider. `learning.playback` is a
+        // separate selector from `media.ingestion` — the fake one hands learners signed URLs that
+        // play nothing — and ProductionConfigValidator was taught to reject it without this helper
+        // being taught to set it, so every "safe config" assertion failed on a rule that is correct.
+        'learning.playback.provider' => 'mux',
+        'learning.playback.allow_fake_provider' => false,
         'notifications.providers.mail' => 'ses',
         'notifications.providers.sms' => 'sns',
         'notifications.providers.push' => 'fcm',

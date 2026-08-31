@@ -40,6 +40,33 @@ final class CourseLookupAdapter implements CourseLookupPort
             ->all();
     }
 
+    /**
+     * @param  list<int>  $courseIds
+     * @return array<int, bool>
+     */
+    public function freeFlagsForCourseIds(array $courseIds): array
+    {
+        $courseIds = array_values(array_unique(array_map('intval', $courseIds)));
+
+        if ($courseIds === []) {
+            return [];
+        }
+
+        // withoutGlobalScopes(): the answer must not depend on the request's resolved tenant. A
+        // guard whose failure mode is "the course looks free" is the wrong shape — see the matching
+        // note on EntitlementService::isCourseSold().
+        $flags = Course::withoutGlobalScopes()
+            ->whereIn('id', $courseIds)
+            ->pluck('is_free', 'id');
+
+        $result = [];
+        foreach ($courseIds as $id) {
+            $result[$id] = (bool) ($flags[$id] ?? false);
+        }
+
+        return $result;
+    }
+
     public function courseTitle(int $courseId): ?string
     {
         $title = Course::query()->whereKey($courseId)->value('title');

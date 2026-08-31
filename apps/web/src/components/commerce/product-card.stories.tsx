@@ -46,8 +46,8 @@ export const OnSale: Story = {
     product: {
       ...base,
       id: "prd_annual",
-      title: "HElbaron Pro — Annual",
-      slug: "helbaron-pro-annual",
+      title: "Academy Pro — Annual",
+      slug: "academy-pro-annual",
       description: "Save 2 months when you pay yearly. Full catalog + certificates.",
       prices: [
         { currency: "SAR", amount_minor: 149000, sale_amount_minor: 119000, on_sale: true, effective_minor: 119000 },

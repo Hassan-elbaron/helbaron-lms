@@ -13,7 +13,7 @@ const section: HomepageSection = {
   type: "cta",
   position: 1,
   content: {
-    headline: { en: "Start learning with HElbaron today", ar: "ابدأ التعلّم مع الباذرون اليوم" },
+    headline: { en: "Start learning with {brand} today", ar: "ابدأ التعلّم مع الباذرون اليوم" },
     subheadline: {
       en: "Join thousands of professionals building in-demand skills across the region.",
       ar: "انضم إلى آلاف المحترفين الذين يبنون مهارات مطلوبة في المنطقة.",
@@ -49,7 +49,7 @@ export const PrimaryOnly: Story = {
       ...section,
       content: {
         headline: { en: "Ready to upskill your team?", ar: "جاهز لتطوير مهارات فريقك؟" },
-        subheadline: { en: "Bring HElbaron to your whole organization.", ar: "أحضر الباذرون إلى مؤسستك بالكامل." },
+        subheadline: { en: "Bring {brand} to your whole organization.", ar: "أحضر الباذرون إلى مؤسستك بالكامل." },
         cta_primary: { label: { en: "Get a demo", ar: "احصل على عرض توضيحي" }, href: "/demo" },
       },
     },

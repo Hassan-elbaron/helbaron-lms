@@ -14,7 +14,34 @@ class ValidateEnvironment extends Command
 {
     protected $signature = 'env:validate {--production : Apply strict production checks}';
 
-    protected $description = 'Validate environment + config for a HElbaron production release';
+    protected $description = 'Validate environment + config for a production release';
+
+    /**
+     * What each payment gateway must have before it can take a real payment.
+     *
+     * Previously only Stripe was checked — and it was checked at `services.stripe.*`, which is NOT
+     * the config GatewayManager reads. Six of the seven supported gateways could therefore be
+     * selected with no credentials at all and this command would report "Environment OK"; the
+     * instance would fail on the customer's first checkout instead of on the operator's deploy.
+     * Every entry below is a key under `commerce.gateways.<provider>` — the same array
+     * GatewayManager hands to the adapter — and every one of them is read by that adapter.
+     *
+     * A nested list means ANY ONE of those keys satisfies the requirement (Paymob verifies webhooks
+     * with hmac_secret and falls back to webhook_secret, so demanding both would be a false failure).
+     *
+     * base_url / api_url / sha_type / language are deliberately absent: they ship working defaults.
+     *
+     * @var array<string, list<string|list<string>>>
+     */
+    private const GATEWAY_REQUIREMENTS = [
+        'fake' => [],
+        'stripe' => ['secret', 'webhook_secret'],
+        'paymob' => ['api_key', 'integration_id', 'iframe_id', ['hmac_secret', 'webhook_secret']],
+        'moyasar' => ['secret_key', 'webhook_secret', 'callback_url'],
+        'hyperpay' => ['access_token', 'entity_id', 'webhook_secret', 'hosted_url'],
+        'tap' => ['secret_key', 'webhook_secret', 'redirect_url'],
+        'aps' => ['access_code', 'merchant_identifier', 'request_phrase', 'response_phrase', 'return_url'],
+    ];
 
     public function handle(): int
     {
@@ -54,20 +81,21 @@ class ValidateEnvironment extends Command
             if (config('queue.default') === 'sync') {
                 $errors[] = 'QUEUE_CONNECTION is "sync" (jobs run inline) — use redis in production';
             }
-            // Trusted proxies: read the raw env because it is applied inline in bootstrap/app.php with
-            // no config key. A warn, not a fail — "*" is valid behind a locked-down ALB, but should be
-            // scoped to the balancer where the network allows it.
-            $proxies = trim((string) env('TRUSTED_PROXIES', '*'));
-            if ($proxies === '*' || $proxies === '') {
+            // Trusted proxies, read from the SAME config key TrustedEdgeConfigurator applies. This
+            // used to read env('TRUSTED_PROXIES', '*') directly, "because it is applied inline in
+            // bootstrap/app.php with no config key" — which was true of the old code and made this a
+            // third resolution path for one setting, defaulting to the opposite of what the app did.
+            $proxies = trim((string) config('security.trusted_proxies', ''));
+            if ($proxies === '') {
+                $errors[] = 'TRUSTED_PROXIES is not set — every request behind a load balancer reports the balancer\'s IP, so all IP-keyed rate limits (login lockout, OTP budget, checkout) share one bucket';
+            } elseif ($proxies === '*') {
                 $warn[] = 'TRUSTED_PROXIES trusts all proxies ("*") — scope it to your load balancer where possible';
             }
-            // Provider secrets required only when the real provider is selected.
-            if (config('commerce.payment.provider') === 'stripe' && blank(config('services.stripe.secret'))) {
-                $errors[] = 'Stripe selected but STRIPE_SECRET is empty';
+            // Payment gateway credentials for whichever gateway is actually selected.
+            foreach ($this->paymentGatewayProblems() as $problem) {
+                $errors[] = $problem;
             }
-            if (config('commerce.payment.provider') === 'stripe' && blank(config('services.stripe.webhook_secret'))) {
-                $errors[] = 'Stripe selected but STRIPE_WEBHOOK_SECRET is empty';
-            }
+
             if (config('learning.playback.provider') === 'mux' && blank(config('services.mux.signing_key'))) {
                 $errors[] = 'Mux selected but MUX_SIGNING_KEY is empty';
             }
@@ -99,5 +127,71 @@ class ValidateEnvironment extends Command
         $this->info('Environment OK'.($prod ? ' (production checks passed)' : '').'.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Problems with the SELECTED payment gateway's credentials. Only the selected gateway is
+     * checked: an instance that sells in Saudi Arabia through Moyasar should not be blocked from
+     * deploying because it has no Stripe keys.
+     *
+     * Names the environment variable, never the value.
+     *
+     * @return list<string>
+     */
+    private function paymentGatewayProblems(): array
+    {
+        $provider = (string) config('commerce.payment.provider', 'fake');
+
+        if (! array_key_exists($provider, self::GATEWAY_REQUIREMENTS)) {
+            return [
+                "COMMERCE_PAYMENT_PROVIDER='{$provider}' is not a supported gateway (".
+                implode(', ', array_keys(self::GATEWAY_REQUIREMENTS)).') — checkout would throw on the first order',
+            ];
+        }
+
+        if ($provider === 'fake') {
+            // Selecting the stub is a configuration decision guarded elsewhere (config:validate
+            // refuses it in production unless COMMERCE_ALLOW_FAKE_GATEWAY is set). There are no
+            // credentials to check, so re-reporting it here would only duplicate that message.
+            return [];
+        }
+
+        $problems = [];
+
+        foreach (self::GATEWAY_REQUIREMENTS[$provider] as $requirement) {
+            $alternatives = is_array($requirement) ? $requirement : [$requirement];
+
+            $satisfied = false;
+            foreach ($alternatives as $key) {
+                if (filled(config("commerce.gateways.{$provider}.{$key}"))) {
+                    $satisfied = true;
+                    break;
+                }
+            }
+
+            if (! $satisfied) {
+                $names = array_map(fn (string $key): string => self::envName($provider, $key), $alternatives);
+
+                $problems[] = count($names) === 1
+                    ? ucfirst($provider).' selected but '.$names[0].' is empty'
+                    : ucfirst($provider).' selected but none of '.implode(' / ', $names).' is set';
+            }
+        }
+
+        return $problems;
+    }
+
+    /**
+     * The environment variable behind a gateway config key.
+     *
+     * config/commerce.php maps these one-for-one and uppercase (`aps.access_code` <-
+     * APS_ACCESS_CODE), so the name is derived rather than duplicated in a second table that could
+     * drift out of step with the first. PaymentGatewayValidationTest asserts every derived name
+     * really appears in config/commerce.php, so a future rename cannot leave this printing an
+     * environment variable that does not exist.
+     */
+    private static function envName(string $provider, string $key): string
+    {
+        return strtoupper($provider.'_'.$key);
     }
 }

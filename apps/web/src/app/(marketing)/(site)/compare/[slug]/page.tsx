@@ -14,10 +14,10 @@ export function generateStaticParams(): { slug: string }[] {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const c = getCompetitor(slug);
-  if (!c) return { title: "Compare HElbaron" };
+  if (!c) return { title: "Compare {brand}" };
 
-  const title = `HElbaron vs ${c.name}`;
-  const description = `A factual, category-level comparison of HElbaron and ${c.name} — capabilities and operating models, with honest "best for" guidance.`;
+  const title = `{brand} vs ${c.name}`;
+  const description = `A factual, category-level comparison of {brand} and ${c.name} — capabilities and operating models, with honest "best for" guidance.`;
   const url = `/compare/${c.slug}`;
   return {
     title,
@@ -39,7 +39,7 @@ export default async function CompareSlugPage({ params }: Params) {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${siteConfig.url}/` },
       { "@type": "ListItem", position: 2, name: "Compare", item: `${siteConfig.url}/compare` },
-      { "@type": "ListItem", position: 3, name: `HElbaron vs ${c.name}`, item: `${siteConfig.url}/compare/${c.slug}` },
+      { "@type": "ListItem", position: 3, name: `{brand} vs ${c.name}`, item: `${siteConfig.url}/compare/${c.slug}` },
     ],
   };
 

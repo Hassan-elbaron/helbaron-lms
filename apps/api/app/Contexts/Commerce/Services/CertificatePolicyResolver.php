@@ -3,6 +3,7 @@
 namespace App\Contexts\Commerce\Services;
 
 use App\Contexts\Commerce\Enums\BuyerType;
+use App\Contexts\Commerce\Enums\CompanyCertificateBranding;
 use App\Contexts\Commerce\Enums\CompanyEntitlementStatus;
 use App\Contexts\Commerce\Models\CompanyEntitlement;
 use App\Contexts\Commerce\Models\CompanyEntitlementAssignment;
@@ -106,7 +107,10 @@ class CertificatePolicyResolver extends BaseService
 
         // Only fetch a logo when the mode actually shows one — a certificate should not carry a
         // company's mark because the record happened to have one lying around.
-        $logo = $branding === 'company_logo_and_helbaron'
+        // Asked through the enum, not by comparing a raw string. The literal here named the vendor
+        // and was one of two places that made the vendor's name load-bearing in logic — so renaming
+        // the persisted values would silently have changed behaviour rather than failing loudly.
+        $logo = CompanyCertificateBranding::tryFrom((string) $branding)?->includesCompanyLogo() === true
             ? $this->branding->brandingFor(TenantId::from($organizationId))->logoUrl
             : null;
 

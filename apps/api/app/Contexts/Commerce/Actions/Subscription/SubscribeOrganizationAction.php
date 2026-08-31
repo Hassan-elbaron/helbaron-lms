@@ -13,6 +13,7 @@ use App\Contexts\Commerce\Models\SubscriptionPlan;
 use App\Contexts\Commerce\Payments\Data\ChargeRequest;
 use App\Contexts\Commerce\Payments\Data\ChargeResult;
 use App\Contexts\Commerce\Support\OrganizationSubscriptionGuard;
+use App\Contexts\Commerce\Support\PaymentDescriptor;
 use App\Platform\Shared\Actions\BaseAction;
 use App\Platform\Shared\Audit\AuditLogger;
 use App\Platform\Shared\Seats\Contracts\SeatProvisioningPort;
@@ -185,7 +186,7 @@ class SubscribeOrganizationAction extends BaseAction
                 reference: $subscription->public_id,
                 amountMinor: $amountMinor,
                 currency: $resolvedCurrency,
-                description: 'HElbaron organization subscription '.$subscription->public_id,
+                description: PaymentDescriptor::forOrganizationSubscription((string) $subscription->public_id),
                 idempotencyKey: $key,
             ));
         } catch (Throwable $e) {

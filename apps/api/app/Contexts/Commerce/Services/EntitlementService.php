@@ -12,6 +12,10 @@ use App\Contexts\Commerce\Models\OrderCourseGrant;
 use App\Contexts\Commerce\Models\Product;
 use App\Contexts\Commerce\Models\Subscription;
 use App\Contexts\Commerce\Models\SubscriptionPlan;
+use App\Contexts\Commerce\Support\SoldCourseIds;
+use App\Platform\Shared\Catalog\Contracts\CourseLookupPort;
+use App\Platform\Shared\Commerce\Data\CourseEntitlement;
+use App\Platform\Shared\Commerce\Enums\EntitlementKind;
 use App\Platform\Shared\Seats\Contracts\SeatProvisioningPort;
 use App\Platform\Shared\Services\BaseService;
 use Illuminate\Database\Eloquent\Builder;
@@ -50,6 +54,7 @@ class EntitlementService extends BaseService
 {
     public function __construct(
         private readonly SeatProvisioningPort $seats,
+        private readonly CourseLookupPort $courses,
     ) {}
 
     /**
@@ -84,6 +89,105 @@ class EntitlementService extends BaseService
     }
 
     /**
+     * The learner's entitlement to a course WITH its kind and window, or null when they have none.
+     *
+     * Ordered strongest-first, because the answer decides how the resulting enrollment is recorded
+     * and a learner may hold several at once. A one-off purchase outranks everything: it is the
+     * learner's own and perpetual, so it must not be re-recorded as a seat that an employer's clock
+     * can withdraw. Borrowed access reports the date it ends, so the enrollment carries a real
+     * expiry instead of NULL.
+     *
+     * Windows are ISO-8601 strings — no Carbon and no Commerce model crosses the boundary.
+     */
+    public function courseEntitlement(int $userId, int $courseId): ?CourseEntitlement
+    {
+        if ($this->hasOneOffGrant($userId, $courseId)) {
+            return new CourseEntitlement(EntitlementKind::Purchase);
+        }
+
+        $subscriptionEnd = $this->subscriptionAccessEnd($userId, $courseId);
+        if ($subscriptionEnd !== null) {
+            return new CourseEntitlement(EntitlementKind::Subscription, $subscriptionEnd);
+        }
+
+        $seatEnd = $this->seatAccessEnd($userId, $courseId);
+        if ($seatEnd !== null) {
+            return new CourseEntitlement(EntitlementKind::CompanySeat, $seatEnd['ends_at']);
+        }
+
+        return null;
+    }
+
+    /**
+     * The latest period end among the learner's own access-granting subscriptions that bundle the
+     * course, or null if none do. Latest wins: holding two overlapping subscriptions should give the
+     * more generous window, not the first one the database happened to return.
+     */
+    private function subscriptionAccessEnd(int $userId, int $courseId): ?string
+    {
+        $end = null;
+
+        foreach ($this->activeSubscriptions($userId)->with('plan.product.courses')->get() as $subscription) {
+            if (! in_array($courseId, $this->courseIdsForSubscription($subscription), true)) {
+                continue;
+            }
+
+            $periodEnd = $subscription->getAttribute('current_period_end');
+            if ($periodEnd === null) {
+                continue;
+            }
+
+            if ($end === null || $periodEnd->greaterThan($end)) {
+                $end = $periodEnd;
+            }
+        }
+
+        return $end?->toIso8601String();
+    }
+
+    /**
+     * Employer-provided access to the course: an organization seat-pool subscription, or a company
+     * purchase the manager assigned. Returns the latest end date across both, or null.
+     *
+     * A company purchase with no access_ends_at never expires on its own clock, but the seat can
+     * still be revoked — which CompanySeatEnrollmentAdapter does by source, so recording it as
+     * CompanySeat (rather than Free) is what makes revocation reach it at all.
+     *
+     * @return array{ends_at: string|null}|null
+     */
+    private function seatAccessEnd(int $userId, int $courseId): ?array
+    {
+        $end = null;
+        $found = false;
+
+        foreach ($this->activeSeatSubscriptions($userId) as $subscription) {
+            if (! in_array($courseId, $this->courseIdsForSubscription($subscription), true)) {
+                continue;
+            }
+
+            $found = true;
+            $periodEnd = $subscription->getAttribute('current_period_end');
+            if ($periodEnd !== null && ($end === null || $periodEnd->greaterThan($end))) {
+                $end = $periodEnd;
+            }
+        }
+
+        foreach ($this->liveCompanyEntitlements($userId) as $entitlement) {
+            if (! in_array($courseId, $this->courseIdsForEntitlement($entitlement), true)) {
+                continue;
+            }
+
+            $found = true;
+            $accessEnd = $entitlement->getAttribute('access_ends_at');
+            if ($accessEnd !== null && ($end === null || $accessEnd->greaterThan($end))) {
+                $end = $accessEnd;
+            }
+        }
+
+        return $found ? ['ends_at' => $end?->toIso8601String()] : null;
+    }
+
+    /**
      * Whether an ACTIVE product sells this course, on its own or inside a bundle.
      *
      * Draft and archived products are ignored: a course whose product is still being prepared is not
@@ -91,10 +195,43 @@ class EntitlementService extends BaseService
      */
     public function isCoursePurchasable(int $courseId): bool
     {
-        return Product::query()
-            ->active()
-            ->whereHas('courses', fn (Builder $q): Builder => $q->whereKey($courseId))
-            ->exists();
+        return SoldCourseIds::activeOnly([$courseId]) !== [];
+    }
+
+    /**
+     * Whether the payment-free enrolment path may open for this course.
+     *
+     * BOTH halves must agree. The course must be DECLARED free by its author (Catalog owns that
+     * intent), and no active product may currently sell it. The second half is belt-and-braces: an
+     * admin who ticks "free" on a course a live product sells has almost certainly made a mistake,
+     * and checkout should win rather than the tick giving the course away.
+     *
+     * Note what is NOT here: a draft or archived product no longer blocks the free path. Freeness is
+     * now stated rather than inferred, so an abandoned pricing experiment or an "All Access" bundle
+     * that happens to include a free intro course cannot silently un-free it.
+     */
+    public function isCourseFreeToEnroll(int $courseId): bool
+    {
+        $declaredFree = $this->courses->freeFlagsForCourseIds([$courseId])[$courseId] ?? false;
+
+        return $declaredFree && ! $this->isCoursePurchasable($courseId);
+    }
+
+    /**
+     * Whether the course is sold at all — a product row of ANY status grants it, directly or in a
+     * bundle.
+     *
+     * Deliberately status-blind, unlike isCoursePurchasable(). The payment-free enrolment path asks
+     * this one, because a product parked in Draft (an admin editing its price) or moved to Archived
+     * is still a course the business charges for. Answering with only ACTIVE products meant every
+     * such window silently reopened a free lifetime grant on every course that product sells.
+     *
+     * Soft-deleted products do not count — the default Eloquent scope drops them here — so deleting
+     * a product genuinely returns the course to the free path.
+     */
+    public function isCourseSold(int $courseId): bool
+    {
+        return SoldCourseIds::anyStatus([$courseId]) !== [];
     }
 
     /**

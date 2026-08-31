@@ -1,27 +1,54 @@
 # HElbaron — production stack (compose). One image, three roles: web (fpm), horizon, scheduler.
 # Secrets come from an out-of-band .env.production (never committed). TLS terminates upstream
 # (ALB/CloudFront); nginx here speaks HTTP on the private network.
+# Applied to every service below.
+#
+# LOGGING. Docker's default json-file driver has NO size limit: a chatty container writes until the
+# host disk is full, and a full disk takes down Postgres and every other service with it. A Horizon
+# container logging one line per processed job is exactly that shape. 10MB x 3 caps each service at
+# 30MB.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# RESOURCE LIMITS. Without them one runaway process — a memory-leaking worker, a query that pulls a
+# million rows — consumes the whole host and everything else is OOM-killed alongside it. These are
+# deliberately generous; the point is a ceiling, not tuning.
+x-api-resources: &api-resources
+  limits: { cpus: "2.0", memory: 1G }
+  reservations: { memory: 256M }
+
 services:
   api:
-    image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.1}
+    image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.2}
     build:
       context: ./apps/api
       dockerfile: Dockerfile
     restart: always
+    logging: *default-logging
+    deploy:
+      resources: *api-resources
     env_file: [./.env]
-    networks:
-      default:
-        aliases: [lms-h-sbvbdl-api-internal]
+    volumes:
+      # Publishes Filament's assets for nginx to serve. Written by the image entrypoint.
+      - helbaron-filament-assets:/srv/filament-assets
     depends_on:
       migrate: { condition: service_completed_successfully }
     healthcheck:
-      test: ["CMD-SHELL", "SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1"]
-      interval: 15s
-      timeout: 5s
+      # Executes the app's liveness route through FPM and requires its answer in the BODY. The probe
+      # this replaces asked for /ping, which is a pool setting that is not enabled anywhere here, so
+      # cgi-fcgi got "Primary script unknown" and still exited 0 — a wedged worker pool reported
+      # healthy, and `web` starts on `api: service_healthy`. See the script for the full reasoning.
+      test: ["CMD", "/usr/local/bin/fpm-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
       retries: 3
+      start_period: 30s
 
   web:
-    image: ${HELBARON_WEB_IMAGE:-helbaron-web:1.0.0-rc.1}
+    image: ${HELBARON_WEB_IMAGE:-helbaron-web:1.0.0-rc.2}
     build:
       context: ./apps/web
       dockerfile: Dockerfile
@@ -30,11 +57,13 @@ services:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:?set in .env}
         API_INTERNAL_URL: ${API_INTERNAL_URL:-http://nginx/api/v1}
     restart: always
+    logging: *default-logging
+    deploy:
+      resources:
+        limits: { cpus: "2.0", memory: 1G }
+        reservations: { memory: 256M }
     # NEXT_PUBLIC_* and server-side runtime env come from an out-of-band env file.
     env_file: [./.env]
-    networks:
-      default:
-        aliases: [lms-h-sbvbdl-web-internal]
     depends_on:
       api: { condition: service_healthy }
     healthcheck:
@@ -45,18 +74,38 @@ services:
       retries: 3
 
   nginx:
-    image: ${HELBARON_NGINX_IMAGE:-helbaron-nginx:1.0.0-rc.1}
+    image: ${HELBARON_NGINX_IMAGE:-helbaron-nginx:1.0.0-rc.2}
     build:
       context: .
       dockerfile: infra/nginx/Dockerfile
     restart: always
+    logging: *default-logging
+    deploy:
+      resources:
+        limits: { cpus: "1.0", memory: 256M }
     depends_on: [api, web]
+    volumes:
+      # Filament's browser assets, published by the API container at startup (read-only here).
+      #
+      # They used to be COPY'd into the NGINX image, which put the admin panel's CSS/JS on a
+      # different release cadence from the PHP that references them. `composer update
+      # filament/filament` without an nginx rebuild shipped STALE assets — not a 404, so nothing
+      # failed and nobody noticed until the panel rendered subtly wrong. Sharing a volume the API
+      # populates from its own image ties them to the PHP they belong to.
+      - helbaron-filament-assets:/var/www/html/public:ro
     ports:
-      - "8080:80"
+      # 127.0.0.1, not 0.0.0.0. Published as "8080:80" this listened on every interface, so the
+      # PLAINTEXT origin was reachable directly from the internet — a bypass around the TLS
+      # terminator, its HSTS, and its WAF. The reverse proxy in front connects over loopback.
+      - "127.0.0.1:8080:80"
 
   horizon:
-    image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.1}
+    image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.2}
     restart: always
+    # The container the log cap matters most for: one line per processed job, forever.
+    logging: *default-logging
+    deploy:
+      resources: *api-resources
     env_file: [./.env]
     command: ["php", "artisan", "horizon"]
     depends_on:
@@ -68,8 +117,12 @@ services:
       retries: 3
 
   scheduler:
-    image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.1}
+    image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.2}
     restart: always
+    logging: *default-logging
+    deploy:
+      resources:
+        limits: { cpus: "1.0", memory: 512M }
     env_file: [./.env]
     command: ["php", "artisan", "schedule:work"]
     depends_on:
@@ -82,7 +135,16 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: always
-    env_file: [./.env]
+    logging: *default-logging
+    deploy:
+      resources:
+        limits: { cpus: "2.0", memory: 2G }
+        reservations: { memory: 512M }
+    # NO env_file. `env_file: [./.env]` injected APP_KEY, every payment gateway secret and
+    # OPENAI_API_KEY into a container that needs three variables. Anything with shell access to the
+    # database container — or any process that dumps its environment into a log — could read the
+    # application's entire secret set. Compose interpolates the three values it does need from the
+    # same file without handing the file's contents to the container.
     environment:
       POSTGRES_DB: ${DB_DATABASE:-helbaron}
       POSTGRES_USER: ${DB_USERNAME:-helbaron}
@@ -95,46 +157,121 @@ services:
       timeout: 5s
       retries: 5
 
-  # Scheduled logical backups: pg_dump into ./backups on the host, with retention.
-  # Env-driven (DB_* comes from .env.production via env_file). For ad-hoc/off-schedule
+  # Scheduled logical backups: pg_dump into $BACKUP_TARGET (a named volume by default, see below),
+  # with retention. Takes only the four database variables it needs. For ad-hoc/off-schedule
   # backups use scripts/backup.sh; for restore drills use scripts/verify-backup.sh.
   db-backup:
     image: postgres:16-alpine
     restart: always
-    env_file: [./.env]
+    logging: *default-logging
+    deploy:
+      resources:
+        limits: { cpus: "1.0", memory: 512M }
+    # NO env_file, for the same reason as postgres above: this container takes a dump, and the four
+    # database variables are all it needs to do that.
     environment:
+      DB_USERNAME: ${DB_USERNAME:-helbaron}
+      DB_DATABASE: ${DB_DATABASE:-helbaron}
+      DB_PASSWORD: ${DB_PASSWORD:?set in .env.production}
       BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
       BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+      BACKUP_MIN_BYTES: ${BACKUP_MIN_BYTES:-512}
     depends_on:
       postgres: { condition: service_healthy }
     volumes:
-      - ./backups:/backups
+      # NOT ./backups. That path is inside the deployment checkout, which Dokploy replaces on every
+      # deploy — the backups lived in the one directory guaranteed to be destroyed by the next
+      # release, and their only copy went with it.
+      #
+      # Defaults to a named Docker volume, which survives redeploys, `docker compose down`, and image
+      # changes. Set BACKUP_TARGET to an ABSOLUTE host path (/srv/backups/academy, an NFS or block
+      # mount) to put them on storage you back up off-box; compose treats a value starting with `/`
+      # as a bind mount and anything else as a named volume, so one variable covers both.
+      - ${BACKUP_TARGET:-helbaron-dbbackups}:/backups
+    healthcheck:
+      # A backup loop that has stopped producing backups is the failure that matters, and it is
+      # invisible in `docker ps` when the container is happily sleeping between broken attempts.
+      # Unhealthy when a dump has failed, or when no dump has landed in two intervals plus a minute
+      # of slack. This is the signal an orchestrator or uptime check can actually see.
+      test:
+        - CMD-SHELL
+        - >-
+          [ ! -f /backups/BACKUP_FAILING ] &&
+          [ -f /backups/.last_success ] &&
+          [ "$$(( $$(date +%s) - $$(stat -c %Y /backups/.last_success) ))" -lt
+          "$$(( ($${BACKUP_INTERVAL_SECONDS:-86400} * 2) + 60 ))" ]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      # First dump only happens after one full interval, so do not judge the container before then.
+      start_period: ${BACKUP_INTERVAL_SECONDS:-86400}s
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
         export PGPASSWORD="$$DB_PASSWORD"
-        echo "db-backup: every $${BACKUP_INTERVAL_SECONDS}s, retention $${BACKUP_RETENTION_DAYS}d"
+        echo "db-backup: every $${BACKUP_INTERVAL_SECONDS}s, retention $${BACKUP_RETENTION_DAYS}d, min $${BACKUP_MIN_BYTES} bytes"
         while true; do
           ts="$$(date +%Y%m%d-%H%M%S)"
           out="/backups/db-$$ts.sql.gz"
+          ok=0
           if pg_dump --clean --if-exists -h postgres -U "$${DB_USERNAME:-helbaron}" "$${DB_DATABASE:-helbaron}" | gzip > "$$out"; then
-            echo "db-backup: wrote $$out ($$(wc -c < "$$out") bytes)"
+            size="$$(wc -c < "$$out")"
+            # A pipeline can exit 0 and still have written a truncated or empty dump. Size is the
+            # cheapest check that distinguishes "backed up" from "created a file".
+            if [ "$$size" -ge "$${BACKUP_MIN_BYTES}" ]; then
+              ok=1
+              echo "db-backup: wrote $$out ($$size bytes)"
+            else
+              echo "db-backup: ERROR $$out is only $$size bytes — treating as failure" >&2
+              rm -f "$$out"
+            fi
           else
-            echo "db-backup: FAILED at $$ts" >&2
+            echo "db-backup: ERROR pg_dump failed at $$ts" >&2
             rm -f "$$out"
           fi
-          find /backups -name 'db-*.sql.gz' -mtime +"$${BACKUP_RETENTION_DAYS}" -print -delete
+          if [ "$$ok" -eq 1 ]; then
+            rm -f /backups/BACKUP_FAILING
+            touch /backups/.last_success
+            # Retention runs ONLY after a good dump. Pruning on the failure path is how a broken
+            # backup job quietly deletes its way to zero backups while reporting nothing.
+            find /backups -name 'db-*.sql.gz' -mtime +"$${BACKUP_RETENTION_DAYS}" -print -delete
+          else
+            echo "db-backup: FAILED at $$ts" >> /backups/BACKUP_FAILING
+            echo "db-backup: retention skipped — existing backups are kept while backups are failing" >&2
+          fi
           sleep "$${BACKUP_INTERVAL_SECONDS}"
         done
 
   redis:
     image: redis:7-alpine
     restart: always
-    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec", "--maxmemory-policy", "noeviction"]
+    logging: *default-logging
+    deploy:
+      resources:
+        # maxmemory-policy is noeviction, so a hard container limit is the backstop that keeps a
+        # growing queue from taking the host rather than just failing writes.
+        limits: { cpus: "1.0", memory: 768M }
+    # Password-protected. Redis holds the session store, the cache and the entire queue: an
+    # unauthenticated instance on the compose network means any container — or anything that reaches
+    # the network — can read sessions and enqueue jobs the workers will execute. Required, not
+    # defaulted: a default password is the same as none.
+    command:
+      - redis-server
+      - --requirepass
+      - ${REDIS_PASSWORD:?set in .env.production}
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --maxmemory-policy
+      - noeviction
     volumes:
       - helbaron-redisdata:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      # The probe has to authenticate too, or it reports a healthy container that no client can use.
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?set in .env.production}
       interval: 10s
       timeout: 5s
       retries: 5
@@ -142,7 +279,8 @@ services:
   # Run schema migrations before starting any application worker. This is idempotent and makes
   # first-time Dokploy deployments boot from an empty persistent PostgreSQL volume safely.
   migrate:
-    image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.1}
+    logging: *default-logging
+    image: ${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.2}
     build:
       context: ./apps/api
       dockerfile: Dockerfile
@@ -156,3 +294,7 @@ services:
 volumes:
   helbaron-pgdata:
   helbaron-redisdata:
+  # Default target for db-backup. Unused when BACKUP_TARGET names an absolute host path instead.
+  helbaron-dbbackups:
+  # Filament's published CSS/JS/fonts: written by the api container on start, served by nginx.
+  helbaron-filament-assets:

@@ -1,11 +1,11 @@
 import { cache } from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { getCourse } from "@/lib/catalog/api";
 import { getSeo } from "@/lib/seo/api";
 import { notFoundMetadata } from "@/lib/seo/not-found";
 import { resolveLocale } from "@/lib/seo/locale";
-import { buildMetadata } from "@/lib/seo/metadata";
+import { buildBrandedMetadata } from "@/lib/seo/metadata";
 import { CourseDetailsClient } from "./course-details-client";
 
 /**
@@ -45,18 +45,36 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const fallback: Metadata = {
     title: "Course details",
-    description: "View course details, curriculum, trainers and enrollment options on HElbaron.",
+    description: "View course details, curriculum, trainers and enrollment options on {brand}.",
   };
 
   const [seo, locale] = await Promise.all([getSeo("course", public_id), resolveLocale()]);
-  return buildMetadata(seo, fallback, locale);
+  return buildBrandedMetadata(seo, fallback, locale);
 }
 
 /** Backstop: metadata already 404s a missing course, but a body that renders it anyway would lie. */
 export default async function CourseDetailsPage({ params }: Params) {
   const { public_id } = await params;
-  const { found } = await loadCourse(public_id);
+  const { found, course } = await loadCourse(public_id);
   if (!found) notFound();
 
+  // A renamed course keeps serving its old URLs: the API resolves a retired slug out of
+  // slug_history, and this sends the browser and the crawler to the canonical one. Without the
+  // redirect the old URL would render fine forever and split the page's search ranking across two
+  // addresses; with a 404 instead, every inbound link and share would simply break.
+  //
+  // permanentRedirect, not redirect: a crawler must record the move rather than re-check it. Guarded
+  // on a non-empty slug and a genuine difference, so a UUID-addressed request — the instructor and
+  // admin deep links — is never rewritten.
+  const canonical = course?.slug;
+  if (canonical && canonical !== public_id && !isUuid(public_id)) {
+    permanentRedirect(`/courses/${canonical}`);
+  }
+
   return <CourseDetailsClient />;
+}
+
+/** The route accepts a public_id OR a slug; only the slug form has a canonical to redirect to. */
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }

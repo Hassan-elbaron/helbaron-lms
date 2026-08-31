@@ -57,6 +57,7 @@ describe("CourseDetailsPage", () => {
         // Every public course is sold, so the page always carries a purchase summary.
         purchase: {
           purchasable: true,
+          free: false,
           product_id: "p1",
           product_type: "course",
           price: { currency: "SAR", amount_minor: 19900, effective_minor: 19900, on_sale: false },

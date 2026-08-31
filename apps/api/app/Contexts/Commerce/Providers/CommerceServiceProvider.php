@@ -7,6 +7,7 @@ use App\Contexts\Commerce\Adapters\CompanyEntitlementAdapter;
 use App\Contexts\Commerce\Adapters\EntitlementAdapter;
 use App\Contexts\Commerce\Adapters\PurchaseSummaryAdapter;
 use App\Contexts\Commerce\Console\Commands\RenewDueSubscriptionsCommand;
+use App\Contexts\Commerce\Console\Commands\ReportFreeGrantsCommand;
 use App\Contexts\Commerce\Console\Commands\RetryFailedPaymentsCommand;
 use App\Contexts\Commerce\Console\Commands\SendExpiryRemindersCommand;
 use App\Contexts\Commerce\Contracts\PaymentGateway;
@@ -91,6 +92,7 @@ class CommerceServiceProvider extends BaseDomainServiceProvider
             RetryFailedPaymentsCommand::class,
             RenewDueSubscriptionsCommand::class,
             SendExpiryRemindersCommand::class,
+            ReportFreeGrantsCommand::class,
         ]);
     }
 

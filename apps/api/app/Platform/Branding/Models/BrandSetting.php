@@ -59,9 +59,98 @@ class BrandSetting extends Model
     }
 
     /**
+     * The full public branding payload WITHOUT creating the singleton row.
+     *
+     * Same shape as toPublicArray(), for read-only callers that must not write on a hot or
+     * side-effect-sensitive path (queued mail, certificate rendering, early boot). Falls back to the
+     * env-driven defaults when no row exists yet.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public static function publicArrayOrDefaults(): array
+    {
+        $row = self::query()->first();
+
+        if ($row !== null) {
+            return $row->toPublicArray();
+        }
+
+        // No row yet: defaults are already complete, and every media key defaults to '' so there is
+        // nothing to resolve.
+        return self::defaults();
+    }
+
+    /**
+     * Read a single `identity` value without creating the singleton row.
+     *
+     * current() is firstOrCreate, which is the wrong shape for read-only callers on hot or
+     * side-effect-sensitive paths (certificate rendering, queued mail, early boot). This resolves the
+     * stored value when the row exists and falls back to the env-driven default otherwise, and never
+     * writes. A localized value (['en' => ..., 'ar' => ...]) is collapsed for $locale, falling back to
+     * the application's default locale and then to the first non-empty entry.
+     */
+    public static function identityValue(string $key, ?string $locale = null): string
+    {
+        $defaults = self::defaults()['identity'];
+        $stored = (array) (self::query()->first()->identity ?? []);
+        $value = $stored[$key] ?? null;
+
+        if (blank($value)) {
+            $value = $defaults[$key] ?? '';
+        }
+
+        if (! is_array($value)) {
+            return (string) $value;
+        }
+
+        $locale ??= (string) app()->getLocale();
+        $fallback = (string) config('shared.default_locale', 'en');
+
+        foreach ([$locale, $fallback] as $candidate) {
+            if (filled($value[$candidate] ?? null)) {
+                return (string) $value[$candidate];
+            }
+        }
+
+        foreach ($value as $entry) {
+            if (is_string($entry) && filled($entry)) {
+                return $entry;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * The instance brand name, per locale, from the environment.
+     *
+     * This product is deployed as a SEPARATE INSTANCE per customer academy, so the built-in defaults
+     * must describe *this* instance rather than the vendor. BRAND_NAME_EN / BRAND_NAME_AR are read
+     * from the instance's own .env and fall back to APP_NAME, which every deployment already sets.
+     * An operator who configures nothing gets a self-consistent instance; an operator who sets the
+     * BRAND_* keys gets a fully white-labelled one before an admin ever opens the branding screen.
+     */
+    private static function envName(string $locale): string
+    {
+        // Resolved from config('branding.*'), NOT from env() directly.
+        //
+        // `scripts/deploy.sh` runs `config:cache` on every production deploy, and Laravel does not
+        // read .env at all once the config is cached — so an env() call from here returns null in
+        // production and every BRAND_* key an operator set was silently ignored. config/branding.php
+        // is evaluated while the cache is built, so the values survive. See that file for the full
+        // reasoning (and for why it uses Env::string rather than env()).
+        $fallback = (string) config('branding.name.en');
+
+        return $locale === 'ar'
+            ? (string) config('branding.name.ar', $fallback)
+            : $fallback;
+    }
+
+    /**
      * Built-in defaults for every group. Colors mirror the current apps/web globals.css OKLCH design
-     * tokens (light + `.dark`), brand is "HElbaron", locale defaults are MENA-oriented (SAR, en,
-     * Asia/Riyadh). These guarantee the frontend always receives a full, on-brand set.
+     * tokens (light + `.dark`). Identity, email and locale defaults are ENV-DRIVEN (see envName and
+     * the BRAND_* keys in .env.example) so a fresh instance is branded for its own academy rather
+     * than for the vendor. These guarantee the frontend always receives a full, on-brand set.
      *
      * @return array<string, array<string, mixed>>
      */
@@ -69,19 +158,19 @@ class BrandSetting extends Model
     {
         return [
             'identity' => [
-                'brand_name' => ['en' => 'HElbaron', 'ar' => 'إلبارون'],
-                'short_name' => 'HElbaron',
-                'company_name' => 'HElbaron Academy',
+                'brand_name' => ['en' => self::envName('en'), 'ar' => self::envName('ar')],
+                'short_name' => self::envName('en'),
+                'company_name' => (string) config('branding.company_name'),
                 'copyright' => [
                     'en' => 'All rights reserved.',
                     'ar' => 'جميع الحقوق محفوظة.',
                 ],
                 'address' => [
-                    'en' => 'Cairo · Dubai · Riyadh',
-                    'ar' => 'القاهرة · دبي · الرياض',
+                    'en' => (string) config('branding.address.en'),
+                    'ar' => (string) config('branding.address.ar'),
                 ],
-                'support_email' => 'support@helbaron.com',
-                'support_phone' => '',
+                'support_email' => (string) (config('branding.support_email') ?: config('mail.from.address', '')),
+                'support_phone' => (string) config('branding.support_phone'),
                 'social_links' => [
                     'twitter' => '',
                     'linkedin' => '',
@@ -89,9 +178,9 @@ class BrandSetting extends Model
                     'instagram' => '',
                     'youtube' => '',
                 ],
-                'default_language' => 'en',
-                'timezone' => 'Asia/Riyadh',
-                'currency' => 'SAR',
+                'default_language' => (string) config('shared.default_locale', 'en'),
+                'timezone' => (string) config('branding.timezone'),
+                'currency' => (string) config('branding.currency'),
                 'date_format' => 'd M Y',
                 'time_format' => 'H:i',
             ],
@@ -142,13 +231,13 @@ class BrandSetting extends Model
                     'header' => 'oklch(0.21 0.022 190)',
                     'footer' => 'oklch(0.25 0.026 190)',
                 ],
-                'preset' => 'helbaron',
+                'preset' => (string) config('branding.theme_preset'),
             ],
             'email' => [
                 'header' => ['en' => '', 'ar' => ''],
                 'footer' => [
-                    'en' => 'HElbaron Academy — Master the core. Lead the future.',
-                    'ar' => 'أكاديمية إلبارون — أتقن الأساس. قُد المستقبل.',
+                    'en' => (string) config('branding.email.footer.en'),
+                    'ar' => (string) config('branding.email.footer.ar'),
                 ],
                 'colors' => [
                     'background' => '#F7F1E3',
@@ -156,8 +245,8 @@ class BrandSetting extends Model
                     'button' => '#134E4A',
                 ],
                 'signature' => [
-                    'en' => 'The HElbaron Team',
-                    'ar' => 'فريق إلبارون',
+                    'en' => (string) config('branding.email.signature.en'),
+                    'ar' => (string) config('branding.email.signature.ar'),
                 ],
                 'social_links' => [
                     'twitter' => '',

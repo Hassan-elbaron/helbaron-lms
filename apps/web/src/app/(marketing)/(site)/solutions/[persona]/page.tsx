@@ -13,19 +13,19 @@ export function generateStaticParams(): { persona: string }[] {
 
 const META: Record<string, { title: string; description: string }> = {
   enterprise: {
-    title: "HElbaron for Companies & Enterprise L&D",
+    title: "{brand} for Companies & Enterprise L&D",
     description: "Launch role-based, Arabic-first learning programs, administer learners at scale, and report on completion and outcomes.",
   },
   academies: {
-    title: "HElbaron for Training Academies & Centers",
+    title: "{brand} for Training Academies & Centers",
     description: "Publish a branded catalog, sell courses and memberships, and run live cohorts end to end with verifiable certificates.",
   },
   instructors: {
-    title: "HElbaron for Independent Instructors & Experts",
+    title: "{brand} for Independent Instructors & Experts",
     description: "Author courses in the studio, publish to a bilingual audience, assess learners, and issue verifiable certificates.",
   },
   government: {
-    title: "HElbaron for Government & Public-Sector Programs",
+    title: "{brand} for Government & Public-Sector Programs",
     description: "Run cohort-based public training programs in Arabic with administration, reporting, and verifiable certificates.",
   },
 };
@@ -33,7 +33,7 @@ const META: Record<string, { title: string; description: string }> = {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { persona } = await params;
   const meta = META[persona];
-  if (!meta) return { title: "Solutions — HElbaron" };
+  if (!meta) return { title: "Solutions — {brand}" };
   const url = `/solutions/${persona}`;
   return {
     title: meta.title,

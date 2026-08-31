@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { gradebookPath, gradebookExportPath } from "@/lib/gradebook/gradebook-api";
@@ -17,21 +17,44 @@ import { gradebookPath, gradebookExportPath } from "@/lib/gradebook/gradebook-ap
  * These files must pass BARE resource paths (e.g. `media/assets`, `admin/...`).
  */
 
-const API_MODULES = [
-  "src/lib/media/media-api.ts",
-  "src/lib/assignments/assignments-api.ts",
-  "src/lib/authoring/versioning-api.ts",
-  "src/lib/gradebook/gradebook-api.ts",
+/**
+ * DISCOVERED, not listed.
+ *
+ * The list used to be hardcoded, which meant the guard covered exactly the five modules that had
+ * already been caught and nothing written afterwards — a regression test that stops growing with the
+ * code it guards is a regression test that expires. Every `*-api.ts` fetcher under src/lib is now
+ * swept automatically, plus the handful of components that call the backend directly.
+ *
+ * The explicit extras stay explicit: they are NOT `*-api.ts`, so a glob would miss them, and each
+ * one is a place a bare path was previously got wrong.
+ */
+const EXTRA_MODULES = [
   "src/lib/learning/player-api.ts",
   "src/components/assignments/grading/SubmissionFileList.tsx",
   "src/components/assignments/submission/upload/uploadClient.ts",
 ];
+
+/** Every `*-api.ts` fetcher under src/lib, with separators normalised for Windows. */
+function discoverApiModules(): string[] {
+  return readdirSync(resolve(process.cwd(), "src/lib"), { recursive: true, encoding: "utf8" })
+    .map((entry) => entry.split("\\").join("/"))
+    .filter((entry) => entry.endsWith("-api.ts"))
+    .map((entry) => `src/lib/${entry}`);
+}
+
+const API_MODULES = [...discoverApiModules(), ...EXTRA_MODULES].sort();
 
 // Matches a fetch-path string literal that starts with the version prefix:
 //   "v1/...   'v1/...   `v1/...   "/v1/...   `/v1/...   etc.
 const VERSION_PREFIXED_PATH = /["'`]\/?v1\//;
 
 describe("no double /api/v1 prefix in client fetchers", () => {
+  it("discovers the fetchers rather than trusting a hardcoded list", () => {
+    // If the glob ever silently matches nothing, every assertion below would vacuously pass.
+    expect(API_MODULES.length).toBeGreaterThan(EXTRA_MODULES.length);
+    expect(API_MODULES).toContain("src/lib/gradebook/gradebook-api.ts");
+  });
+
   it.each(API_MODULES)("%s passes bare paths (no v1/ prefix)", (rel) => {
     const src = readFileSync(resolve(process.cwd(), rel), "utf8");
     // Strip line comments and block-comment lines so doc examples don't trip the guard.

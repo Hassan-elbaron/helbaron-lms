@@ -11,6 +11,7 @@ use App\Contexts\Commerce\Models\SubscriptionChange;
 use App\Contexts\Commerce\Models\SubscriptionPlan;
 use App\Contexts\Commerce\Models\SubscriptionRenewalClaim;
 use App\Contexts\Commerce\Payments\Data\ChargeRequest;
+use App\Contexts\Commerce\Support\PaymentDescriptor;
 use App\Platform\Shared\Actions\BaseAction;
 use App\Platform\Shared\Audit\AuditLogger;
 use Illuminate\Support\Carbon;
@@ -179,7 +180,7 @@ class RenewSubscriptionAction extends BaseAction
                 reference: $fresh->public_id,
                 amountMinor: $amountMinor,
                 currency: $currency,
-                description: 'HElbaron subscription renewal '.$fresh->public_id,
+                description: PaymentDescriptor::forSubscriptionRenewal((string) $fresh->public_id),
                 idempotencyKey: $key,
             ));
             $succeeded = $charge->isSucceeded();

@@ -10,6 +10,12 @@ return [
 
     'payment' => [
         'provider' => env('COMMERCE_PAYMENT_PROVIDER', 'fake'), // fake | stripe | paymob | moyasar | hyperpay | tap | aps
+
+        // Maximum length of the description sent to the gateway — the text a customer sees on their
+        // bank statement. Gateways differ (Stripe's statement descriptor is 22 characters), so this
+        // is per-deployment. PaymentDescriptor truncates the BRAND to fit and never the order
+        // reference, because the reference is what reconciles the payment.
+        'descriptor_max_length' => (int) env('COMMERCE_DESCRIPTOR_MAX_LENGTH', 100),
         // Fake webhook HMAC secret (local/test only). Real gateways use commerce.gateways.<provider>.webhook_secret.
         'webhook_secret' => env('COMMERCE_WEBHOOK_SECRET', 'whsec_fake'),
         // Explicit escape hatch: permit the `fake` gateway in production ONLY for a deliberate

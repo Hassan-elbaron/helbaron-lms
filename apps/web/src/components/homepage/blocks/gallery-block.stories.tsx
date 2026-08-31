@@ -15,7 +15,7 @@ const section: HomepageSection = {
   type: "gallery",
   position: 1,
   content: {
-    heading: { en: "Life at HElbaron Academy", ar: "الحياة في أكاديمية الباذرون" },
+    heading: { en: "Life at {brand} Academy", ar: "الحياة في أكاديمية الباذرون" },
     items: [
       { image: img("gal-workshop"), caption: { en: "Riyadh leadership workshop", ar: "ورشة القيادة في الرياض" } },
       { image: img("gal-studio"), caption: { en: "Course production studio", ar: "استوديو إنتاج الدورات" } },

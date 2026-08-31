@@ -29,7 +29,7 @@ class MailgunMailProvider implements MailProvider
             ->withBasicAuth('api', $secret)
             ->asForm()
             ->post("/v3/{$domain}/messages", [
-                'from' => (string) ($this->config['from'] ?? 'no-reply@helbaron.test'),
+                'from' => (string) (($this->config['from'] ?? null) ?: config('mail.from.address', '')),
                 'to' => $to,
                 'subject' => $subject,
                 'html' => $body,

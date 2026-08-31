@@ -26,20 +26,36 @@ if [ -n "$IMAGE_TAG" ]; then
   echo "==> Pull image"
   docker pull "$IMAGE"
 else
-  IMAGE="${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.1}"
+  IMAGE="${HELBARON_IMAGE:-helbaron-api:1.0.0-rc.2}"
   export HELBARON_IMAGE="$IMAGE"
   echo "==> HElbaron deploy (on-host build): $IMAGE"
   echo "==> Build image"
   $COMPOSE build api
 fi
 
+# Gate BEFORE the migration, because a migration is the first irreversible thing this script does.
+# Runs with --no-deps so the check itself cannot start the `migrate` service as a dependency.
+# Non-strict = ProductionConfigValidator::criticalErrors(): the problems that make an instance unsafe
+# to serve at all. It prints variable NAMES only, never their values.
+echo "==> Validate production configuration"
+if ! $COMPOSE run --rm --no-deps api php artisan config:validate; then
+  echo "!! Configuration is not safe for production — nothing has been migrated or rolled." >&2
+  exit 1
+fi
+
+# Advisory pass (hygiene: file sessions, log channel, mail transport). Never blocks the deploy.
+$COMPOSE run --rm --no-deps api php artisan config:validate --strict || \
+  echo "   (advisory problems above — deploy continues)"
+
 echo "==> Run migrations (once, forward-only)"
 $COMPOSE run --rm api php artisan migrate --force
 
-echo "==> Warm caches"
-$COMPOSE run --rm api php artisan config:cache
-$COMPOSE run --rm api php artisan route:cache
-$COMPOSE run --rm api php artisan event:cache
+# NOTE: the framework caches are NOT warmed here. `docker compose run --rm` builds them inside a
+# throwaway container whose filesystem is discarded the moment the command exits, and the api service
+# mounts no volume over bootstrap/cache — so the three `artisan *:cache` calls that used to live here
+# wrote a cache that no serving process ever read. They are now built by the image entrypoint
+# (apps/api/infra/php/docker-entrypoint.sh) inside each container that will actually serve, from that
+# container's own environment. See docs/ops/DEPLOYMENT_CHECKLIST.md.
 
 echo "==> Roll api + web + workers"
 if [ "$REGISTRY_MODE" -eq 1 ]; then

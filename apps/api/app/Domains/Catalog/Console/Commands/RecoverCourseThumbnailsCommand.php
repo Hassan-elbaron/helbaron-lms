@@ -39,7 +39,7 @@ class RecoverCourseThumbnailsCommand extends Command
 {
     protected $signature = 'catalog:recover-course-thumbnails
         {--actor= : Acting admin, as a numeric user id or an email}
-        {--actor-email=admin@helbaron.local : Email used to resolve the acting admin when --actor is omitted}
+        {--actor-email=admin@academy.local : Email used to resolve the acting admin when --actor is omitted}
         {--dir= : Livewire temp upload directory (defaults to storage/app/private/livewire-tmp)}
         {--force : Also replace thumbnails on courses that already have one}
         {--dry-run : Print the mapping without importing anything}';

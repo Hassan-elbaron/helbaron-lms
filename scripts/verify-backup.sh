@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # HElbaron — automated backup restore drill (safe: never touches the live database).
 #
-# Restores the LATEST ./backups/db-*.sql.gz into a throwaway database created inside
+# Restores the LATEST $BACKUP_DIR/db-*.sql.gz into a throwaway database created inside
 # the compose postgres container, verifies table count > 0, then drops it.
 # Exit 0 = drill passed. Suitable for cron / scheduled DR drills
 # (see docs/ops/DISASTER_RECOVERY_GUIDE.md).
@@ -18,11 +18,15 @@ if [ -f apps/api/.env.production ]; then
   set +a
 fi
 DB_USERNAME="${DB_USERNAME:-helbaron}"
-BACKUP_DIR="${BACKUP_DIR:-backups}"
+# Must match scripts/backup.sh: the default lives OUTSIDE the deployment checkout, which
+# Dokploy replaces on every deploy. The scheduled backups written by the compose db-backup
+# service land in a Docker volume instead, so point BACKUP_DIR at a copy of those
+# (docker compose cp db-backup:/backups/... ) when drilling the scheduled path.
+BACKUP_DIR="${BACKUP_DIR:-/var/backups/academy-lms}"
 
 LATEST=$(ls -1t "$BACKUP_DIR"/db-*.sql.gz 2>/dev/null | head -n1 || true)
 if [ -z "$LATEST" ]; then
-  echo "!! No backups found in ./$BACKUP_DIR — run scripts/backup.sh first" >&2
+  echo "!! No backups found in $BACKUP_DIR — run scripts/backup.sh first, or set BACKUP_DIR" >&2
   exit 1
 fi
 

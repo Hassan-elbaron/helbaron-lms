@@ -13,7 +13,7 @@ const section: HomepageSection = {
   type: "statistics",
   position: 1,
   content: {
-    heading: { en: "HElbaron Academy in numbers", ar: "أكاديمية الباذرون بالأرقام" },
+    heading: { en: "{brand} Academy in numbers", ar: "أكاديمية الباذرون بالأرقام" },
     items: [
       { value: "48", suffix: "K+", label: { en: "Learners across MENA", ar: "متعلّم في المنطقة" } },
       { value: "1,200", suffix: "+", label: { en: "Courses & workshops", ar: "دورة وورشة عمل" } },

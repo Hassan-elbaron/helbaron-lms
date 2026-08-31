@@ -3,7 +3,7 @@ import { I18nProvider } from "@/lib/i18n/i18n-context";
 import { ProductModes } from "@/components/landing/product-modes";
 
 /**
- * ProductModes — the five HElbaron product modes (Courses, Live Cohorts, Workshops, B2B/B2G
+ * ProductModes — the five the academy product modes (Courses, Live Cohorts, Workshops, B2B/B2G
  * Training, Advisory) in a bento layout with per-mode accents, from the brand serviceLines.
  */
 const meta = {

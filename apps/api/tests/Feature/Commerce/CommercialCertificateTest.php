@@ -81,14 +81,14 @@ it('brands an employee certificate with the company the seat came from', functio
         ->and($certificate->organization_id)->toBe((int) $org->id)
         ->and($certificate->company_name)->toBe('Northwind Trading')
         ->and($certificate->company_logo_url)->toBe('https://cdn.example.test/northwind.png')
-        ->and($certificate->branding_mode)->toBe('company_logo_and_helbaron')
+        ->and($certificate->branding_mode)->toBe(CompanyCertificateBranding::CompanyAndPlatform->value)
         ->and($certificate->isCompanyBranded())->toBeTrue();
 });
 
 it('does not put a company logo on a certificate branded HElbaron-only', function (): void {
     [$product, $course] = certificateProduct([
         'audience' => 'company',
-        'company_certificate_branding' => CompanyCertificateBranding::HelbaronOnly->value,
+        'company_certificate_branding' => CompanyCertificateBranding::PlatformOnly->value,
     ]);
     $org = Organization::factory()->create(['name' => 'Quiet Corp']);
     OrganizationBrandSetting::create([

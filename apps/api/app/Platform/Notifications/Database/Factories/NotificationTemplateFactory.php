@@ -19,7 +19,7 @@ class NotificationTemplateFactory extends Factory
             'channel' => 'in_app',
             'locale' => 'en',
             'subject' => 'Welcome, {{ name }}',
-            'body' => 'Hello {{ name }}, welcome to HElbaron.',
+            'body' => 'Hello {{ name }}, welcome to {{ brand }}.',
             'is_active' => true,
         ];
     }

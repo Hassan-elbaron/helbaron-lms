@@ -22,7 +22,7 @@ class LoginAction extends BaseAction
     ) {}
 
     /**
-     * @param  array{email: string, password: string, mfa_code?: ?string, device_name?: ?string}  $data
+     * @param  array{email: string, password: string, mfa_code?: ?string, device_name?: ?string, remember?: ?bool}  $data
      * @param  array{ip?: ?string, user_agent?: ?string}  $meta
      * @return array{user: User, token: string}
      */
@@ -63,7 +63,11 @@ class LoginAction extends BaseAction
         $user->forceFill(['failed_login_count' => 0, 'locked_until' => null])->save();
 
         $token = $this->transaction(function () use ($user, $data, $meta): string {
-            $newToken = $user->createToken($data['device_name'] ?? 'api');
+            $newToken = $user->createToken(
+                $data['device_name'] ?? 'api',
+                ['*'],
+                $this->tokenExpiry((bool) ($data['remember'] ?? false)),
+            );
             $this->devices->register(
                 $user,
                 $newToken,
@@ -78,6 +82,22 @@ class LoginAction extends BaseAction
         UserLoggedIn::dispatch($user);
 
         return ['user' => $user, 'token' => $token];
+    }
+
+    /**
+     * When this token stops being accepted.
+     *
+     * The server-side half of "remember me". The browser cookie is the visible half — without the
+     * box ticked it carries no Max-Age and dies with the browser — but a cookie the browser discards
+     * is not the same as a credential the server has stopped accepting. Someone who declines to be
+     * remembered on a shared machine is telling us the credential should be short-lived, and only
+     * this bounds it if the token leaks by some other route.
+     */
+    private function tokenExpiry(bool $remember): \DateTimeInterface
+    {
+        return $remember
+            ? now()->addDays((int) config('identity.session.remembered_days', 30))
+            : now()->addHours((int) config('identity.session.session_hours', 12));
     }
 
     private function registerFailedAttempt(User $user): void

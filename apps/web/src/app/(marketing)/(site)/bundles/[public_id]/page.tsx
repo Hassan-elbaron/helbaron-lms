@@ -25,9 +25,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!(await loadBundle(public_id))) return notFoundMetadata("Bundle not found");
 
   return {
-    title: "Bundle — HElbaron",
+    title: "Bundle — {brand}",
     description:
-      "Several HElbaron courses in one purchase, with the access and certificate terms shown up front.",
+      "Several {brand} courses in one purchase, with the access and certificate terms shown up front.",
   };
 }
 

@@ -23,12 +23,32 @@ parameters:
         -
             identifier: nullsafe.neverNull
             path: app/Contexts/Analytics/Services/ReportCache.php
-        # Intentional raw env(). ValidateEnvironment validates TRUSTED_PROXIES, which bootstrap/app.php
-        # applies inline from env() with no config key; the command must inspect the raw environment
-        # value, so config() is not applicable here.
+        # (The ValidateEnvironment exemption that used to sit here is gone. Its justification was
+        # "bootstrap/app.php applies TRUSTED_PROXIES inline from env() with no config key, so the
+        # command must inspect the raw environment". bootstrap/app.php no longer does that — it could
+        # not: that closure runs before the config binding exists AND before .env is read, so the
+        # value it saw was whatever the process environment held, usually nothing. Both sides now
+        # resolve through config('security.trusted_proxies'), and the exemption with them.)
+        # Intentional raw env(). Env::orFallback IS the helper that reads the raw environment — its
+        # whole purpose is to make a default fire for a key that is present-but-empty, which config()
+        # cannot express. Call sites that must survive `config:cache` resolve through a config file
+        # (see config/branding.php); this class is the primitive underneath them.
         -
             identifier: larastan.noEnvCallsOutsideOfConfig
-            path: app/Console/Commands/ValidateEnvironment.php
+            path: app/Platform/Shared/Support/Env.php
+        # Intentional raw env(). The seeder decides whether it may create the shared development
+        # admin by inspecting whether an operator SET a password at all — a question about the raw
+        # environment, not about a config value. It never runs in production.
+        -
+            identifier: larastan.noEnvCallsOutsideOfConfig
+            path: app/Platform/Identity/Database/Seeders/IdentitySeeder.php
+        # False positive, and removing the `?->` would be a real null dereference. Illuminate's
+        # Seeder declares `protected $command;` with NO type and no default, so it is uninitialised
+        # whenever a seeder runs programmatically (`$this->seed(X::class)`, every test, `install:academy`).
+        # Laravel's own Seeder guards it with `isset($this->command)` for exactly this reason.
+        -
+            identifier: nullsafe.neverNull
+            path: app/Platform/Identity/Database/Seeders/IdentitySeeder.php
     excludePaths:
         - app/Domains/*/openapi/*
         - app/Contexts/*/openapi/*

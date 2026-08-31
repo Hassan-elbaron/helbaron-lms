@@ -13,6 +13,7 @@ use App\Contexts\Commerce\Enums\SeatMode;
 use App\Contexts\Commerce\Models\ContractTemplate;
 use App\Contexts\Commerce\Models\Product;
 use App\Domains\Catalog\Models\Course;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 use App\Platform\Shared\Helpers\Slug;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
@@ -32,6 +33,9 @@ class CommerceSeeder extends Seeder
 {
     public function run(): void
     {
+        $brand = trim(app(BrandProfilePort::class)->profile()->name);
+        $brand = $brand !== '' ? $brand : 'the academy';
+
         $this->call(CommerceTaxSeeder::class);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
@@ -43,7 +47,7 @@ class CommerceSeeder extends Seeder
 
         ContractTemplate::firstOrCreate(
             ['key' => 'terms', 'version' => 1],
-            ['title' => 'Terms & Conditions', 'body' => 'By enrolling you accept the HElbaron terms.', 'is_active' => true],
+            ['title' => 'Terms & Conditions', 'body' => 'By enrolling you accept the '.$brand.' terms.', 'is_active' => true],
         );
 
         // EVERY published course, not the first three. The limit was a demo-era convenience that

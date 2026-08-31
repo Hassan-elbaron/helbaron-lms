@@ -18,12 +18,12 @@ export const proofMetrics = [
 ];
 
 export const whyHeading = {
-  eyebrow: L("WHY HELBARON", "لماذا HElbaron"),
+  eyebrow: L("WHY {brand}", "لماذا {brand}"),
   title1: L("Built for outcomes,", "مبنيّة على النتائج،"),
   title2: L("not just content.", "لا المحتوى فقط."),
   subtitle: L(
-    "Most platforms sell videos. HElbaron is engineered around the way MENA professionals actually build careers and companies.",
-    "معظم المنصّات تبيع فيديوهات. HElbaron مصمّمة حول الطريقة التي يبني بها محترفو المنطقة مسيرتهم وشركاتهم فعلًا.",
+    "Most platforms sell videos. {brand} is engineered around the way MENA professionals actually build careers and companies.",
+    "معظم المنصّات تبيع فيديوهات. {brand} مصمّمة حول الطريقة التي يبني بها محترفو المنطقة مسيرتهم وشركاتهم فعلًا.",
   ),
 };
 
@@ -81,7 +81,7 @@ export const journeySteps = [
   { step: "02", title: L("Join a cohort", "انضم إلى فوج"), body: L("Go deeper with a mentor-led, 8–12 week live program.", "تعمّق مع برنامج مباشر بإشراف مرشد من 8–12 أسبوعًا."), meta: L("Live Cohorts", "الأفواج") },
   { step: "03", title: L("Practice in person", "تدرّب حضوريًا"), body: L("Sharpen with hands-on workshops in Cairo, Dubai, Riyadh.", "اصقل مهاراتك بورش حضورية في القاهرة ودبي والرياض."), meta: L("Workshops", "الورش") },
   { step: "04", title: L("Upskill your org", "طوّر مؤسستك"), body: L("Roll out a custom academy with SSO, SCORM, and reporting.", "أطلق أكاديمية مخصّصة مع دخول موحّد وSCORM وتقارير."), meta: L("Enterprise", "المؤسسات") },
-  { step: "05", title: L("Partner on strategy", "اعقد شراكة استراتيجية"), body: L("Bring in HElbaron Advisory to turn capability into growth.", "استعن باستشارات HElbaron لتحويل القدرة إلى نمو."), meta: L("Advisory", "الاستشارات") },
+  { step: "05", title: L("Partner on strategy", "اعقد شراكة استراتيجية"), body: L("Bring in {brand} Advisory to turn capability into growth.", "استعن باستشارات {brand} لتحويل القدرة إلى نمو."), meta: L("Advisory", "الاستشارات") },
 ];
 
 export const testimonialsHeading = {
@@ -92,7 +92,7 @@ export const testimonialsHeading = {
 
 export const testimonials = [
   { quote: L("The cohort changed how our whole PMO operates. Practical, regional, and actually finished — rare for online learning.", "غيّر الفوج طريقة عمل مكتب إدارة المشاريع لدينا بالكامل. عملي وإقليمي وأُنجز فعلًا — أمر نادر في التعلّم عبر الإنترنت."), name: "Yara Adel", role: L("Head of PMO · Fintech, Cairo", "رئيسة مكتب المشاريع · فنتك، القاهرة"), initial: "Y", color: "teal" },
-  { quote: L("We rolled HElbaron out to 400 staff across three countries. SSO, reporting, and Arabic support just worked.", "أطلقنا HElbaron لـ400 موظف في ثلاث دول. الدخول الموحّد والتقارير والدعم العربي عملت ببساطة."), name: "Omar Farouk", role: L("L&D Director · Retail Group, Riyadh", "مدير التطوير · مجموعة تجزئة، الرياض"), initial: "O", color: "copper" },
+  { quote: L("We rolled {brand} out to 400 staff across three countries. SSO, reporting, and Arabic support just worked.", "أطلقنا {brand} لـ400 موظف في ثلاث دول. الدخول الموحّد والتقارير والدعم العربي عملت ببساطة."), name: "Omar Farouk", role: L("L&D Director · Retail Group, Riyadh", "مدير التطوير · مجموعة تجزئة، الرياض"), initial: "O", color: "copper" },
   { quote: L("The AI for Decision Makers program paid for itself in a month. Content built for how we actually work.", "برنامج الذكاء الاصطناعي لصنّاع القرار عوّض تكلفته في شهر. محتوى مبنيّ على طريقة عملنا فعلًا."), name: "Nour Hassan", role: L("COO · Logistics, Dubai", "مديرة العمليات · لوجستيات، دبي"), initial: "N", color: "gold" },
 ];
 

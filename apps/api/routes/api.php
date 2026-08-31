@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\VersionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,4 +14,8 @@ Route::prefix('v1')->group(function (): void {
     Route::get('health', [HealthController::class, 'live'])->name('api.v1.health');
     Route::get('health/live', [HealthController::class, 'live'])->name('api.v1.health.live');
     Route::get('health/ready', [HealthController::class, 'ready'])->name('api.v1.health.ready');
+
+    // Build provenance + schema state. Answers "which build is this academy running, and did its
+    // migrations actually apply?" across the fleet. See VersionController for why it is public.
+    Route::get('version', VersionController::class)->name('api.v1.version');
 });

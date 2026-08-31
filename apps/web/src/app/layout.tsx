@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { Inter, Fraunces, IBM_Plex_Sans_Arabic, IBM_Plex_Mono } from "next/font/google";
 import { defaultLocale, isLocale, localeCookieName, localeDirection, type Locale } from "@/lib/i18n/config";
 import { siteConfig } from "@/config/site";
+import { interpolate } from "@/lib/i18n/interpolate";
 import { getBranding, type Branding } from "@/lib/branding/api";
 import { getFeatureFlags, type FeatureFlags } from "@/lib/flags/api";
 import { brandThemeCss, googleFontCss, googleFontHref } from "@/lib/branding/css";
@@ -43,13 +44,16 @@ const ibmPlexMono = IBM_Plex_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   const branding = await getBranding();
   const name = branding.identity.brand_name.en || siteConfig.name;
+  // The description was left vendor-branded on every page even after a rebrand, because it
+  // came from the build-time constant and was never interpolated.
+  const description = interpolate(siteConfig.description, { brand: name });
   const favicon = branding.logos.favicon;
   const appleIcon = branding.logos.apple_icon;
 
   return {
     metadataBase: new URL(siteConfig.url),
     title: { default: `${name} · Bilingual Professional Academy`, template: `%s · ${name}` },
-    description: siteConfig.description,
+    description,
     applicationName: name,
     alternates: { canonical: "/" },
     icons: {
@@ -60,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       siteName: name,
       title: name,
-      description: siteConfig.description,
+      description,
       url: siteConfig.url,
       locale: "en",
       alternateLocale: ["ar"],
@@ -68,7 +72,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: name,
-      description: siteConfig.description,
+      description,
     },
     robots: { index: true, follow: true },
   };
@@ -81,7 +85,9 @@ function organizationJsonLd(name: string): string {
     "@type": "EducationalOrganization",
     name,
     url: siteConfig.url,
-    description: siteConfig.description,
+    // Interpolated against the resolved brand: this is structured data search engines index, so a
+    // stale vendor name here outlives a rebrand in search results.
+    description: interpolate(siteConfig.description, { brand: name }),
   });
 }
 

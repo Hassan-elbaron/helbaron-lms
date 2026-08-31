@@ -62,4 +62,18 @@ interface UserLookupPort
      * @return array<int, UserRef>
      */
     public function refsByIds(array $userIds): array;
+
+    /**
+     * Internal ids of users whose name or email matches a partial search term.
+     *
+     * Exists so another context can OFFER SEARCH over a user-owned column without joining to the
+     * users table. An admin looking up an enrollment types a learner's email; the calling context
+     * turns that into `whereIn('user_id', ...)` and never learns anything else about the user.
+     *
+     * Bounded on purpose: a wide term like "a" would otherwise pull every id in the system into an
+     * IN clause. Callers get the most relevant page, not the whole table.
+     *
+     * @return list<int>
+     */
+    public function idsMatching(string $term, int $limit = 100): array;
 }

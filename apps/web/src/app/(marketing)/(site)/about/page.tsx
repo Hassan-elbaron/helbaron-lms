@@ -12,14 +12,14 @@ const SLUG = "about";
 const loadPage = cache(async (): Promise<StaticPage | null> => getStaticPage(SLUG));
 
 const description =
-  "HElbaron is a bilingual professional academy built for the MENA region — practical courses, live cohorts, and verifiable certificates in Arabic and English.";
+  "{brand} is a bilingual professional academy built for the MENA region — practical courses, live cohorts, and verifiable certificates in Arabic and English.";
 
 /** Built-in metadata used when the CMS record is absent/unreachable (URL never breaks). */
 const fallbackMetadata: Metadata = {
   title: "About",
   description,
   alternates: { canonical: "/about" },
-  openGraph: { title: "About HElbaron", description, url: "/about" },
+  openGraph: { title: "About {brand}", description, url: "/about" },
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,12 +31,12 @@ export async function generateMetadata(): Promise<Metadata> {
 function AboutFallback() {
   return (
     <ContentPage
-      eyebrow={{ en: "ABOUT HELBARON", ar: "عن HElbaron" }}
+      eyebrow={{ en: "ABOUT {brand}", ar: "عن {brand}" }}
       title={{ en: "A bilingual academy", ar: "أكاديمية ثنائية اللغة" }}
       emphasis={{ en: "built for the region.", ar: "مصمّمة للمنطقة." }}
       subtitle={{
-        en: "HElbaron exists to make high-quality, practical business education available in both Arabic and English — designed from the ground up for learners across the MENA region.",
-        ar: "وُجدت HElbaron لإتاحة تعليم أعمال عملي وعالي الجودة بالعربية والإنجليزية معًا — مصمّمة من الأساس لمتعلّمي منطقة الشرق الأوسط وشمال أفريقيا.",
+        en: "{brand} exists to make high-quality, practical business education available in both Arabic and English — designed from the ground up for learners across the MENA region.",
+        ar: "وُجدت {brand} لإتاحة تعليم أعمال عملي وعالي الجودة بالعربية والإنجليزية معًا — مصمّمة من الأساس لمتعلّمي منطقة الشرق الأوسط وشمال أفريقيا.",
       }}
       ctas={[
         { label: { en: "Explore courses", ar: "استكشف الدورات" }, href: "/courses" },
@@ -81,8 +81,8 @@ function AboutFallback() {
           h: { en: "Our story", ar: "قصّتنا" },
           body: [
             {
-              en: "HElbaron started from a simple observation: ambitious professionals across the region were learning in a language that wasn't theirs, from material that didn't reflect their market. We set out to build an academy that treats Arabic and English as equals and puts practical, regional relevance first.",
-              ar: "بدأت HElbaron من ملاحظة بسيطة: محترفون طموحون في المنطقة يتعلّمون بلغة ليست لغتهم ومن مواد لا تعكس سوقهم. فانطلقنا لبناء أكاديمية تعامل العربية والإنجليزية على قدم المساواة وتضع الملاءمة العملية والإقليمية أولًا.",
+              en: "{brand} started from a simple observation: ambitious professionals across the region were learning in a language that wasn't theirs, from material that didn't reflect their market. We set out to build an academy that treats Arabic and English as equals and puts practical, regional relevance first.",
+              ar: "بدأت {brand} من ملاحظة بسيطة: محترفون طموحون في المنطقة يتعلّمون بلغة ليست لغتهم ومن مواد لا تعكس سوقهم. فانطلقنا لبناء أكاديمية تعامل العربية والإنجليزية على قدم المساواة وتضع الملاءمة العملية والإقليمية أولًا.",
             },
           ],
         },

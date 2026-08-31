@@ -62,6 +62,46 @@ export function isAccessExpired(error: unknown): boolean {
 }
 
 /**
+ * True when the refusal was "your email is not verified yet".
+ *
+ * The API answers this with 403 EMAIL_VERIFICATION_REQUIRED, which nothing on the client read — so
+ * it was indistinguishable from a permission failure and surfaced as a generic error toast, with no
+ * route to the one page that fixes it. Callers should send the user to /verify-email instead.
+ */
+export function isEmailVerificationRequired(error: unknown): boolean {
+  return errorCode(error) === "EMAIL_VERIFICATION_REQUIRED";
+}
+
+/**
+ * True when the server refused because the caller is going too fast.
+ *
+ * Distinguishes a real rate limit from a dropped connection or a 500. The resend-code control used
+ * to start its 60-second cooldown on ANY failure, so one flaky network request locked the button
+ * for a minute when retrying immediately would have worked.
+ */
+export function isRateLimited(error: unknown): boolean {
+  if (!(error instanceof ApiRequestError)) return false;
+  return error.status === 429 || error.code === "AUTH_OTP_RATE_LIMITED";
+}
+
+/**
+ * The path a caller should send the user to in order to CLEAR this refusal, or null when there
+ * isn't one.
+ *
+ * Centralised so every authenticated surface behaves the same way. `EMAIL_VERIFICATION_REQUIRED` is
+ * returned by middleware that gates the ENTIRE api group, so it can surface on any mutation in the
+ * app — but only the course purchase panel handled it, and everywhere else showed a generic "went
+ * wrong" toast with no route out. `returnTo` is threaded so the user lands back where they were.
+ */
+export function recoveryPathFor(error: unknown, returnTo?: string): string | null {
+  if (!isEmailVerificationRequired(error)) return null;
+
+  return returnTo
+    ? `/verify-email?redirect=${encodeURIComponent(returnTo)}`
+    : "/verify-email";
+}
+
+/**
  * True when the server refused because of WHO is asking, not because anything went wrong.
  *
  * Covers the course-entitlement codes plus the generic authorization refusals every surface can
@@ -72,5 +112,8 @@ export function isAuthorizationError(error: unknown): boolean {
   const code = errorCode(error);
   if (code === null) return false;
 
+  // EMAIL_VERIFICATION_REQUIRED is deliberately NOT here: it is a refusal the user can clear
+  // themselves in about a minute, so it routes to /verify-email rather than rendering "access
+  // denied". Check isEmailVerificationRequired() before this.
   return ACCESS_CODES.has(code) || code === "HTTP_FORBIDDEN" || code === "UNAUTHENTICATED";
 }

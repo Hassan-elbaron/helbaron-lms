@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { defaultLocale, type Locale } from "@/lib/i18n/config";
 import { pickLocalized, type ResolvedSeo } from "@/lib/seo/api";
+import { withBrand } from "@/lib/branding/metadata";
+import { resolveBrandName } from "@/lib/branding/metadata";
 
 /**
  * The ONE mapper from a resolved SEO payload into a Next.js Metadata object. Every page that honours a
@@ -59,4 +61,23 @@ export function buildMetadata(
  */
 export function seoJsonLd(seo: ResolvedSeo | null): Record<string, unknown> | unknown[] | null {
   return seo?.json_ld ?? null;
+}
+
+/**
+ * The brand-aware entry point pages call.
+ *
+ * Page metadata is written with a `{brand}` token so one bundle can serve any academy, and this is
+ * the ONE place that resolves it — a page added later inherits the behaviour by calling this instead
+ * of remembering to interpolate.
+ *
+ * Async because the brand arrives from the branding API at request time. `buildMetadata` above stays
+ * SYNC and pure: it is the mapper under test, and making it async would have forced every existing
+ * caller and assertion to change for no gain.
+ */
+export async function buildBrandedMetadata(
+  seo: ResolvedSeo | null,
+  fallback: Metadata,
+  locale: Locale = defaultLocale,
+): Promise<Metadata> {
+  return withBrand(buildMetadata(seo, fallback, locale), await resolveBrandName());
 }

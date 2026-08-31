@@ -43,7 +43,10 @@ function LoginForm() {
   } = useForm<Values>({ resolver: zodResolver(schema), defaultValues: { email: "", password: "", remember: false, mfa_code: "" } });
 
   const mutation = useMutation({
-    mutationFn: (v: Values) => auth.login(v.email, v.password, mfa ? v.mfa_code : undefined),
+    // v.remember was collected by the form and then dropped on the floor here: the checkbox
+    // was registered, validated, and never sent. Unticked must mean a session-only cookie.
+    mutationFn: (v: Values) =>
+      auth.login(v.email, v.password, mfa ? v.mfa_code : undefined, v.remember === true),
     // With no explicit redirect target, land on the authenticated dashboard rather than the public
     // marketing home (safeRedirect's default "/"), which reads to users as "login did nothing".
     onSuccess: () => router.replace(safeRedirect(params.get("redirect") ?? "/dashboard")),

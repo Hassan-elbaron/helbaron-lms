@@ -24,7 +24,7 @@ export interface SidebarProps {
 }
 
 /** Direction-agnostic vertical nav. Icons + resolved labels; active state by path prefix. */
-export function Sidebar({ items, brand = "HElbaron", className, navLabel = "Primary" }: SidebarProps) {
+export function Sidebar({ items, brand = "Academy", className, navLabel = "Primary" }: SidebarProps) {
   const pathname = usePathname();
 
   // Only the LONGEST matching href is "active" — otherwise a parent (e.g. /teach) and its child

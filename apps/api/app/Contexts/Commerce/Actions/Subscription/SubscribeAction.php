@@ -12,6 +12,7 @@ use App\Contexts\Commerce\Models\SubscriptionChange;
 use App\Contexts\Commerce\Models\SubscriptionPlan;
 use App\Contexts\Commerce\Payments\Data\ChargeRequest;
 use App\Contexts\Commerce\Payments\Data\ChargeResult;
+use App\Contexts\Commerce\Support\PaymentDescriptor;
 use App\Platform\Shared\Actions\BaseAction;
 use App\Platform\Shared\Audit\AuditLogger;
 use Illuminate\Support\Carbon;
@@ -128,7 +129,7 @@ class SubscribeAction extends BaseAction
                 reference: $subscription->public_id,
                 amountMinor: $amountMinor,
                 currency: $resolvedCurrency,
-                description: 'HElbaron subscription '.$subscription->public_id,
+                description: PaymentDescriptor::forSubscription((string) $subscription->public_id),
                 idempotencyKey: $key,
             ));
         } catch (Throwable $e) {

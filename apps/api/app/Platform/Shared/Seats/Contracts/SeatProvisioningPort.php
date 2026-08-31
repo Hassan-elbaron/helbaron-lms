@@ -70,4 +70,14 @@ interface SeatProvisioningPort
      * @return list<int>
      */
     public function activeSeatPoolIdsForUser(int $userId): array;
+
+    /**
+     * The user id behind an organization member, or null when the member is not linked to an account.
+     *
+     * Needed so releasing a seat can also withdraw the enrollment that seat produced. Members cross
+     * this boundary as scalar `organization_members.id` values, so the caller has no other way to
+     * reach the learner, and an employer-provided enrollment that outlives its seat is access nobody
+     * is paying for.
+     */
+    public function userIdForMember(int $memberId): ?int;
 }

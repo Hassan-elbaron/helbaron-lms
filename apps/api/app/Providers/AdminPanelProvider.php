@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Filament\Widgets\PlatformOverview;
 use App\Platform\Identity\Http\Middleware\EnforceAdminMfa;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 use App\Platform\Shared\Http\Middleware\SetAdminLocale;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -76,7 +77,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->authGuard('web')
-            ->brandName('HElbaron')
+            // The admin panel belongs to the academy running this instance, not to the vendor. Read
+            // through the branding port so a white-labelled deployment brands its back office too;
+            // the port never throws and falls back to the env-driven default.
+            ->brandName(fn (): string => app(BrandProfilePort::class)->profile()->name ?: (string) config('app.name'))
             // HELBARON identity: deep-teal primary (AA-tuned above) + Slate gray so the admin panel
             // reads as the same brand as the marketing/app frontend rather than stock Filament amber.
             ->colors([

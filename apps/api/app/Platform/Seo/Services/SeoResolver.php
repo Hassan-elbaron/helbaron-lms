@@ -8,6 +8,7 @@ use App\Domains\Live\Models\LiveSession;
 use App\Platform\Identity\Models\User;
 use App\Platform\Seo\Enums\SeoEntityType;
 use App\Platform\Seo\Models\SeoMeta;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 
 /**
  * The SINGLE read path for resolved SEO. This is NOT a second metadata engine — it is a merge +
@@ -98,7 +99,10 @@ class SeoResolver
      */
     private function brandingDefaults(SeoEntityType $type): array
     {
-        $name = (string) config('app.name', 'HElbaron');
+        // The instance's own brand, via the port. `config('app.name', 'HElbaron')` did resolve —
+        // app.name falls through to APP_NAME — but the literal default named the vendor, and SEO
+        // titles are the single most visible place a wrong brand appears.
+        $name = trim(app(BrandProfilePort::class)->profile()->name);
 
         return [
             'meta_title' => ['en' => $name, 'ar' => $name],

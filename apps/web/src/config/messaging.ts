@@ -1,7 +1,9 @@
+import { interpolate } from "@/lib/i18n/interpolate";
+import { GENERIC_BRAND } from "@/config/theme";
 import type { Locale } from "@/lib/i18n/config";
 
 /**
- * Source-controlled messaging system — the single source of truth for HElbaron's public positioning
+ * Source-controlled messaging system — the single source of truth for {brand}'s public positioning
  * and conversion copy (English + Arabic). Marketing surfaces read from here instead of scattering
  * inconsistent strings.
  *
@@ -19,8 +21,11 @@ import type { Locale } from "@/lib/i18n/config";
 
 export type Localized = { readonly en: string; readonly ar: string };
 
-export function localized(value: Localized, locale: Locale): string {
-  return value[locale] ?? value.en;
+export function localized(value: Localized, locale: Locale, brand?: string): string {
+  // Resolves `{brand}` for the same reason pickLocale() does: this copy is a build-time constant, so
+  // a brand name written into it would be frozen into the bundle and identical on every instance.
+  // Omitting `brand` renders the GENERIC word, never a vendor name.
+  return interpolate(value[locale] ?? value.en, { brand: brand && brand !== "" ? brand : GENERIC_BRAND });
 }
 
 export type CtaIntent = "primary" | "secondary";
@@ -101,7 +106,7 @@ const CTA_DEMO: Cta = {
 
 /** The one messaging system consumed by every public surface. */
 export const messaging: MessagingSystem = {
-  brand: "HElbaron",
+  brand: "{brand}",
   category: {
     en: "Professional & enterprise learning platform for MENA",
     ar: "منصّة تعلّم احترافي ومؤسسي لمنطقة الشرق الأوسط وشمال أفريقيا",

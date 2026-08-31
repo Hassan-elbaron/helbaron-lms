@@ -2,7 +2,7 @@
 @plugin "tailwindcss-animate";
 
 /*
-  HElbaron design tokens — "Premium MENA academy" identity.
+  Design tokens — editorial academy identity.
   Direction: deep dark teal primary, warm cream background, burnt copper / terracotta
   accent, muted gold accent, soft warm borders, serif headings + clean sans body.
   Light/Dark via the `.dark` class (next-themes). RTL/LTR via the `dir` attribute; components
@@ -175,7 +175,7 @@
   --font-serif: var(--font-fraunces), ui-serif, "Iowan Old Style", Georgia, serif;
   --font-arabic: var(--font-ibm-plex-arabic), "Segoe UI", Tahoma, sans-serif;
   /* Editorial technical mono — course codes, coordinates, folio/press metadata on the
-     HElbaron course covers. Exposed as Tailwind `font-mono`. */
+     course covers. Exposed as Tailwind `font-mono`. */
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
 }
 
@@ -613,7 +613,7 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   HElbaron course cover (marketing): thumbnail image, a carved cream wave, and
+   course cover (marketing): thumbnail image, a carved cream wave, and
    instructor avatars riding the wave. The card body is one course link; each
    avatar is a separate profile link above it (no nested anchors). Depth is
    transform/opacity only and fully disabled under reduced motion.
@@ -653,7 +653,7 @@
     font-size: clamp(4.4rem, 34cqw, 8.2rem); color: rgba(255,255,255,0.10);
   }
 
-  /* Editorial masthead — HElbaron Press technical readout in IBM Plex Mono. */
+  /* Editorial masthead — press technical readout in IBM Plex Mono. */
   .hb-cover-mast {
     position: absolute; inset-block-start: 13px; inset-inline: 15px; z-index: 1; pointer-events: none;
     display: flex; justify-content: space-between; gap: 0.75rem;

@@ -6,7 +6,7 @@ import { siteConfig } from "@/config/site";
 export async function generateMetadata(): Promise<Metadata> {
   const title = `Blog · ${siteConfig.name}`;
   const description =
-    "Insights, guides, and news from the HElbaron academy — practical, bilingual perspectives on learning, leadership, and the future of work.";
+    "Insights, guides, and news from the {brand} academy — practical, bilingual perspectives on learning, leadership, and the future of work.";
 
   return {
     title,

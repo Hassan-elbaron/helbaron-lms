@@ -14,7 +14,12 @@ class UpdatePreferencesRequest extends BaseFormRequest
     {
         return [
             'locale' => ['sometimes', 'in:en,ar'],
-            'digest_frequency' => ['sometimes', Rule::in(DigestFrequency::values())],
+            // Accepted ONLY while digests can actually be delivered. `prohibited` rather than
+            // silently ignored: a client that sends it gets told, instead of being led to believe a
+            // preference was saved. See config/notifications.php for what has to exist first.
+            'digest_frequency' => config('notifications.digest.enabled')
+                ? ['sometimes', Rule::in(DigestFrequency::values())]
+                : ['prohibited'],
             'timezone' => ['sometimes', 'string', 'max:64'],
             // Quiet hours: a marketing-category message inside this window is deferred (transactional
             // messages always send). Times are wall-clock HH:MM (or HH:MM:SS) in the user's timezone.
