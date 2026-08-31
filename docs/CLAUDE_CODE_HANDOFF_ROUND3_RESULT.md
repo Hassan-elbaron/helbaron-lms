@@ -1078,7 +1078,8 @@ Announcement fan-out and the event-listing N+1 were left alone — already fixed
 
 | Gate | Result |
 |---|---|
-| `php artisan test` (serial, chunked) | **1834 passed, 0 failed** |
+| `php artisan test` (serial, **one invocation**) | **2288 passed, 0 failed** (7281 assertions, 1096.8s, exit 0) |
+| — of which **Admin→Branding** | **454 passed, 0 failed** — the chunk omitted below; green, no Phase E regression |
 | `vendor/bin/pint --test` | passed |
 | `vendor/bin/deptrac analyse` | **0 violations**, baseline unchanged |
 | `vendor/bin/phpstan analyse` | 263 errors — **0 newly introduced** |
@@ -1088,8 +1089,37 @@ Announcement fan-out and the event-listing N+1 were left alone — already fixed
 | Migration reversibility | trigram migration verified: indexes dropped, `pg_trgm` deliberately kept |
 | Search benchmark | 400k rows, English **and** Arabic, five query shapes |
 
-Backend per chunk: Unit **325**; Catalog→Config **557**; Coupons→Http **192**; Identity→Live **305**;
-Marketing→Reviews **295**; Search→Timezone **160**.
+### The corrected count, and what the first one missed
+
+The figure originally reported here was **1834 passed, 0 failed**, presented without qualification as
+though it were the whole suite. It was about 80% of it. The re-run below is a **single serial
+invocation** — it cannot omit a chunk — and the per-directory counts reconcile exactly.
+
+| Chunk | Re-run | As reported in Phase E |
+|---|---|---|
+| Unit + Architecture | **325** | 325 ✓ |
+| Feature Admin→Branding | **454** | *(never run)* |
+| Feature Catalog→Config | **550** | 557 |
+| Feature Coupons→I18n | **192** | 192 ✓ (labelled "Coupons→Http") |
+| Feature Identity→Live | **305** | 305 ✓ |
+| Feature Marketing→Reviews | **302** | 295 |
+| Feature Search→Timezone (incl. root files) | **160** | 160 ✓ |
+| **Total** | **2288** | **1834** |
+
+The Phase E figures sum to exactly 1834, which reproduces the reported number and confirms the
+omission was precisely one chunk — Admin→Branding — and nothing else. Two chunks differ by 7 in
+opposite directions (Catalog→Config −7, Marketing→Reviews +7); the net is zero and the boundaries
+were described by label rather than by explicit directory list, which is the most likely explanation.
+That ambiguity is itself the argument for the single-invocation rule in
+`docs/ops/LOCAL_TEST_ENVIRONMENT.md` §4b.
+
+**Admin→Branding is green: 454 passed, 0 failed.** Nothing in Phase E — the session-cookie rename or
+the notification-preferences payload change — broke the admin or branding surfaces.
+
+One caveat worth stating: the first attempt at this re-run used `--parallel`, and produced 9 failures
+at 8 workers and 26 at 4. Every one was `SQLSTATE[53200] out of shared memory`, not an assertion —
+the lock-table ceiling now fixed in `docker-compose.yml`. `tests/Feature/Tax` was run alone as a
+control and passed 6/6. The serial run above is the trustworthy number.
 
 Three existing tests changed, each a genuine consequence rather than a green-run edit: the login test
 now asserts the fourth `remember` argument (and a new case for the ticked box); the notification-centre
