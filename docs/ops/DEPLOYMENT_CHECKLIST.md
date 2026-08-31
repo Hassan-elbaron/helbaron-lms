@@ -130,28 +130,54 @@ npm ci
 npm run build
 ```
 
-## 4. Database
+## 4. Database — one command
 
 ```bash
 cd apps/api
-php artisan migrate --force
+php artisan install:academy \
+  --brand="Northwind Academy" \
+  --brand-ar="أكاديمية نورثويند" \
+  --company="Northwind Education Ltd" \
+  --support-email="help@northwind.com" \
+  --timezone="Europe/London" \
+  --currency="GBP" \
+  --admin-email="ops@northwind.com" --admin-name="Ops"
 ```
 
-**Seed only what production needs.** `db:seed` runs the full demo catalog — do NOT run it on a
-client environment. Seed the structural data individually:
+It migrates, seeds the structural data in dependency order, writes the branding row, creates the
+first administrator, and runs `config:validate` before it will report success. Run with no options at
+all to be prompted for each value instead.
 
-```bash
-php artisan db:seed --force --class="App\Platform\Identity\Database\Seeders\RolePermissionSeeder"
-php artisan db:seed --force --class="Database\Seeders\StaffRoleTemplatesSeeder"
-php artisan db:seed --force --class="App\Platform\Navigation\Database\Seeders\NavigationSeeder"
-php artisan db:seed --force --class="App\Platform\Branding\Database\Seeders\BrandingSeeder"
-php artisan db:seed --force --class="App\Platform\Pages\Database\Seeders\StaticPagesSeeder"
-php artisan db:seed --force --class="App\Platform\Features\Database\Seeders\FeatureFlagsSeeder"
-php artisan db:seed --force --class="App\Platform\Homepage\Database\Seeders\HomepageSeeder"
-```
+It prompts once, hidden, for the administrator password — that is deliberate and it is the only
+interactive step. `identity:create-admin` never accepts a password as an argument, so it cannot end
+up in shell history or a process listing. To script the rest and set the password separately, pass
+`--skip-admin` and run `php artisan identity:create-admin` afterwards.
 
-All are idempotent. Re-run `NavigationSeeder` after any release that adds a sidebar entry — the
-frontend's `nav.ts` is only a fallback; `AppShell` renders the CMS menu when one exists.
+It refuses to run on an instance that already has an administrator. Pass `--force` to re-run the
+structural seeders on an existing instance; nothing is deleted and the administrator is left alone.
+
+**Do not run `db:seed`.** `DatabaseSeeder` publishes a dozen demo courses and five invented trainers
+onto the public catalogue. `install:academy` cannot reach them.
+
+<details>
+<summary>What replaced the manual seeder list, and why</summary>
+
+This section used to list seven `db:seed --class=...` commands to run by hand. Two things were wrong
+with it beyond the obvious risk of running the wrong one:
+
+- **It was incomplete.** `NotificationsSeeder` (every email and in-app template), `AiPromptSeeder`
+  and `SeoSeeder` were missing, so an academy installed by following it had no notification
+  templates and an empty sitemap.
+- **The order branded the content wrong.** `BrandingSeeder` came after `NavigationSeeder`, and
+  several seeders resolve the academy name *as they write*. Anything seeded before the branding row
+  existed captured the environment fallback instead, permanently — those seeders are `firstOrCreate`
+  and never rewrite an existing row.
+
+`install:academy` owns the list and the order, and a test asserts no content seeder can enter it.
+</details>
+
+Re-run `install:academy --force` after any release that adds a sidebar entry — the frontend's
+`nav.ts` is only a fallback; `AppShell` renders the CMS menu when one exists.
 
 ## 5. Storage & caches
 
@@ -164,6 +190,16 @@ php artisan view:cache
 ```
 
 Re-run the `*:cache` commands on every deploy, after the new code is in place.
+
+**On the compose stack you do not run these by hand.** The API image's entrypoint
+(`apps/api/infra/php/docker-entrypoint.sh`) builds the config, route and event caches inside every
+container that will serve — api, horizon and scheduler — from that container's own environment, and
+refuses to start if the config cannot be compiled.
+
+`scripts/deploy.sh` used to warm them with `docker compose run --rm api php artisan config:cache`.
+That runs in a throwaway container whose filesystem is discarded on exit, and no service mounts a
+volume over `bootstrap/cache` — so the cache was written where nothing could read it, and production
+had never actually run on a cached config. The steps above remain correct for a bare-metal install.
 
 ## 6. Queue worker + scheduler
 
@@ -300,8 +336,16 @@ Two things to know when it misbehaves:
 A database dump alone is **not** a complete backup — uploaded media lives on disk/object storage.
 
 ```bash
-pg_dump -U <user> -d <db> --clean --if-exists | gzip > backups/db-$(date +%Y%m%d-%H%M%S).sql.gz
+# NOT into the deployment checkout — the platform replaces that directory on every deploy.
+pg_dump -U <user> -d <db> --clean --if-exists \
+  | gzip > /var/backups/academy-lms/db-$(date +%Y%m%d-%H%M%S).sql.gz
 ```
+
+Scheduled dumps are written by the compose `db-backup` service into `$BACKUP_TARGET` (a named Docker
+volume by default; set it to an absolute host path to place them on storage you copy off-box). That
+service reports **unhealthy** when a dump fails or when none has landed in two intervals, and it
+stops pruning old dumps while backups are failing — so a broken backup job can no longer delete its
+way to zero in silence. Check it with `docker compose -f docker-compose.prod.yml ps db-backup`.
 
 Also back up (or confirm they live in durable object storage):
 
@@ -309,3 +353,20 @@ Also back up (or confirm they live in durable object storage):
 - `apps/api/storage/app/private/manual-import/` — labelled operator source images (gitignored)
 - `apps/api/storage/app/private/certificates/` — issued certificate artefacts
 - `apps/api/storage/app/private/exports/` — generated report exports
+
+## Stack changes an operator needs to know about
+
+Four items below change how the stack is fronted or configured. The rest of the hardening
+(log rotation, resource limits, an nginx patch pin, the Filament asset volume) needs nothing from you.
+
+| Change | What you must do |
+|---|---|
+| **`REDIS_PASSWORD` is now required.** Redis holds sessions, the cache and the whole queue; it ran unauthenticated. | Set it in `.env`. Compose refuses to start without it — deliberately, because a default password is the same as none. |
+| **The plaintext origin binds to loopback.** `"8080:80"` published on `0.0.0.0`, so the un-encrypted origin was reachable from the internet, around the TLS terminator, its HSTS and its WAF. It is now `127.0.0.1:8080:80`. | Point your TLS terminator at `127.0.0.1:8080`. If it runs on another host, put the two on a private network and publish to that interface instead. |
+| **`postgres` and `db-backup` no longer read `.env`.** They were handed `APP_KEY`, every payment gateway secret and `OPENAI_API_KEY` to do a job that needs four database variables. | Nothing, unless you added your own variables to those containers. |
+| **The API healthcheck now asks the application.** It probed FPM's `/ping`, which is a pool setting enabled nowhere here, so `cgi-fcgi` got "Primary script unknown" and exited 0 — a wedged worker pool reported healthy, and `web` starts on `api: condition: service_healthy`. | Nothing. Expect the container to take up to 30s to report healthy on first boot (`start_period`). |
+
+**Upstreams are addressed by compose service name** (`api`, `web`) instead of the Dokploy-generated
+`lms-h-sbvbdl-*` aliases that were hardcoded in both `docker-compose.prod.yml` and `nginx.conf` and
+had to agree. Deploying the same repository under a different project name used to 502 with no
+explanation. If you had pinned anything to the old aliases, drop them.
