@@ -7,6 +7,7 @@ use App\Platform\Navigation\Enums\NavAuthVisibility;
 use App\Platform\Navigation\Enums\NavUrlType;
 use App\Platform\Navigation\Models\NavItem;
 use App\Platform\Navigation\Models\NavMenu;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 use Illuminate\Database\Seeder;
 
 /**
@@ -88,6 +89,10 @@ class NavigationSeeder extends Seeder
      */
     private function definitions(): array
     {
+        // The nav ships to every academy, so an entry naming the operator names THIS one.
+        $brand = trim(app(BrandProfilePort::class)->profile()->name);
+        $brand = $brand !== '' ? $brand : 'the academy';
+
         return [
             // brandTheme.nav
             MenuLocation::PublicHeader->value => [
@@ -120,7 +125,7 @@ class NavigationSeeder extends Seeder
                     'position' => 20, 'url' => '#', 'label' => ['en' => 'For Business', 'ar' => 'للأعمال'],
                     'children' => [
                         ['position' => 10, 'label' => ['en' => 'B2B / B2G Training', 'ar' => 'تدريب المؤسسات'], 'url' => '/enterprise'],
-                        ['position' => 20, 'label' => ['en' => 'HElbaron Advisory', 'ar' => 'استشارات HElbaron'], 'url' => '/advisory'],
+                        ['position' => 20, 'label' => ['en' => $brand.' Advisory', 'ar' => 'استشارات '.$brand], 'url' => '/advisory'],
                         ['position' => 30, 'label' => ['en' => 'Government partnerships', 'ar' => 'شراكات حكومية'], 'url' => '/enterprise'],
                         ['position' => 40, 'label' => ['en' => 'Case studies', 'ar' => 'دراسات حالة'], 'url' => '/enterprise'],
                     ],

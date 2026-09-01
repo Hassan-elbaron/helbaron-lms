@@ -5,6 +5,7 @@ namespace App\Platform\Blog\Database\Seeders;
 use App\Platform\Blog\Enums\PostStatus;
 use App\Platform\Blog\Models\BlogCategory;
 use App\Platform\Blog\Models\BlogPost;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 use Illuminate\Database\Seeder;
 
 /**
@@ -73,6 +74,9 @@ class BlogSeeder extends Seeder
      */
     private static function categories(): array
     {
+        $brand = trim(app(BrandProfilePort::class)->profile()->name);
+        $brand = $brand !== '' ? $brand : 'the academy';
+
         return [
             'insights' => [
                 'position' => 10,
@@ -94,8 +98,8 @@ class BlogSeeder extends Seeder
                 'position' => 30,
                 'name' => ['en' => 'News', 'ar' => 'أخبار'],
                 'description' => [
-                    'en' => 'Announcements and updates from the HElbaron academy.',
-                    'ar' => 'إعلانات وتحديثات من أكاديمية HElbaron.',
+                    'en' => 'Announcements and updates from the '.$brand.' academy.',
+                    'ar' => 'إعلانات وتحديثات من أكاديمية '.$brand.'.',
                 ],
             ],
         ];
@@ -109,6 +113,9 @@ class BlogSeeder extends Seeder
      */
     private static function posts(): array
     {
+        $brand = trim(app(BrandProfilePort::class)->profile()->name);
+        $brand = $brand !== '' ? $brand : 'the academy';
+
         return [
             'why-bilingual-learning-matters' => [
                 'category' => 'insights',
@@ -168,8 +175,8 @@ class BlogSeeder extends Seeder
                     'ar' => 'من الدورة إلى الشهادة: كيف يعمل التحقّق',
                 ],
                 'excerpt' => [
-                    'en' => 'Every HElbaron certificate carries a unique code anyone can verify online. Here is what that means for you and your employer.',
-                    'ar' => 'كل شهادة من HElbaron تحمل رمزًا فريدًا يمكن لأي شخص التحقّق منه عبر الإنترنت. إليك ما يعنيه ذلك لك ولصاحب عملك.',
+                    'en' => 'Every '.$brand.' certificate carries a unique code anyone can verify online. Here is what that means for you and your employer.',
+                    'ar' => 'كل شهادة من '.$brand.' تحمل رمزًا فريدًا يمكن لأي شخص التحقّق منه عبر الإنترنت. إليك ما يعنيه ذلك لك ولصاحب عملك.',
                 ],
                 'body' => [
                     'en' => '<p>A certificate is only as useful as it is trustworthy. That is why every credential you earn is verifiable — not just a PDF, but a record anyone can confirm.</p>'
@@ -213,8 +220,8 @@ class BlogSeeder extends Seeder
                 'days_ago' => 25,
                 'reading_minutes' => 3,
                 'title' => [
-                    'en' => 'Introducing live cohorts at HElbaron',
-                    'ar' => 'نقدّم الأفواج المباشرة في HElbaron',
+                    'en' => 'Introducing live cohorts at '.$brand,
+                    'ar' => 'نقدّم الأفواج المباشرة في '.$brand,
                 ],
                 'excerpt' => [
                     'en' => 'Learn alongside a group, guided by a practitioner, on a schedule. Our new live cohorts bring accountability and community to online learning.',

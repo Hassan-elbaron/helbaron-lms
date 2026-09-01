@@ -225,8 +225,8 @@ class BrandSettingResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('identity.brand_name.en')->label('Brand')->placeholder('HElbaron'),
-            TextColumn::make('theme.preset')->label('Theme preset')->badge()->placeholder('helbaron'),
+            TextColumn::make('identity.brand_name.en')->label('Brand')->placeholder('Not set'),
+            TextColumn::make('theme.preset')->label('Theme preset')->badge()->placeholder('default'),
             TextColumn::make('updated_at')->dateTime()->since()->label('Last updated'),
         ]);
     }

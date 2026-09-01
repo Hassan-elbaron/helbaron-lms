@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Console\Commands\ValidateProductionConfigCommand;
+use App\Platform\Shared\Config\ConfigGuardScope;
 use App\Platform\Shared\Config\ProductionConfigValidator;
+use App\Platform\Shared\Http\TrustedEdgeConfigurator;
 use Filament\Tables\Columns\IconColumn;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\Log;
@@ -22,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerQueueFailureLogging();
         $this->commands([ValidateProductionConfigCommand::class]);
+        // Must run here rather than in bootstrap/app.php: config is not bound yet at the moment
+        // ->withMiddleware() fires. See TrustedEdgeConfigurator for the measurement.
+        TrustedEdgeConfigurator::apply();
         $this->guardProductionConfig();
         $this->configureFilamentAccessibility();
     }
@@ -42,15 +47,16 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Fail fast: a production WEB process must not serve traffic on an unsafe configuration. Scoped
-     * to the HTTP path (`! runningInConsole()`) so console commands — including `config:validate`
-     * itself, migrations and the deploy pipeline — still run and can report the problems. No-op
-     * outside production, so local/testing are unaffected.
+     * Fail fast: a production process must not do production work on an unsafe configuration.
+     *
+     * Applies to the HTTP path AND to the long-running queue/schedule workers — see
+     * ConfigGuardScope for which processes are in scope and why the operator tooling is not.
+     * No-op outside production, so local/testing are unaffected.
      */
     private function guardProductionConfig(): void
     {
         $this->app->booted(function (): void {
-            if (! $this->app->environment('production') || $this->app->runningInConsole()) {
+            if (! ConfigGuardScope::appliesTo($this->app)) {
                 return;
             }
 

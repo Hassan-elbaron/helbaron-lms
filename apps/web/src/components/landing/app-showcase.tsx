@@ -3,6 +3,7 @@
 import {
   LayoutDashboard, GraduationCap, Radio, Award, BarChart3, Flame, Play, ArrowUpRight,
 } from "lucide-react";
+import { useBranding } from "@/lib/branding/context";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import type { Locale } from "@/config/theme";
 
@@ -25,6 +26,7 @@ const BARS = [42, 58, 35, 70, 52, 84, 61];
  * from real tokens. Not a generic illustration. RTL-safe, static (reduced-motion friendly).
  */
 export function AppShowcase({ className }: { className?: string }) {
+  const brandName = useBranding().identity.brand_name.en;
   const { locale } = useI18n();
 
   return (
@@ -36,7 +38,7 @@ export function AppShowcase({ className }: { className?: string }) {
           <span className="size-2.5 rounded-full bg-warning/80" />
           <span className="size-2.5 rounded-full bg-success/70" />
         </span>
-        <span className="ms-2 truncate text-[0.7rem] font-medium text-muted-foreground">app.helbaron.academy / dashboard</span>
+        <span className="ms-2 truncate text-[0.7rem] font-medium text-muted-foreground">app.example.com / dashboard</span>
       </div>
 
       <div className="grid grid-cols-[auto_1fr]">
@@ -44,7 +46,7 @@ export function AppShowcase({ className }: { className?: string }) {
         <nav className="hidden w-40 flex-col gap-1 border-e border-border/70 bg-surface/50 p-3 sm:flex">
           <span className="mb-2 flex items-center gap-2 px-2">
             <span className="grid size-6 place-items-center rounded-md bg-primary font-serif text-[0.7rem] font-bold text-primary-foreground">H</span>
-            <span className="font-serif text-sm font-semibold">HElbaron</span>
+            <span className="font-serif text-sm font-semibold">{brandName}</span>
           </span>
           {NAV.map((n, i) => (
             <span key={i} className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-[0.72rem] ${n.active ? "bg-card font-semibold text-primary shadow-sm ring-1 ring-border/70" : "text-muted-foreground"}`}>

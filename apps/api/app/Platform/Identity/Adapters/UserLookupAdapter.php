@@ -141,4 +141,31 @@ final class UserLookupAdapter implements UserLookupPort
 
         return $refs;
     }
+
+    /**
+     * @return list<int>
+     */
+    public function idsMatching(string $term, int $limit = 100): array
+    {
+        $term = trim($term);
+
+        if ($term === '') {
+            return [];
+        }
+
+        // Escape the LIKE wildcards in the caller's term: an admin pasting an email containing '%'
+        // should search for that character, not match everything.
+        $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $term);
+
+        return User::query()
+            ->where(function ($query) use ($escaped): void {
+                $query->where('email', 'like', '%'.$escaped.'%')
+                    ->orWhere('name', 'like', '%'.$escaped.'%');
+            })
+            ->orderBy('id')
+            ->limit($limit)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
 }

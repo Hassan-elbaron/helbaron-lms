@@ -3,6 +3,7 @@
 namespace App\Platform\Homepage\Enums;
 
 use App\Platform\Homepage\Models\HomepageSection;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 
 /**
  * The set of predefined homepage blocks (PRD-scoped). This is NOT a generic page builder — only
@@ -111,6 +112,15 @@ enum BlockType: string
      */
     public function defaultContent(): array
     {
+        // Default block content ships to every academy, so every identity value here names THIS
+        // instance rather than the vendor it was written at.
+        $profile = app(BrandProfilePort::class)->profile();
+        $brand = trim($profile->name) !== '' ? trim($profile->name) : 'the academy';
+        $supportEmail = trim($profile->supportEmail);
+        $supportPhone = trim($profile->supportPhone);
+        // The vendor's own office cities are not a property of an arbitrary academy.
+        $address = trim($profile->address);
+
         $seed = HomepageSection::defaults();
         if (isset($seed[$this->value])) {
             /** @var array<string, mixed> $content */
@@ -193,12 +203,12 @@ enum BlockType: string
             ],
             self::Cta => [
                 'headline' => ['en' => 'Ready to lead the future?', 'ar' => 'جاهز لقيادة المستقبل؟'],
-                'subheadline' => ['en' => 'Join thousands of MENA professionals learning with HElbaron.', 'ar' => 'انضم إلى آلاف محترفي المنطقة الذين يتعلّمون مع HElbaron.'],
+                'subheadline' => ['en' => 'Join thousands of MENA professionals learning with '.$brand.'.', 'ar' => 'انضم إلى آلاف محترفي المنطقة الذين يتعلّمون مع '.$brand.'.'],
                 'cta_primary' => ['label' => ['en' => 'Get started', 'ar' => 'ابدأ الآن'], 'href' => '/register'],
                 'cta_secondary' => ['label' => ['en' => 'Talk to us', 'ar' => 'تواصل معنا'], 'href' => '/contact'],
             ],
             self::Video => [
-                'heading' => ['en' => 'See HElbaron in action', 'ar' => 'شاهد HElbaron أثناء العمل'],
+                'heading' => ['en' => 'See '.$brand.' in action', 'ar' => 'شاهد '.$brand.' أثناء العمل'],
                 'url' => null,
                 'poster' => null,
                 'caption' => ['en' => 'A two-minute tour of the academy.', 'ar' => 'جولة في دقيقتين داخل الأكاديمية.'],
@@ -237,16 +247,16 @@ enum BlockType: string
             self::ContactStrip => [
                 'heading' => ['en' => 'Let’s talk', 'ar' => 'لنتحدّث'],
                 'subheading' => ['en' => 'We usually reply within one business day.', 'ar' => 'نردّ عادةً خلال يوم عمل واحد.'],
-                'phone' => '+20 2 0000 0000',
-                'email' => 'hello@helbaron.com',
-                'address' => ['en' => 'Cairo · Dubai · Riyadh', 'ar' => 'القاهرة · دبي · الرياض'],
+                'phone' => $supportPhone,
+                'email' => $supportEmail,
+                'address' => ['en' => $address, 'ar' => $address],
                 'cta' => ['label' => ['en' => 'Contact us', 'ar' => 'تواصل معنا'], 'href' => '/contact'],
             ],
             self::RichText => [
-                'title' => ['en' => 'About HElbaron', 'ar' => 'عن HElbaron'],
+                'title' => ['en' => 'About '.$brand, 'ar' => 'عن '.$brand],
                 'body' => [
-                    'en' => '<p>HElbaron is the MENA business academy. <strong>Master the core. Lead the future.</strong></p>',
-                    'ar' => '<p>HElbaron أكاديمية الأعمال للمنطقة. <strong>أتقن الأساس. قُد المستقبل.</strong></p>',
+                    'en' => '<p>'.$brand.' is the MENA business academy. <strong>Master the core. Lead the future.</strong></p>',
+                    'ar' => '<p>'.$brand.' أكاديمية الأعمال للمنطقة. <strong>أتقن الأساس. قُد المستقبل.</strong></p>',
                 ],
             ],
             self::LogoCloud => [
@@ -260,7 +270,7 @@ enum BlockType: string
                 'heading' => ['en' => 'How we compare', 'ar' => 'كيف نتميّز'],
                 'columns' => [
                     ['en' => 'Feature', 'ar' => 'الميزة'],
-                    ['en' => 'HElbaron', 'ar' => 'HElbaron'],
+                    ['en' => $brand, 'ar' => $brand],
                     ['en' => 'Others', 'ar' => 'غيرنا'],
                 ],
                 'rows' => [

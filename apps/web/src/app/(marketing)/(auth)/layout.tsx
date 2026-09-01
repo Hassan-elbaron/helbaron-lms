@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useBranding } from "@/lib/branding/context";
 import { usePathname } from "next/navigation";
 import { GraduationCap, Users, Award } from "lucide-react";
 import { RequireGuest } from "@/lib/auth/guards";
@@ -19,6 +20,9 @@ const AUTHENTICATED_AUTH_ROUTES = new Set(["/verify-email"]);
  * on mobile so the form leads.
  */
 export default function AuthLayout({ children }: { children: ReactNode }) {
+  const branding = useBranding();
+  const brandName = branding.identity.brand_name.en;
+
   const { locale } = useI18n();
   const pathname = usePathname();
   const L = (en: string, ar: string) => (locale === "ar" ? ar : en);
@@ -42,8 +46,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="pointer-events-none absolute -end-16 top-1/3 size-72 rounded-full bg-gold/10 blur-3xl" aria-hidden />
 
           <div className="relative flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-xl bg-primary-foreground/10 font-serif text-lg font-bold">H</span>
-            <span className="font-serif text-xl font-semibold">HElbaron</span>
+            <span className="grid size-10 place-items-center rounded-xl bg-primary-foreground/10 font-serif text-lg font-bold">
+              {brandName.slice(0, 1).toUpperCase()}
+            </span>
+            <span className="font-serif text-xl font-semibold">{brandName}</span>
           </div>
 
           <div className="relative">
@@ -64,7 +70,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             </ul>
           </div>
 
-          <p className="relative text-xs text-primary-foreground/60">© 2026 HElbaron</p>
+          {/* The year was hardcoded to 2026 and was therefore wrong from 1 January 2027 onwards. */}
+          <p className="relative text-xs text-primary-foreground/60">
+            © {new Date().getFullYear()} {brandName}
+          </p>
         </aside>
 
         {/* Form column */}

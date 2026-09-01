@@ -38,7 +38,7 @@ function certificateProduct(array $policy = []): array
         'certificate_expiry_value' => 2,
         'seat_mode' => SeatMode::Fixed->value,
         'default_seat_count' => 5,
-        'company_certificate_branding' => CompanyCertificateBranding::CompanyLogoAndHelbaron->value,
+        'company_certificate_branding' => CompanyCertificateBranding::CompanyAndPlatform->value,
     ], $policy))->save();
 
     return [$product->refresh(), $course];

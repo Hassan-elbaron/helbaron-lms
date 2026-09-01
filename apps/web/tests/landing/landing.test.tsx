@@ -24,7 +24,10 @@ describe("Landing sections", () => {
     renderWithI18n(<ServiceLines />);
     expect(screen.getByText("Courses")).toBeInTheDocument();
     expect(screen.getByText("Live Cohorts")).toBeInTheDocument();
-    expect(screen.getByText("HElbaron Advisory")).toBeInTheDocument();
+    // Asserts the INTERPOLATED brand, not a vendor literal. Without a BrandingProvider the
+    // generic fallback renders, which is exactly what a white-labelled build must do.
+    expect(screen.getByText(/Advisory/)).toBeInTheDocument();
+    expect(screen.queryByText(/HElbaron/i)).not.toBeInTheDocument();
     expect(screen.getByText("01")).toBeInTheDocument();
     expect(screen.getByText("05")).toBeInTheDocument();
     expect(screen.getByText("Browse catalog")).toBeInTheDocument();

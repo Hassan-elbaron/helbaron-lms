@@ -8,6 +8,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { pickLocale, type Localized, type LinkItem } from "@/config/theme";
+import { useBranding } from "@/lib/branding/context";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/landing/reveal";
 
@@ -44,6 +45,9 @@ export interface ContentPageProps {
  * copper eyebrow, rounded cards).
  */
 export function ContentPage({ eyebrow, title, emphasis, subtitle, ctas, cards, sections }: ContentPageProps) {
+  // Every marketing page built on ContentPage carries the academy's real name, not the
+  // generic fallback: the `{brand}` tokens in its copy resolve here.
+  const brandName = useBranding().identity.brand_name.en;
   const { locale } = useI18n();
 
   return (
@@ -59,18 +63,18 @@ export function ContentPage({ eyebrow, title, emphasis, subtitle, ctas, cards, s
 
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-copper/25 bg-copper/[0.06] ps-2 pe-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-copper">
           <span className="size-1.5 rounded-full bg-copper" aria-hidden />
-          {pickLocale(eyebrow, locale)}
+          {pickLocale(eyebrow, locale, brandName)}
         </div>
         <h1 className="max-w-3xl text-display font-serif leading-[1.05] tracking-tight">
-          {pickLocale(title, locale)} <span className="italic text-copper">{pickLocale(emphasis, locale)}</span>
+          {pickLocale(title, locale, brandName)} <span className="italic text-copper">{pickLocale(emphasis, locale, brandName)}</span>
         </h1>
-        <p className="mt-5 max-w-2xl text-muted-foreground sm:text-lg">{pickLocale(subtitle, locale)}</p>
+        <p className="mt-5 max-w-2xl text-muted-foreground sm:text-lg">{pickLocale(subtitle, locale, brandName)}</p>
         {ctas && ctas.length > 0 ? (
           <div className="mt-8 flex flex-wrap gap-3">
             {ctas.map((c, i) => (
               <Button key={c.href} asChild size="lg" variant={i === 0 ? "default" : "outline"} className={i === 0 ? "shine relative overflow-hidden" : undefined}>
                 <Link href={c.href}>
-                  {pickLocale(c.label, locale)}
+                  {pickLocale(c.label, locale, brandName)}
                   {i === 0 ? <ArrowRight className="size-4 rtl:rotate-180" aria-hidden /> : null}
                 </Link>
               </Button>
@@ -102,20 +106,20 @@ export function ContentPage({ eyebrow, title, emphasis, subtitle, ctas, cards, s
                 >
                   <Icon className="size-5" aria-hidden />
                 </span>
-                <h3 className="font-serif text-lg font-semibold">{pickLocale(card.title, locale)}</h3>
+                <h3 className="font-serif text-lg font-semibold">{pickLocale(card.title, locale, brandName)}</h3>
                 <p className={card.highlight ? "mt-1.5 text-sm text-primary-foreground/80" : "mt-1.5 text-sm text-muted-foreground"}>
-                  {pickLocale(card.body, locale)}
+                  {pickLocale(card.body, locale, brandName)}
                 </p>
                 {card.meta ? (
                   <p className={card.highlight ? "mt-3 text-sm font-medium" : "mt-3 text-sm font-medium text-primary"}>
-                    {pickLocale(card.meta, locale)}
+                    {pickLocale(card.meta, locale, brandName)}
                   </p>
                 ) : null}
                 {card.cta ? (
                   <div className="mt-auto pt-4">
                     <Button asChild variant={card.highlight ? "secondary" : "outline"} size="sm">
                       <Link href={card.cta.href}>
-                        {pickLocale(card.cta.label, locale)}
+                        {pickLocale(card.cta.label, locale, brandName)}
                         <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
                       </Link>
                     </Button>
@@ -132,11 +136,11 @@ export function ContentPage({ eyebrow, title, emphasis, subtitle, ctas, cards, s
         <div className="mx-auto max-w-3xl space-y-10">
           {sections.map((s) => (
             <section key={s.h.en}>
-              <h2 className="font-serif text-2xl font-semibold tracking-tight">{pickLocale(s.h, locale)}</h2>
+              <h2 className="font-serif text-2xl font-semibold tracking-tight">{pickLocale(s.h, locale, brandName)}</h2>
               <div className="mt-3 space-y-3">
                 {s.body.map((p, i) => (
                   <p key={i} className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {pickLocale(p, locale)}
+                    {pickLocale(p, locale, brandName)}
                   </p>
                 ))}
               </div>

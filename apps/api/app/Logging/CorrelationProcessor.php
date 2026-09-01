@@ -14,7 +14,7 @@ class CorrelationProcessor implements ProcessorInterface
 {
     public function __invoke(LogRecord $record): LogRecord
     {
-        $record->extra['service'] = (string) config('app.name', 'helbaron');
+        $record->extra['service'] = (string) config('app.name', 'lms');
         $record->extra['env'] = (string) config('app.env', 'production');
 
         // Prefer the propagated Context value (present in BOTH request and queue worker — M2), and

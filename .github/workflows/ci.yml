@@ -17,11 +17,24 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
+        # The database NAME must be `helbaron_test`: apps/api/phpunit.xml pins
+        # `DB_DATABASE=helbaron_test` with force="true", which overrides the job env below for the
+        # Pest step. Created as `lms` (as it was until this commit), every test errored with
+        # "database helbaron_test does not exist" — latent since 227b969 (2026-08-16) and never
+        # observed, because CI last reached the test step on 2026-07-20 and has been failing earlier
+        # in the job since. Change this name only together with phpunit.xml.
+        #
+        # NOTE ON PARALLELISM: the Tests step runs SERIALLY, so the stock
+        # max_locks_per_transaction=64 is sufficient — one `migrate:fresh` drop takes ~1000 locks
+        # against a 64 x 100 = 6400-slot shared table. Do NOT add `--parallel` here without raising
+        # that limit, or the suite will flake exactly as it does locally (see docker-compose.yml).
+        # GitHub service containers cannot take a custom command, so raising it requires running
+        # Postgres as a normal `docker run` step instead of as a service.
         image: postgres:16-alpine
-        env: { POSTGRES_DB: helbaron, POSTGRES_USER: helbaron, POSTGRES_PASSWORD: secret }
+        env: { POSTGRES_DB: helbaron_test, POSTGRES_USER: lms, POSTGRES_PASSWORD: secret }
         ports: ["5432:5432"]
         options: >-
-          --health-cmd="pg_isready -U helbaron" --health-interval=10s --health-timeout=5s --health-retries=5
+          --health-cmd="pg_isready -U lms" --health-interval=10s --health-timeout=5s --health-retries=5
       redis:
         image: redis:7-alpine
         ports: ["6379:6379"]
@@ -31,8 +44,10 @@ jobs:
       DB_CONNECTION: pgsql
       DB_HOST: 127.0.0.1
       DB_PORT: 5432
-      DB_DATABASE: helbaron
-      DB_USERNAME: helbaron
+      # Matches POSTGRES_DB above. The Migrate step uses this value; the Tests step gets the same
+      # name forced by phpunit.xml, so both hit one database that actually exists.
+      DB_DATABASE: helbaron_test
+      DB_USERNAME: lms
       DB_PASSWORD: secret
       REDIS_HOST: 127.0.0.1
       REDIS_PORT: 6379
@@ -186,6 +201,11 @@ jobs:
           file: ./apps/api/Dockerfile
           push: false
           load: true
+          # Build provenance baked into the image and reported by GET /api/v1/version. The commit is
+          # only knowable here, at build time; an image tag can be re-pointed, a commit cannot.
+          build-args: |
+            APP_BUILD_SHA=${{ github.sha }}
+            APP_RELEASE=${{ github.ref_type == 'tag' && github.ref_name || format('sha-{0}', github.sha) }}
           tags: |
             ${{ env.IMAGE }}:sha-${{ github.sha }}
             ${{ env.IMAGE }}:latest

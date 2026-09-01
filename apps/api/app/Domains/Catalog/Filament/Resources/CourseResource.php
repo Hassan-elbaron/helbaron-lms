@@ -85,6 +85,14 @@ class CourseResource extends Resource
                 ->default(Visibility::Public->value),
             Select::make('level_id')->relationship('level', 'name')->searchable(),
             Select::make('language_id')->relationship('language', 'name')->searchable(),
+            // Freeness is a STATED INTENT, not something inferred from whether a product happens to
+            // exist. The helper text spells out the one interaction that would otherwise generate
+            // support tickets: an active product wins over this tick, on purpose, so that ticking it
+            // by mistake on a course somebody is selling cannot give the course away.
+            Toggle::make('is_free')
+                ->label('Free course')
+                ->helperText('Lets learners enroll at no charge. An ACTIVE product always wins: while one sells this course, buyers are sent to checkout and this toggle has no effect. A course that is neither free nor sold shows as "Not available yet".')
+                ->default(false),
             Toggle::make('is_featured'),
             Section::make('Taxonomy')->columns(2)->schema([
                 Select::make('categories')

@@ -1,13 +1,13 @@
 import { siteConfig } from "@/config/site";
 import { isLocale, localeCookieName } from "@/lib/i18n/config";
 import type { ApiError, ApiSuccess, AuthUser } from "@/types/api";
+import { MARKER_COOKIE } from "@/lib/auth/session-cookies";
 
 /**
  * API access goes through the same-origin BFF proxy (/api/backend/*), which attaches the
  * Sanctum token from an httpOnly cookie server-side. Browser JS never sees the token
  * (mitigates XSS token exfiltration). Login/logout use /api/session.
  */
-const MARKER_COOKIE = "helbaron_authed";
 const DEFAULT_TIMEOUT_MS = 20_000;
 
 /** True when a session marker cookie is present (the real credential is httpOnly). */
@@ -119,6 +119,8 @@ export async function sessionLogin(payload: {
   password: string;
   mfa_code?: string;
   device_name?: string;
+  /** "Remember me". Absent or false means a session-only cookie and a short-lived token. */
+  remember?: boolean;
 }): Promise<{ user: AuthUser }> {
   const res = await fetch("/api/session", {
     method: "POST",

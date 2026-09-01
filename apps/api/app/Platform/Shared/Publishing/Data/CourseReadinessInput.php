@@ -32,5 +32,12 @@ final readonly class CourseReadinessInput
         public ?string $thumbnailPath,
         public bool $hasInstructor,
         public ?string $visibility = null,
+        /**
+         * Whether the author declared the course free. Null when the caller did not supply it, in
+         * which case the acquisition check is skipped rather than guessed at.
+         */
+        public ?bool $isFree = null,
+        /** Whether an ACTIVE product currently sells the course. Null means "not supplied". */
+        public ?bool $isSoldByActiveProduct = null,
     ) {}
 }

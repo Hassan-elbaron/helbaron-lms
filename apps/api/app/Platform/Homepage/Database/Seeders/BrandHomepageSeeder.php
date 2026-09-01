@@ -35,7 +35,7 @@ class BrandHomepageSeeder extends Seeder
         'proof_band',
         'trusted_by',
         'product_modes',
-        'why_helbaron',
+        'why_us',
         'learning_experience',
         'learning_journey',
         'featured_courses',

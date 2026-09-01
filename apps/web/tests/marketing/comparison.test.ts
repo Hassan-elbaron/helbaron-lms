@@ -23,7 +23,7 @@ describe("competitor comparison data", () => {
   it("carries honest guidance and a review date for every competitor", () => {
     for (const c of Object.values(comparisons)) {
       expect(c.bestFor.en.length).toBeGreaterThan(0);
-      expect(c.helbaronBestFor.en.length).toBeGreaterThan(0);
+      expect(c.platformBestFor.en.length).toBeGreaterThan(0);
       expect(c.bestFor.ar.length).toBeGreaterThan(0);
       expect(/^\d{4}-\d{2}-\d{2}$/.test(c.lastReviewed), `bad date: ${c.lastReviewed}`).toBe(true);
       expect(c.rows.length).toBeGreaterThan(2);
@@ -33,7 +33,7 @@ describe("competitor comparison data", () => {
   it("requires a note whenever a competitor cell is `varies`", () => {
     for (const c of Object.values(comparisons)) {
       for (const row of c.rows) {
-        for (const cell of [row.helbaron, row.competitor]) {
+        for (const cell of [row.platform, row.competitor]) {
           if (cell.support === "varies") {
             expect(cell.note, `varies without note in ${c.slug}/${row.id}`).toBeDefined();
             expect(cell.note?.en.length ?? 0).toBeGreaterThan(0);

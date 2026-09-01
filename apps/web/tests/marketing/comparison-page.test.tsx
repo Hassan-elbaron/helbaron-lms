@@ -20,15 +20,18 @@ describe("comparison pages", () => {
   });
 
   it("detail renders the table, honest best-for guidance, review date, and real CTA routes", () => {
-    renderWithI18n(<ComparisonDetail slug="moodle" />);
+    const { container } = renderWithI18n(<ComparisonDetail slug="moodle" />);
     // Dimension rows present.
     expect(screen.getByText(/Arabic-first & full RTL/i)).toBeInTheDocument();
     expect(screen.getByText(/Verifiable certificates/i)).toBeInTheDocument();
-    // Both product columns.
-    expect(screen.getAllByText("HElbaron").length).toBeGreaterThan(0);
+    // Both product columns. The brand is asserted against the page text rather than as a standalone
+    // node, because it renders inside a larger heading ("<brand> vs Moodle"). With no
+    // BrandingProvider the GENERIC brand renders — and the vendor name must be gone entirely.
+    expect(container.textContent ?? "").toContain("Academy");
+    expect(container.textContent ?? "").not.toMatch(/HElbaron/i);
     expect(screen.getAllByText("Moodle").length).toBeGreaterThan(0);
     // Honest guidance for both sides.
-    expect(screen.getByText(/Choose HElbaron when/i)).toBeInTheDocument();
+    expect(screen.getByText(/Choose Academy when/i)).toBeInTheDocument();
     expect(screen.getByText(/Choose the other when/i)).toBeInTheDocument();
     // Review date rendered as a <time>.
     const time = document.querySelector("time[datetime='2026-08-01']");

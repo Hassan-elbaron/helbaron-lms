@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { SESSION_COOKIE } from "@/lib/auth/session-cookies";
 
 /**
  * Server-side route protection: authenticated areas redirect to /login (preserving the
@@ -6,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
  * the client-side guards and the API's own authorization: the middleware only checks cookie
  * presence; token validity is enforced by the API on every proxied request.
  */
-const SESSION_COOKIE = "helbaron_session";
+
 
 // Real URL prefixes only — NOT route-group folder names like "(account)". "/account" was a phantom
 // entry (no such URL), leaving the actual account routes (/profile, /notifications) with no edge

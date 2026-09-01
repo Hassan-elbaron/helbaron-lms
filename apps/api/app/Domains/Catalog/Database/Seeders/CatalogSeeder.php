@@ -73,13 +73,19 @@ class CatalogSeeder extends Seeder
         collect(['strategy', 'leadership', 'growth', 'mena', 'finance', 'ai'])
             ->each(fn ($t) => CourseTag::firstOrCreate(['slug' => Slug::make($t)], ['name' => ucfirst($t)]));
 
-        // Trainers (the first one is also the demo login: trainer@helbaron.local / password).
+        // DEMO TRAINERS — obviously fictional, on purpose.
+        //
+        // These were five invented people with plausible names, real-sounding biographies and
+        // vendor-domain addresses, all sharing the password "password". On a customer instance they
+        // read as genuine faculty, and a visitor cannot tell them from real trainers. They are now
+        // unmistakably placeholders, and `install:academy` does not run this seeder at all — only
+        // `db:seed` (development) and the demo environment reach it.
         $trainers = collect([
-            ['trainer@helbaron.local', 'Yara Adel', 'PMP-certified program lead, 12 years across MENA delivery.'],
-            ['omar.farouk@helbaron.local', 'Omar Farouk', 'Leadership coach and former regional operations director.'],
-            ['nour.hassan@helbaron.local', 'Nour Hassan', 'AI product strategist helping teams ship with data.'],
-            ['laila.mansour@helbaron.local', 'Laila Mansour', 'Growth marketer for MENA consumer brands.'],
-            ['karim.saleh@helbaron.local', 'Karim Saleh', 'CFA charterholder, finance and analysis educator.'],
+            ['trainer@academy.local', 'Demo Trainer One', 'Sample instructor profile — replace with a real trainer.'],
+            ['trainer2@academy.local', 'Demo Trainer Two', 'Sample instructor profile — replace with a real trainer.'],
+            ['trainer3@academy.local', 'Demo Trainer Three', 'Sample instructor profile — replace with a real trainer.'],
+            ['trainer4@academy.local', 'Demo Trainer Four', 'Sample instructor profile — replace with a real trainer.'],
+            ['trainer5@academy.local', 'Demo Trainer Five', 'Sample instructor profile — replace with a real trainer.'],
         ])->map(function ($t) {
             [$email, $name, $headline] = $t;
             $user = User::firstOrCreate(

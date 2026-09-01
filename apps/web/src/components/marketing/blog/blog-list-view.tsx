@@ -1,5 +1,6 @@
 "use client";
 
+import { useBranding } from "@/lib/branding/context";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { pickLocale, type Localized } from "@/config/theme";
@@ -21,13 +22,14 @@ export function BlogListView({
   categories: BlogCategory[];
   activeCategory?: string;
 }) {
+  const brandName = useBranding().identity.brand_name.en;
   const { locale } = useI18n();
 
   const heading = locale === "ar" ? "المدوّنة" : "Blog";
   const subtitle =
     locale === "ar"
-      ? "رؤى وأدلة وأخبار من أكاديمية HElbaron — بالعربية والإنجليزية."
-      : "Insights, guides, and news from the HElbaron academy — in Arabic and English.";
+      ? `رؤى وأدلة وأخبار من أكاديمية ${brandName} — بالعربية والإنجليزية.`
+      : `Insights, guides, and news from the ${brandName} academy — in Arabic and English.`;
   const allLabel = locale === "ar" ? "الكل" : "All";
   const emptyLabel =
     locale === "ar" ? "لا توجد مقالات منشورة بعد." : "No published articles yet.";
@@ -40,7 +42,7 @@ export function BlogListView({
   return (
     <Reveal className="py-4">
       <header className="mx-auto max-w-3xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-copper">HElbaron</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-copper">{brandName}</p>
         <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
           {heading}
         </h1>

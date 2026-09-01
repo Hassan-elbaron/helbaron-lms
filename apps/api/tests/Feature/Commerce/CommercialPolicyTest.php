@@ -177,8 +177,24 @@ it('does not treat a course as purchasable when only a draft product grants it',
 
     $summary = app(PurchaseSummaryPort::class)->forCourse((int) $course->id);
 
+    // `free` joined the payload, so the exact-shape assertion had to be updated. It is asserted
+    // here rather than dropped because THIS is the case it exists for: a draft product means the
+    // course is not buyable AND not free — the third state. Reading `purchasable: false` as "free"
+    // is what advertised paid courses at no charge and granted them as lifetime enrolments.
     expect($summary->purchasable)->toBeFalse()
-        ->and($summary->toArray())->toBe(['purchasable' => false]);
+        ->and($summary->free)->toBeFalse()
+        ->and($summary->toArray())->toBe(['purchasable' => false, 'free' => false]);
+});
+
+it('reports a course no product sells as free rather than merely unpurchasable', function (): void {
+    $course = Course::factory()->free()->create();
+
+    $summary = app(PurchaseSummaryPort::class)->forCourse((int) $course->id);
+
+    // The counterpart to the draft case above: identical `purchasable`, opposite `free`.
+    expect($summary->purchasable)->toBeFalse()
+        ->and($summary->free)->toBeTrue()
+        ->and($summary->toArray())->toBe(['purchasable' => false, 'free' => true]);
 });
 
 it('answers a summary for every requested course in one batched call', function (): void {

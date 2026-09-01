@@ -13,7 +13,7 @@ const section: HomepageSection = {
   type: "video",
   position: 1,
   content: {
-    heading: { en: "See HElbaron in action", ar: "شاهد الباذرون على أرض الواقع" },
+    heading: { en: "See {brand} in action", ar: "شاهد الباذرون على أرض الواقع" },
     url: "https://www.youtube.com/embed/aqz-KE-bpKQ",
     caption: {
       en: "A two-minute tour of the learner and instructor experience.",

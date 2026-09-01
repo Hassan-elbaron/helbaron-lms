@@ -10,7 +10,7 @@ import { RichTextBlock } from "@/components/homepage/blocks/rich-text-block";
  * Renders nothing when both title and body are empty.
  */
 const bodyEn = `
-  <p>HElbaron Academy exists to make <strong>world-class professional education</strong> accessible across the Arab world — in both Arabic and English.</p>
+  <p>The academy exists to make <strong>world-class professional education</strong> accessible across the Arab world — in both Arabic and English.</p>
   <h3>What we believe</h3>
   <ul>
     <li>Learning should map to real, in-demand skills.</li>
@@ -38,7 +38,7 @@ const section: HomepageSection = {
   type: "rich_text",
   position: 1,
   content: {
-    title: { en: "About HElbaron", ar: "عن الباذرون" },
+    title: { en: "About {brand}", ar: "عن الباذرون" },
     body: { en: bodyEn, ar: bodyAr },
   },
 };

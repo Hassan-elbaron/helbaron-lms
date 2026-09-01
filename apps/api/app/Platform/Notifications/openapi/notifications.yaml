@@ -47,7 +47,17 @@ paths:
               type: object
               properties:
                 locale: { type: string, enum: [en, ar] }
-                digest_frequency: { type: string, enum: [none, daily, weekly] }
+                # WITHDRAWN. Rejected with a validation error unless notifications.digest.enabled
+                # is true, and omitted from the response. Nothing delivers a digest today: there is
+                # no scheduled command and DigestService has no callers. Documented as deprecated
+                # rather than deleted so an existing integration reads WHY it stopped being accepted.
+                digest_frequency:
+                  type: string
+                  enum: [none, daily, weekly]
+                  deprecated: true
+                  description: >-
+                    Not available. Digest delivery is not implemented, so this field is rejected.
+                    See config/notifications.php for what must exist before it is re-enabled.
                 timezone: { type: string }
                 preferences:
                   type: array

@@ -1,5 +1,6 @@
 "use client";
 
+import { useBranding } from "@/lib/branding/context";
 import DOMPurify from "isomorphic-dompurify";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { pickLocale, type Localized } from "@/config/theme";
@@ -25,6 +26,7 @@ function sanitizeBodyHtml(dirty: string): string {
 }
 
 export function CmsPage({ page }: { page: StaticPage }) {
+  const brandName = useBranding().identity.brand_name.en;
   const { locale } = useI18n();
 
   const title = pickLocale(page.title as Localized, locale);
@@ -34,7 +36,7 @@ export function CmsPage({ page }: { page: StaticPage }) {
 
   return (
     <Reveal className="mx-auto max-w-3xl py-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-copper">HElbaron</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-copper">{brandName}</p>
       <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
       {excerpt ? <p className="mt-4 text-muted-foreground sm:text-lg">{excerpt}</p> : null}
 

@@ -5,6 +5,7 @@ namespace App\Platform\Homepage\Models;
 use App\Platform\Homepage\Database\Factories\HomepageSectionFactory;
 use App\Platform\Homepage\Enums\BlockType;
 use App\Platform\Homepage\Enums\HomepageStatus;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 use App\Platform\Shared\Html\HtmlSanitizer;
 use App\Platform\Shared\Traits\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
@@ -279,6 +280,10 @@ class HomepageSection extends Model
      */
     public static function defaults(): array
     {
+        // Shipped default content: it must describe THIS academy, not the vendor.
+        $brand = trim(app(BrandProfilePort::class)->profile()->name);
+        $brand = $brand !== '' ? $brand : 'the academy';
+
         return [
             'hero' => [
                 'type' => BlockType::Hero,
@@ -297,7 +302,7 @@ class HomepageSection extends Model
                         'href' => '/courses',
                     ],
                     'cta_secondary' => [
-                        'label' => ['en' => 'HElbaron Advisory', 'ar' => 'استشارات HElbaron'],
+                        'label' => ['en' => $brand.' Advisory', 'ar' => 'استشارات '.$brand],
                         'href' => '/advisory',
                     ],
                     'image' => null,
@@ -329,7 +334,7 @@ class HomepageSection extends Model
                             'icon' => 'enterprise',
                         ],
                         [
-                            'title' => ['en' => 'HElbaron Advisory', 'ar' => 'استشارات HElbaron'],
+                            'title' => ['en' => $brand.' Advisory', 'ar' => 'استشارات '.$brand],
                             'description' => ['en' => 'Strategy, operations, and BD consulting that ships.', 'ar' => 'استشارات في الاستراتيجية والعمليات وتطوير الأعمال تُنفَّذ فعلًا.'],
                             'icon' => 'advisory',
                         ],
@@ -357,7 +362,7 @@ class HomepageSection extends Model
                 'content' => [
                     'items' => [
                         [
-                            'quote' => ['en' => 'HElbaron rebuilt how our managers lead. The cohort format actually stuck.', 'ar' => 'أعادت HElbaron تشكيل طريقة قيادة مديرينا. وأسلوب الأفواج ترسّخ فعلًا.'],
+                            'quote' => ['en' => $brand.' rebuilt how our managers lead. The cohort format actually stuck.', 'ar' => 'أعادت '.$brand.' تشكيل طريقة قيادة مديرينا. وأسلوب الأفواج ترسّخ فعلًا.'],
                             'author' => 'Layla Hassan',
                             'role' => ['en' => 'People Director, Nile Group', 'ar' => 'مديرة الموارد البشرية، مجموعة النيل'],
                             'avatar' => null,
@@ -424,7 +429,7 @@ class HomepageSection extends Model
                             'title' => ['en' => 'For Business', 'ar' => 'للأعمال'],
                             'links' => [
                                 ['label' => ['en' => 'B2B / B2G Training', 'ar' => 'تدريب المؤسسات'], 'href' => '/enterprise'],
-                                ['label' => ['en' => 'HElbaron Advisory', 'ar' => 'استشارات HElbaron'], 'href' => '/advisory'],
+                                ['label' => ['en' => $brand.' Advisory', 'ar' => 'استشارات '.$brand], 'href' => '/advisory'],
                                 ['label' => ['en' => 'Case studies', 'ar' => 'دراسات حالة'], 'href' => '/enterprise'],
                             ],
                         ],
@@ -444,8 +449,8 @@ class HomepageSection extends Model
                 'position' => 70,
                 'content' => [
                     'meta_title' => [
-                        'en' => 'HElbaron — Master the core. Lead the future.',
-                        'ar' => 'HElbaron — أتقن الأساس. قُد المستقبل.',
+                        'en' => $brand.' — Master the core. Lead the future.',
+                        'ar' => $brand.' — أتقن الأساس. قُد المستقبل.',
                     ],
                     'meta_description' => [
                         'en' => 'The MENA business academy for individuals, teams, and enterprises across twelve verticals — courses, cohorts, workshops, enterprise training, and advisory.',

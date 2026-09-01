@@ -47,7 +47,7 @@ class LearningSeeder extends Seeder
         }
 
         $student = User::firstOrCreate(
-            ['email' => 'student@helbaron.local'],
+            ['email' => 'student@academy.local'],
             ['name' => 'Sample Student', 'password' => Hash::make('password'), 'is_active' => true, 'email_verified_at' => now()],
         );
         $student->assignRole('student'); // Identity 'student' role slug (was Role::Student->value)

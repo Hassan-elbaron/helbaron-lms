@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useBranding } from "@/lib/branding/context";
 import { Play, Bookmark } from "lucide-react";
 import { useI18n } from "@/lib/i18n/i18n-context";
 import { pickLocale } from "@/config/theme";
@@ -17,7 +18,7 @@ import type { CoverCourse, CoverWave } from "./types";
 const pad = (n: number, len: number): string => String(n).padStart(len, "0");
 
 /**
- * HElbaron course cover — the course thumbnail (or a branded generative field when none is set)
+ * Course cover — the course thumbnail (or a branded generative field when none is set)
  * with a carved cream wave, the instructor avatars riding the wave (each a link to that
  * instructor), and the course title + faculty names on the cream. The card body is one course
  * link; avatars sit above it as separate links. Bilingual + RTL-aware; motion off under
@@ -43,6 +44,11 @@ export function CourseCover({
   const { locale } = useI18n();
   const { onPointerMove, onPointerLeave } = usePointerDepth();
 
+  // These marks are rendered into EVERY generated cover image, so a vendor string here is
+  // baked into the artwork itself rather than merely displayed beside it.
+  const coverBrand = useBranding().identity.brand_name.en.toUpperCase();
+  const coverSigil = coverBrand.replace(/[^A-Z]/g, "").slice(0, 3) || "ACA";
+
   const title = pickLocale(course.title, locale);
   const level = course.level ? pickLocale(course.level, locale) : null;
   const subtitle = course.subtitle ? pickLocale(course.subtitle, locale) : null;
@@ -53,7 +59,7 @@ export function CourseCover({
   const names = course.instructors.map((i) => i.name).join(" · ");
 
   // Editorial masthead values — all pure + deterministic per course.
-  const pressCode = derivePressCode(course.title.en, course.id);
+  const pressCode = derivePressCode(course.title.en, course.id, coverSigil);
   const tier = deriveTier(course.level?.en ?? level);
   const idx = index ?? ((hashString(course.id) % 20) + 1);
   const roman = toRoman(idx);
@@ -97,7 +103,7 @@ export function CourseCover({
           {/* navy scrim over the top of the photo so the light press text stays legible */}
           <span className="hb-cover-scrim" aria-hidden="true" />
 
-          {/* editorial masthead — HElbaron Press / Institute of Practice (hidden in minimal) */}
+          {/* editorial masthead — brand Press / Institute of Practice (hidden in minimal) */}
           {!minimal && (
           <div className="hb-cover-mast">
             <div className="hb-cover-mast-left">
@@ -105,13 +111,13 @@ export function CourseCover({
               <span className="hb-cover-mast-tier">{tier}</span>
               <span className="hb-cover-mast-readout">
                 <span>{`x:${readoutX} y:${readoutY} h:—`}</span>
-                <span>{`HEL·STR·${readoutRef}`}</span>
+                <span>{`${coverSigil}·STR·${readoutRef}`}</span>
                 <span>MISSION · MMXXVI</span>
               </span>
             </div>
             <div className="hb-cover-mast-right">
               <Bookmark className="hb-cover-mast-mark" aria-hidden="true" />
-              <span className="hb-cover-mast-press">HELBARON · PRESS</span>
+              <span className="hb-cover-mast-press">{`${coverBrand} · PRESS`}</span>
               <span className="hb-cover-mast-edition">FIRST EDITION · N° 1/1200</span>
               <span className="hb-cover-mast-vol">IN THREE VOLUMES</span>
             </div>
@@ -134,7 +140,7 @@ export function CourseCover({
           {course.price ? <p className="hb-cover-price">{course.price}</p> : null}
           {!minimal && (
           <p className="hb-cover-footer">
-            <span className="hb-cover-footer-l">HELBARON · INSTITUTE OF PRACTICE</span>
+            <span className="hb-cover-footer-l">{`${coverBrand} · INSTITUTE OF PRACTICE`}</span>
             <span className="hb-cover-footer-r">{school ?? `MMXXVI · fol. ${pad(folio, 2)}`}</span>
           </p>
           )}

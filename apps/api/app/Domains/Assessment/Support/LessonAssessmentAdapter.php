@@ -46,6 +46,26 @@ class LessonAssessmentAdapter implements LessonAssessmentPort
         return $assessment === null ? null : $this->toRef($assessment);
     }
 
+    /**
+     * @param  list<int>  $assessmentIds
+     * @return array<int, AssessmentRef>
+     */
+    public function describeMany(array $assessmentIds): array
+    {
+        $ids = array_values(array_unique(array_filter($assessmentIds)));
+
+        if ($ids === []) {
+            return [];
+        }
+
+        return Assessment::query()
+            ->withCount('questions')
+            ->whereIn('id', $ids)
+            ->get()
+            ->mapWithKeys(fn (Assessment $a): array => [(int) $a->id => $this->toRef($a)])
+            ->all();
+    }
+
     private function toRef(Assessment $assessment): AssessmentRef
     {
         return new AssessmentRef(

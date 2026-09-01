@@ -137,7 +137,7 @@ export const dictionaries = {
       genericError: "Something went wrong. Please try again.",
       login: {
         title: "Sign in",
-        subtitle: "Welcome back to HElbaron.",
+        subtitle: "Welcome back to {brand}.",
         remember: "Remember me",
         forgot: "Forgot password?",
         submit: "Sign in",
@@ -146,7 +146,7 @@ export const dictionaries = {
       },
       register: {
         title: "Create your account",
-        subtitle: "Start learning on HElbaron.",
+        subtitle: "Start learning on {brand}.",
         terms: "I agree to the Terms of Service and Privacy Policy.",
         // Account type. A company account also registers the organization it buys for, and its
         // first user becomes that organization's manager.
@@ -182,6 +182,7 @@ export const dictionaries = {
         subtitle: "Enter the code we sent to your email.",
         submit: "Verify",
         resend: "Resend code",
+        resendIn: "Resend code in {seconds}s",
         resent: "A new code has been sent.",
         success: "Email verified. You're all set.",
         needLogin: "Please sign in first to verify your email.",
@@ -535,7 +536,7 @@ export const dictionaries = {
       },
       // --- Public "become an instructor" application (F5). Visible on /teach/apply (no auth). ---
       apply: {
-        eyebrow: "Teach on HElbaron",
+        eyebrow: "Teach on {brand}",
         title: "Share your expertise. Teach thousands of learners.",
         lead: "Join our instructors and turn what you know into engaging, Arabic-first courses. Tell us about yourself and what you'd like to teach — our team reviews every application and reaches out to qualified instructors by email.",
         benefitsTitle: "Why teach with us",
@@ -584,7 +585,7 @@ export const dictionaries = {
       nav: { home: "Home", courses: "Courses", categories: "Categories", trainers: "Trainers", signIn: "Sign in" },
       home: {
         heroTitle: "Learn without limits",
-        heroSubtitle: "Explore expert-led courses on HElbaron and grow your skills at your own pace.",
+        heroSubtitle: "Explore expert-led courses on {brand} and grow your skills at your own pace.",
         browse: "Browse courses",
         featured: "Featured courses",
         categoriesTitle: "Browse by category",
@@ -631,6 +632,8 @@ export const dictionaries = {
         enrollFree: "Enroll for free",
         signInToEnroll: "Sign in to enroll",
         freeHint: "No payment is required for this course.",
+        notAvailable: "Not available yet",
+        notAvailableHint: "This course is not on sale at the moment. Check back soon.",
         featured: "Featured",
         view: "View course",
         notFound: "Course not found.",
@@ -1003,7 +1006,7 @@ export const dictionaries = {
             expiresWithPurchase: "Employees lose access when this purchase ends.",
             outlivesPurchase: "Employee access continues after this purchase ends.",
             brandingCompany: "Certificates carry your company's branding.",
-            brandingPlatform: "Certificates carry HElbaron branding.",
+            brandingPlatform: "Certificates carry {brand} branding.",
           },
         },
       },
@@ -1479,7 +1482,7 @@ export const dictionaries = {
       eyebrow: "CERTIFICATE VERIFICATION",
       title: "Verify a",
       emphasis: "certificate.",
-      subtitle: "Confirm that a HElbaron certificate is authentic by entering its verification code.",
+      subtitle: "Confirm that a {brand} certificate is authentic by entering its verification code.",
       codeLabel: "Verification code",
       codePlaceholder: "Enter the code printed on the certificate",
       submit: "Verify",
@@ -1669,7 +1672,7 @@ export const dictionaries = {
       genericError: "حدث خطأ ما. برجاء المحاولة مرة أخرى.",
       login: {
         title: "تسجيل الدخول",
-        subtitle: "مرحبًا بعودتك إلى HElbaron.",
+        subtitle: "مرحبًا بعودتك إلى {brand}.",
         remember: "تذكّرني",
         forgot: "نسيت كلمة المرور؟",
         submit: "تسجيل الدخول",
@@ -1678,7 +1681,7 @@ export const dictionaries = {
       },
       register: {
         title: "أنشئ حسابك",
-        subtitle: "ابدأ التعلّم على HElbaron.",
+        subtitle: "ابدأ التعلّم على {brand}.",
         terms: "أوافق على شروط الخدمة وسياسة الخصوصية.",
         // نوع الحساب. حساب الشركة يسجّل أيضًا المؤسسة التي تشتري لها، وأول مستخدم يصبح مديرها.
         accountType: "نوع الحساب",
@@ -1713,6 +1716,7 @@ export const dictionaries = {
         subtitle: "أدخل الرمز الذي أرسلناه إلى بريدك.",
         submit: "تأكيد",
         resend: "إعادة إرسال الرمز",
+        resendIn: "إعادة الإرسال بعد {seconds} ثانية",
         resent: "تم إرسال رمز جديد.",
         success: "تم تأكيد البريد. كل شيء جاهز.",
         needLogin: "برجاء تسجيل الدخول أولًا لتأكيد بريدك.",
@@ -2066,7 +2070,7 @@ export const dictionaries = {
       },
       // --- طلب "كن مدرّبًا" العام (F5). يظهر على /teach/apply دون تسجيل دخول. ---
       apply: {
-        eyebrow: "درّس على منصّة HElbaron",
+        eyebrow: "درّس على منصّة {brand}",
         title: "شارِك خبرتك. علّم آلاف المتعلّمين.",
         lead: "انضمّ إلى مدرّبينا وحوّل معرفتك إلى دورات عربية أولًا وجذّابة. أخبِرنا عن نفسك وعمّا ترغب في تدريسه — يراجع فريقنا كل طلب ويتواصل مع المدرّبين المؤهّلين عبر البريد الإلكتروني.",
         benefitsTitle: "لماذا تُدرّس معنا",
@@ -2115,7 +2119,7 @@ export const dictionaries = {
       nav: { home: "الرئيسية", courses: "الدورات", categories: "التصنيفات", trainers: "المدرّبون", signIn: "تسجيل الدخول" },
       home: {
         heroTitle: "تعلّم بلا حدود",
-        heroSubtitle: "استكشف دورات يقودها خبراء على HElbaron وطوّر مهاراتك بالوتيرة التي تناسبك.",
+        heroSubtitle: "استكشف دورات يقودها خبراء على {brand} وطوّر مهاراتك بالوتيرة التي تناسبك.",
         browse: "تصفّح الدورات",
         featured: "دورات مميّزة",
         categoriesTitle: "تصفّح حسب التصنيف",
@@ -2162,6 +2166,8 @@ export const dictionaries = {
         enrollFree: "سجّل مجانًا",
         signInToEnroll: "سجّل الدخول للالتحاق",
         freeHint: "لا يتطلب هذا الكورس أي دفع.",
+        notAvailable: "غير متاح حاليًا",
+        notAvailableHint: "هذا الكورس غير معروض للبيع في الوقت الحالي. تابعنا قريبًا.",
         featured: "مميّزة",
         view: "عرض الدورة",
         notFound: "الدورة غير موجودة.",
@@ -2534,7 +2540,7 @@ export const dictionaries = {
             expiresWithPurchase: "يفقد الموظفون الوصول عند انتهاء هذا الاشتراء.",
             outlivesPurchase: "يستمر وصول الموظفين بعد انتهاء هذا الاشتراء.",
             brandingCompany: "تحمل الشهادات هوية شركتك.",
-            brandingPlatform: "تحمل الشهادات هوية HElbaron.",
+            brandingPlatform: "تحمل الشهادات هوية {brand}.",
           },
         },
       },
@@ -2979,7 +2985,7 @@ export const dictionaries = {
       eyebrow: "التحقق من الشهادات",
       title: "تحقّق من",
       emphasis: "شهادة.",
-      subtitle: "تأكّد من أصالة شهادة HElbaron بإدخال رمز التحقق الخاص بها.",
+      subtitle: "تأكّد من أصالة شهادة {brand} بإدخال رمز التحقق الخاص بها.",
       codeLabel: "رمز التحقق",
       codePlaceholder: "أدخل الرمز المطبوع على الشهادة",
       submit: "تحقّق",

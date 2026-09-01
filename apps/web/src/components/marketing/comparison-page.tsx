@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Check, Minus, CircleDot, ArrowRight, Clock } from "lucide-react";
 import { useI18n } from "@/lib/i18n/i18n-context";
+import { useBranding } from "@/lib/branding/context";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/landing/reveal";
 import { comparisons, getCompetitor, type CellSupport, type ComparisonCell } from "@/config/comparison";
@@ -10,13 +11,13 @@ import { localized } from "@/config/messaging";
 import { track } from "@/lib/analytics/track";
 
 const T = {
-  overviewTitle: { en: "How HElbaron compares", ar: "كيف تُقارَن HElbaron" },
+  overviewTitle: { en: "How {brand} compares", ar: "كيف تُقارَن {brand}" },
   overviewLead: {
     en: "Honest, category-level comparisons — operating models, not unverified prices. Pick what fits your program.",
     ar: "مقارنات صادقة على مستوى الفئة — نماذج التشغيل، لا أسعار غير مُتحقَّق منها. اختر ما يناسب برنامجك.",
   },
-  helbaron: { en: "HElbaron", ar: "HElbaron" },
-  bestForHelbaron: { en: "Choose HElbaron when", ar: "اختر HElbaron عندما" },
+  platform: { en: "{brand}", ar: "{brand}" },
+  bestForPlatform: { en: "Choose {brand} when", ar: "اختر {brand} عندما" },
   bestForCompetitor: { en: "Choose the other when", ar: "اختر الآخر عندما" },
   operatingModel: { en: "Operating model", ar: "نموذج التشغيل" },
   lastReviewed: { en: "Last reviewed", ar: "آخر مراجعة" },
@@ -55,6 +56,7 @@ function SupportBadge({ cell }: { cell: ComparisonCell }) {
 }
 
 export function ComparisonIndex() {
+  const brandName = useBranding().identity.brand_name.en;
   const { locale } = useI18n();
   return (
     <div className="space-y-12 py-2">
@@ -73,7 +75,7 @@ export function ComparisonIndex() {
               className="group flex h-full flex-col rounded-2xl border border-border/70 bg-card p-6 transition-colors hover:border-primary/40"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-copper">
-                {T.helbaron[locale]} <span className="text-muted-foreground">{T.vs[locale]}</span> {c.name}
+                {localized(T.platform, locale, brandName)} <span className="text-muted-foreground">{T.vs[locale]}</span> {c.name}
               </p>
               <h2 className="mt-2 font-serif text-xl font-semibold">{localized(c.category, locale)}</h2>
               <p className="mt-2 flex-1 text-sm text-muted-foreground">{localized(c.operatingModel, locale)}</p>
@@ -99,6 +101,7 @@ export function ComparisonIndex() {
 }
 
 export function ComparisonDetail({ slug }: { slug: string }) {
+  const brandName = useBranding().identity.brand_name.en;
   const { locale } = useI18n();
   const c = getCompetitor(slug);
   if (!c) return null;
@@ -108,7 +111,7 @@ export function ComparisonDetail({ slug }: { slug: string }) {
       <Reveal>
         <header className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-copper">
-            {T.helbaron[locale]} {T.vs[locale]} {c.name}
+            {localized(T.platform, locale, brandName)} {T.vs[locale]} {c.name}
           </p>
           <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
             {localized(c.category, locale)}
@@ -125,12 +128,12 @@ export function ComparisonDetail({ slug }: { slug: string }) {
         <div className="overflow-hidden rounded-2xl border border-border/70">
           <table className="w-full border-collapse text-start">
             <caption className="sr-only">
-              {T.helbaron[locale]} {T.vs[locale]} {c.name}
+              {localized(T.platform, locale, brandName)} {T.vs[locale]} {c.name}
             </caption>
             <thead>
               <tr className="bg-surface/60 text-start text-sm">
                 <th scope="col" className="p-4 text-start font-semibold">{" "}</th>
-                <th scope="col" className="p-4 text-start font-semibold text-primary">{T.helbaron[locale]}</th>
+                <th scope="col" className="p-4 text-start font-semibold text-primary">{localized(T.platform, locale, brandName)}</th>
                 <th scope="col" className="p-4 text-start font-semibold">{c.name}</th>
               </tr>
             </thead>
@@ -140,7 +143,7 @@ export function ComparisonDetail({ slug }: { slug: string }) {
                   <th scope="row" className="p-4 text-start align-top text-sm font-medium">
                     {localized(row.dimension, locale)}
                   </th>
-                  <td className="p-4 align-top"><SupportBadge cell={row.helbaron} /></td>
+                  <td className="p-4 align-top"><SupportBadge cell={row.platform} /></td>
                   <td className="p-4 align-top"><SupportBadge cell={row.competitor} /></td>
                 </tr>
               ))}
@@ -153,8 +156,8 @@ export function ComparisonDetail({ slug }: { slug: string }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <Reveal>
           <div className="h-full rounded-2xl border border-primary/25 bg-primary/[0.04] p-6">
-            <h2 className="font-serif text-lg font-semibold text-primary">{T.bestForHelbaron[locale]}</h2>
-            <p className="mt-2 text-sm text-muted-foreground">{localized(c.helbaronBestFor, locale)}</p>
+            <h2 className="font-serif text-lg font-semibold text-primary">{localized(T.bestForPlatform, locale, brandName)}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{localized(c.platformBestFor, locale, brandName)}</p>
           </div>
         </Reveal>
         <Reveal>

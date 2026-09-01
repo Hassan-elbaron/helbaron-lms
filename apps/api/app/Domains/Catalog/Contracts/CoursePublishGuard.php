@@ -25,6 +25,17 @@ interface CoursePublishGuard
     public function reason(): ?string;
 
     /**
+     * The stable codes of every blocker behind the last canPublish() verdict.
+     *
+     * `reason()` is the first blocker's prose title, written for an author reading a panel. These
+     * are for machines: the scheduled-publish command logs them so an operator can see WHY a course
+     * has been stuck for a week without reading a message that may since have been reworded.
+     *
+     * @return list<string>
+     */
+    public function blockerCodes(): array;
+
+    /**
      * The full, explainable evaluation behind canPublish().
      *
      * Takes the flattened input rather than a Course because the implementing domain may not be

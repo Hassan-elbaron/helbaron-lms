@@ -8,8 +8,14 @@
 #   DB_USERNAME             (default: helbaron)
 #   DB_DATABASE             (default: helbaron)
 #   BACKUP_RETENTION_DAYS   (default: 14)
-#   BACKUP_DIR              (default: backups)
+#   BACKUP_DIR              (default: /var/backups/academy-lms — see below)
 #   BACKUP_S3_BUCKET        (optional: upload target; requires aws CLI)
+#
+# BACKUP_DIR defaults OUTSIDE the deployment checkout on purpose. It used to default to ./backups,
+# which is inside the directory Dokploy replaces on every deploy: the dumps were written to the one
+# place guaranteed to be destroyed by the next release. The scheduled backups in
+# docker-compose.prod.yml write to $BACKUP_TARGET (a named Docker volume by default) for the same
+# reason; this script is the ad-hoc path and needs the same guarantee.
 #
 # Note: the docker-compose.prod.yml `db-backup` service performs the same dump on a
 # schedule; this script is for ad-hoc/manual backups and host cron.
@@ -30,9 +36,16 @@ fi
 DB_USERNAME="${DB_USERNAME:-helbaron}"
 DB_DATABASE="${DB_DATABASE:-helbaron}"
 BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-14}"
-BACKUP_DIR="${BACKUP_DIR:-backups}"
+BACKUP_DIR="${BACKUP_DIR:-/var/backups/academy-lms}"
 
-mkdir -p "$BACKUP_DIR"
+if ! mkdir -p "$BACKUP_DIR" 2>/dev/null || [ ! -w "$BACKUP_DIR" ]; then
+  echo "!! Cannot write to BACKUP_DIR=$BACKUP_DIR" >&2
+  echo "   Create it once with the right ownership, e.g." >&2
+  echo "     sudo install -d -o \"\$(id -un)\" -g \"\$(id -gn)\" -m 0750 \"$BACKUP_DIR\"" >&2
+  echo "   or set BACKUP_DIR to a writable path OUTSIDE this checkout." >&2
+  exit 1
+fi
+
 OUT="$BACKUP_DIR/db-$(date +%Y%m%d-%H%M%S).sql.gz"
 
 echo "==> pg_dump $DB_DATABASE (user: $DB_USERNAME) -> $OUT"
@@ -47,6 +60,9 @@ fi
 SIZE=$(wc -c < "$OUT")
 if [ "$SIZE" -lt 512 ]; then
   echo "!! Backup suspiciously small ($SIZE bytes) — treating as failure" >&2
+  # Remove it: a truncated dump left on disk looks like a backup to the next person who needs one,
+  # and to the retention sweep that counts files rather than reading them.
+  rm -f "$OUT"
   exit 1
 fi
 echo "==> Backup written: $OUT ($SIZE bytes)"

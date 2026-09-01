@@ -19,6 +19,11 @@ Route::prefix('v1/auth')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('verify-email', [AuthController::class, 'verifyEmail'])->middleware('throttle:identity-otp-verify');
+
+        // Reachable while UNVERIFIED — see RequireVerifiedEmail::isVerificationSurface(). Without
+        // this route an account whose 10-minute code expired or landed in spam had no self-service
+        // recovery at all and was locked out of the entire API permanently.
+        Route::post('resend-email-otp', [AuthController::class, 'resendEmailOtp'])->middleware('throttle:identity-otp-resend');
         Route::post('verify-phone', [AuthController::class, 'verifyPhone'])->middleware('throttle:identity-otp-verify');
 
         Route::post('mfa/enable', [MfaController::class, 'enable']);

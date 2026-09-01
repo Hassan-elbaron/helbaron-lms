@@ -1,5 +1,6 @@
 <?php
 
+use App\Platform\Branding\Models\BrandSetting;
 use App\Platform\Branding\Models\CustomDomain;
 use App\Platform\Identity\Database\Seeders\RolePermissionSeeder;
 use App\Platform\Identity\Models\User;
@@ -8,6 +9,17 @@ use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\Models\Role as SpatieRole;
 
 uses(RefreshDatabase::class);
+
+/*
+ * Brand assertions here compare against BrandSetting::defaults() rather than a literal brand string.
+ *
+ * They previously pinned the vendor's name ('HElbaron' / 'إلبارون'). That is a hardcoded brand
+ * literal in a product whose whole selling model is one white-labelled instance per customer, so the
+ * tests broke the moment the defaults became env-driven — and any assertion that passed did so only
+ * because this machine's APP_NAME happened to match, which is not true on a customer instance.
+ * What is actually under test is the MERGE: a stored value wins, an unset sibling inherits the
+ * default, and no default is ever empty.
+ */
 
 beforeEach(function () {
     $this->seed(RolePermissionSeeder::class);
@@ -32,8 +44,11 @@ function brandingSuperAdmin(): User
 it('returns the GLOBAL payload unchanged when the host is unknown (no override)', function () {
     $res = $this->getJson('/api/v1/branding')->assertOk();
 
-    expect($res->json('data.identity.brand_name.en'))->toBe('HElbaron')
-        ->and($res->json('data.identity.brand_name.ar'))->toBe('إلبارون')
+    $defaults = BrandSetting::defaults();
+
+    expect($res->json('data.identity.brand_name.en'))->toBe($defaults['identity']['brand_name']['en'])
+        ->and($res->json('data.identity.brand_name.ar'))->toBe($defaults['identity']['brand_name']['ar'])
+        ->and(trim((string) $res->json('data.identity.brand_name.ar')))->not->toBe('')
         ->and($res->json('data.theme.colors.primary'))->toBe('oklch(0.36 0.045 185)')
         ->and($res->json('data.theme.colors.secondary'))->toBe('oklch(0.91 0.03 86)')
         ->and($res->json('data.certificate.qr_position'))->toBe('bottom-right');
@@ -59,7 +74,7 @@ it('resolves a verified custom domain to the org merged brand and inherits the r
     expect($res->json('data.identity.brand_name.en'))->toBe('Acme')
         ->and($res->json('data.theme.colors.primary'))->toBe('#ff0000')
         // ...untouched fields still inherit the global brand.
-        ->and($res->json('data.identity.brand_name.ar'))->toBe('إلبارون')
+        ->and($res->json('data.identity.brand_name.ar'))->toBe(BrandSetting::defaults()['identity']['brand_name']['ar'])
         ->and($res->json('data.theme.colors.secondary'))->toBe('oklch(0.91 0.03 86)');
 });
 
@@ -73,7 +88,8 @@ it('falls back to the GLOBAL brand for an UNVERIFIED custom domain', function ()
 
     $res = $this->getJson('http://unverified.acme.test/api/v1/branding')->assertOk();
 
-    expect($res->json('data.identity.brand_name.en'))->toBe('HElbaron');
+    expect($res->json('data.identity.brand_name.en'))
+        ->toBe(BrandSetting::defaults()['identity']['brand_name']['en']);
 });
 
 it('enforces GLOBAL host uniqueness across organizations (duplicate => 422)', function () {

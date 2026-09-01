@@ -12,8 +12,8 @@ const HEADING = {
   title1: { en: "Trusted by", ar: "موثوق من" },
   title2: { en: "teams across MENA.", ar: "فرق في المنطقة." },
   subtitle: {
-    en: "What professionals, founders, and enterprises say about learning with HElbaron.",
-    ar: "ما يقوله المحترفون والروّاد والمؤسسات عن التعلّم مع HElbaron.",
+    en: "What professionals, founders, and enterprises say about learning with {brand}.",
+    ar: "ما يقوله المحترفون والروّاد والمؤسسات عن التعلّم مع {brand}.",
   },
 };
 

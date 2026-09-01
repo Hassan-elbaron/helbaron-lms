@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -53,7 +54,8 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $thumbnail_path
  * @property array<string, mixed>|null $title_i18n
  * @property Visibility $visibility
- * @property \Illuminate\Support\Carbon|null $featured_at
+ * @property bool $is_free
+ * @property Carbon|null $featured_at
  */
 class Course extends Model
 {
@@ -77,7 +79,7 @@ class Course extends Model
     protected $fillable = [
         'title', 'title_i18n', 'slug', 'subtitle', 'subtitle_i18n', 'description', 'description_i18n',
         'learning_objectives_i18n', 'requirements_i18n', 'target_audience_i18n', 'duration_minutes',
-        'level_id', 'language_id', 'status', 'visibility', 'is_featured', 'featured_at', 'thumbnail_path', 'trailer_path',
+        'level_id', 'language_id', 'status', 'visibility', 'is_free', 'is_featured', 'featured_at', 'thumbnail_path', 'trailer_path',
         'position', 'published_at', 'scheduled_publish_at', 'last_published_at', 'seo',
     ];
 
@@ -106,6 +108,7 @@ class Course extends Model
         return [
             'status' => CourseStatus::class,
             'visibility' => Visibility::class,
+            'is_free' => 'boolean',
             'is_featured' => 'boolean',
             'featured_at' => 'datetime',
             'position' => 'integer',

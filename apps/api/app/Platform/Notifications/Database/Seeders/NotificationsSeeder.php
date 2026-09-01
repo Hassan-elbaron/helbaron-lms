@@ -25,7 +25,9 @@ class NotificationsSeeder extends Seeder
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $templates = [
-            ['welcome', 'Welcome, {{ name }}', 'Hello {{ name }}, welcome to HElbaron.', 'مرحبًا {{ name }}', 'أهلًا {{ name }}، مرحبًا بك في HElbaron.'],
+            // {{ brand }} is injected by TemplateRenderer from this instance's branding record, so
+            // the seeded copy is white-label rather than naming one academy.
+            ['welcome', 'Welcome, {{ name }}', 'Hello {{ name }}, welcome to {{ brand }}.', 'مرحبًا {{ name }}', 'أهلًا {{ name }}، مرحبًا بك في {{ brand }}.'],
             ['enrollment_confirmed', 'You are enrolled', 'You have been enrolled in a course.', 'تم تسجيلك', 'تم تسجيلك في دورة.'],
             ['course_completed', 'Course completed', 'Congratulations on completing your course.', 'أكملت الدورة', 'تهانينا على إكمال دورتك.'],
             ['course_announcement', '{{ title }}', '{{ body }}', '{{ title }}', '{{ body }}'],

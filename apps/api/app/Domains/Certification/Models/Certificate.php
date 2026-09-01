@@ -118,12 +118,24 @@ class Certificate extends Model
         return $this->hasExpired() ? CertificateStatus::Expired : $this->status;
     }
 
+    /**
+     * The branding mode meaning "the operator's own marks only".
+     *
+     * Mirrors CompanyCertificateBranding::PlatformOnly, which Certification cannot import (Domains
+     * may not depend on Contexts). Kept as a named constant so the coupling is visible and greppable
+     * instead of being an anonymous string in the middle of a boolean.
+     */
+    private const PLATFORM_ONLY_BRANDING = 'platform_only';
+
     /** Does this credential carry a company's marks? */
     public function isCompanyBranded(): bool
     {
+        // Certification may not import a Commerce enum, so the neutral persisted value is named
+        // here as a constant with its meaning spelled out, rather than as a bare vendor string.
+        // 'platform_only' means "the operator's marks alone" — see CompanyCertificateBranding.
         return $this->organization_id !== null
             && $this->branding_mode !== null
-            && $this->branding_mode !== 'helbaron_only';
+            && $this->branding_mode !== self::PLATFORM_ONLY_BRANDING;
     }
 
     /**

@@ -315,7 +315,7 @@ class ProductResource extends Resource
                         ->options(CompanyCertificateBranding::options())
                         ->required()
                         ->native(false)
-                        ->default(CompanyCertificateBranding::HelbaronOnly->value),
+                        ->default(CompanyCertificateBranding::PlatformOnly->value),
                     Toggle::make('employee_access_expires_with_purchase')
                         ->label('Employee access ends when the company purchase expires')
                         ->default(true)

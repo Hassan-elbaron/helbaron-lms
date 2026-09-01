@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Assignments — React Query data controller (W04, HELBARON LMS).
+ * Assignments — React Query data controller (W04, the academy LMS).
  *
  * ┌───────────────────────────────────────────────────────────────────────────────────────────┐
  * │ SHARED CONTRACT — this hook surface is imported by D4 (submission/grading) and D5.           │

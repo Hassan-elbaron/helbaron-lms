@@ -19,7 +19,7 @@ const section: HomepageSection = {
       ar: "نساعد الفرق على اختيار المسارات والباقات المناسبة.",
     },
     phone: "+966 11 234 5678",
-    email: "hello@helbaron.academy",
+    email: "hello@academy.test",
     address: { en: "King Fahd Road, Riyadh, Saudi Arabia", ar: "طريق الملك فهد، الرياض، السعودية" },
     cta: { label: { en: "Book a call", ar: "احجز مكالمة" }, href: "/contact" },
   },
@@ -51,7 +51,7 @@ export const EmailOnly: Story = {
       ...section,
       content: {
         heading: { en: "Questions? Reach out", ar: "أسئلة؟ تواصل معنا" },
-        email: "hello@helbaron.academy",
+        email: "hello@academy.test",
       },
     },
   },

@@ -4,6 +4,8 @@ namespace App\Contexts\Commerce\Adapters;
 
 use App\Contexts\Commerce\Enums\ProductType;
 use App\Contexts\Commerce\Models\Product;
+use App\Contexts\Commerce\Support\SoldCourseIds;
+use App\Platform\Shared\Catalog\Contracts\CourseLookupPort;
 use App\Platform\Shared\Commerce\Contracts\PurchaseSummaryPort;
 use App\Platform\Shared\Commerce\Data\PurchaseSummary;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,9 +20,11 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class PurchaseSummaryAdapter implements PurchaseSummaryPort
 {
+    public function __construct(private readonly CourseLookupPort $courses) {}
+
     public function forCourse(int $courseId): PurchaseSummary
     {
-        return $this->forCourseIds([$courseId])[$courseId] ?? PurchaseSummary::notPurchasable();
+        return $this->forCourseIds([$courseId])[$courseId] ?? PurchaseSummary::notAvailable();
     }
 
     /**
@@ -31,11 +35,28 @@ class PurchaseSummaryAdapter implements PurchaseSummaryPort
     {
         $courseIds = array_values(array_unique(array_map('intval', $courseIds)));
 
-        // Every id answers, even when nothing sells it.
-        $summaries = array_fill_keys($courseIds, PurchaseSummary::notPurchasable());
-
         if ($courseIds === []) {
-            return $summaries;
+            return [];
+        }
+
+        // Freeness is a STATED INTENT, not an inference. A course is free when its author declared
+        // it free and no active product currently sells it. Deriving it from "no product row exists"
+        // made one product_courses row a one-way door — an "All Access" bundle that included a free
+        // intro course, or a draft product created by mistake, un-freed the course permanently.
+        //
+        // Both halves are resolved through the same helpers the enrolment guard uses
+        // (SoldCourseIds / CourseLookupPort), so the catalogue and the guard cannot drift apart —
+        // they previously ran different queries and disagreed under tenant scoping.
+        $declaredFree = $this->courses->freeFlagsForCourseIds($courseIds);
+        $activelySold = SoldCourseIds::activeOnly($courseIds);
+
+        // Every id answers. Anything neither free nor actively sold is "not available yet".
+        $summaries = [];
+        foreach ($courseIds as $courseId) {
+            $isFree = ($declaredFree[$courseId] ?? false) && ! isset($activelySold[$courseId]);
+            $summaries[$courseId] = $isFree
+                ? PurchaseSummary::free()
+                : PurchaseSummary::notAvailable();
         }
 
         $products = Product::query()

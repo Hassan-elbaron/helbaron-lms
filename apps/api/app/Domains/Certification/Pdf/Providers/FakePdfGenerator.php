@@ -18,7 +18,7 @@ class FakePdfGenerator implements PdfGenerator
     {
         $text = trim(strip_tags($html));
         $bytes = "%PDF-1.4\n"
-            ."% HElbaron fake certificate orientation={$options->orientation} size={$options->pageSize} dir={$options->direction}\n"
+            ."% fake certificate orientation={$options->orientation} size={$options->pageSize} dir={$options->direction}\n"
             .substr($text, 0, 2000)
             ."\n%%EOF";
 

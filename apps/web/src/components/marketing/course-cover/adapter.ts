@@ -12,12 +12,12 @@ const PRESS_STOPWORDS = new Set([
 ]);
 
 /**
- * Stable HElbaron press code for a course — `HEL · XXX · NNN`. `XXX` is a 3-letter sigil built from
+ * Stable press code for a course — `SIG · XXX · NNN`. `XXX` is a 3-letter sigil built from
  * the initials of up to three significant title words (padded with the title's consonants, then `X`);
  * `NNN` is a deterministic 700–899 catalogue number hashed from the course id. Pure + locale-stable
  * (derive from a fixed title string so the code never shifts between EN/AR).
  */
-export function derivePressCode(title: string, id: string): string {
+export function derivePressCode(title: string, id: string, prefix = "ACA"): string {
   const words = title
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, " ")
@@ -30,7 +30,9 @@ export function derivePressCode(title: string, id: string): string {
   }
   sigil = (sigil + "XXX").slice(0, 3);
   const num = 700 + (hashString(id) % 200);
-  return `HEL · ${sigil} · ${num}`;
+  // The leading sigil is supplied by the caller (derived from the instance brand) so the code
+  // does not carry the vendor's initials on every cover.
+  return `${prefix} · ${sigil} · ${num}`;
 }
 
 /**

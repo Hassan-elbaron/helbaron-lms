@@ -11,7 +11,7 @@ return [
     'domain' => env('HORIZON_DOMAIN'),
     'path' => env('HORIZON_PATH', 'horizon'),
     'use' => 'default',
-    'prefix' => env('HORIZON_PREFIX', Str::slug((string) env('APP_NAME', 'helbaron'), '_').'_horizon:'),
+    'prefix' => env('HORIZON_PREFIX', Str::slug((string) env('APP_NAME', 'lms'), '_').'_horizon:'),
 
     'middleware' => ['web'],
 

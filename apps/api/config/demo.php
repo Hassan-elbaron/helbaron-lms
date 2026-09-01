@@ -31,7 +31,7 @@ return [
      | and a coupon-code prefix. Anything carrying these is demo data.
      */
     'markers' => [
-        'email_domain' => env('DEMO_EMAIL_DOMAIN', 'demo.helbaron.local'),
+        'email_domain' => env('DEMO_EMAIL_DOMAIN', 'demo.academy.local'),
         'slug_prefix' => 'demo-',
         'coupon_prefix' => 'DEMO',
         'password' => env('DEMO_USER_PASSWORD', 'password'),

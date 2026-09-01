@@ -5,6 +5,7 @@ namespace App\Contexts\Commerce\Services;
 use App\Contexts\Commerce\Exceptions\SubscriptionException;
 use App\Contexts\Commerce\Models\Subscription;
 use App\Contexts\Commerce\Support\OrganizationSubscriptionGuard;
+use App\Platform\Shared\Learning\Contracts\CompanySeatEnrollmentPort;
 use App\Platform\Shared\Seats\Contracts\SeatProvisioningPort;
 use App\Platform\Shared\Services\BaseService;
 
@@ -36,6 +37,7 @@ class OrganizationSubscriptionService extends BaseService
     public function __construct(
         private readonly SeatProvisioningPort $seats,
         private readonly OrganizationSubscriptionGuard $guard,
+        private readonly CompanySeatEnrollmentPort $enrollments,
     ) {}
 
     /**
@@ -50,12 +52,56 @@ class OrganizationSubscriptionService extends BaseService
         $this->seats->assignSeat($this->requirePoolId($subscription), $memberId);
     }
 
-    /** Release an employee's seat on the subscription (idempotent). */
+    /**
+     * Release an employee's seat on the subscription (idempotent), and withdraw the enrollments that
+     * seat produced.
+     *
+     * Releasing the seat alone was not enough. Seat-derived access is decided by the enrollment row
+     * (CourseEnrollmentAdapter never re-consults the entitlement port), so an employee whose seat was
+     * taken back kept the course until the subscription's billing period elapsed — and before the
+     * enrollment carried a source and a window at all, kept it forever. Revoking here makes
+     * withdrawal immediate, which is what a manager reassigning a seat expects.
+     *
+     * revokeCompanySeat() filters on `source = company_seat`, so it touches ONLY access this seat
+     * created: a learner who also bought the course keeps their own purchase.
+     */
     public function unassignEmployee(Subscription $subscription, int $memberId): void
     {
         $this->guard->authorizeSubscription($subscription);
 
         $this->seats->releaseSeat($this->requirePoolId($subscription), $memberId);
+
+        $userId = $this->seats->userIdForMember($memberId);
+
+        if ($userId === null) {
+            // An invited member with no account yet holds no enrollments to withdraw.
+            return;
+        }
+
+        foreach ($this->subscriptionCourseIds($subscription) as $courseId) {
+            $this->enrollments->revokeCompanySeat($courseId, $userId);
+        }
+    }
+
+    /**
+     * The course ids this subscription's plan bundles, resolved plan -> product -> courses.
+     *
+     * @return list<int>
+     */
+    private function subscriptionCourseIds(Subscription $subscription): array
+    {
+        $courses = $subscription->loadMissing('plan.product.courses')->plan?->product?->courses;
+
+        if (! is_iterable($courses)) {
+            return [];
+        }
+
+        $ids = [];
+        foreach ($courses as $course) {
+            $ids[] = (int) $course->getKey();
+        }
+
+        return $ids;
     }
 
     /**

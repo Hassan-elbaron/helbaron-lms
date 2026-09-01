@@ -17,7 +17,7 @@ import { ProductModes } from "@/components/landing/product-modes";
 import { FinalCta } from "@/components/landing/final-cta";
 import {
   ProofBand,
-  WhyHelbaron,
+  WhyUs,
   LearningExperience,
   LearningJourney,
   Testimonials,
@@ -154,7 +154,7 @@ export default async function LandingPage({
         <ProofBand />
         <TrustedBy />
         <ProductModes />
-        <WhyHelbaron />
+        <WhyUs />
         <LearningExperience />
         <LearningJourney />
         <FeaturedCourses />

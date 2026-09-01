@@ -16,7 +16,11 @@ class PreferenceController extends Controller
 
         return ApiResponse::updated([
             'locale' => $setting->locale,
-            'digest_frequency' => $setting->digest_frequency->value,
+            // Present only when digests can be delivered. The frontend renders the control from the
+            // presence of this key, so hiding it here hides it everywhere — one switch, not two.
+            ...(config('notifications.digest.enabled')
+                ? ['digest_frequency' => $setting->digest_frequency->value]
+                : []),
             'timezone' => $setting->timezone,
             'quiet_hours_enabled' => (bool) $setting->quiet_hours_enabled,
             'quiet_hours_start' => $setting->quiet_hours_start,

@@ -31,6 +31,18 @@ class CourseFactory extends Factory
         ];
     }
 
+    /**
+     * A course its author has declared free.
+     *
+     * Deliberately NOT the factory default. `courses.is_free` defaults to false in the database —
+     * fail-closed, because a course must not be giveable-away until somebody says so — and a factory
+     * that quietly defaulted it to true would hide that from every test.
+     */
+    public function free(): static
+    {
+        return $this->state(fn () => ['is_free' => true]);
+    }
+
     public function published(): static
     {
         return $this->state(fn () => [

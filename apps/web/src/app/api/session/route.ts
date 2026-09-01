@@ -1,21 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  MARKER_COOKIE,
+  SESSION_COOKIE,
+  clearedCookieOptions,
+  sessionCookieOptions,
+} from "@/lib/auth/session-cookies";
 
 /**
  * Session endpoint (BFF): exchanges credentials for a Sanctum token server-side and stores it
- * in an httpOnly, Secure, SameSite=Lax cookie. The token is never exposed to browser JS
- * (mitigates token exfiltration via XSS). A non-httpOnly marker cookie ("helbaron_authed")
- * lets the client know a session exists without revealing the credential.
+ * in an httpOnly, SameSite=Lax cookie. The token is never exposed to browser JS (mitigates token
+ * exfiltration via XSS). A non-httpOnly marker cookie lets the client know a session exists without
+ * revealing the credential.
+ *
+ * Cookie names, lifetimes and the Secure flag all live in @/lib/auth/session-cookies — including why
+ * "remember me" now changes what is set here, and why an unticked box must produce a cookie with no
+ * Max-Age rather than a short one.
  */
-const SESSION_COOKIE = "helbaron_session";
-const MARKER_COOKIE = "helbaron_authed";
-const SESSION_MAX_AGE = 60 * 60 * 24 * 14; // 14 days
 
 const API_BASE =
   process.env.API_INTERNAL_URL ??
   process.env.NEXT_PUBLIC_API_BASE_URL ??
   "http://localhost:8000/api/v1";
 
-const secure = process.env.NODE_ENV === "production";
+
 
 /**
  * CSRF origin check. An Origin is accepted only when it matches a host this deployment actually
@@ -61,6 +68,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const body = await req.json().catch(() => null);
 
+  // The user's actual choice, defaulting to NOT remembered. Defaulting the other way would restore
+  // the exact defect this fixes for any client that omits the field.
+  const remember = (body as { remember?: unknown } | null)?.remember === true;
+
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
@@ -88,20 +99,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // Return the user but never the token.
   const out = NextResponse.json({ data: { user: data.user } }, { status: 200 });
-  out.cookies.set(SESSION_COOKIE, data.token, {
-    httpOnly: true,
-    secure,
-    sameSite: "lax",
-    path: "/",
-    maxAge: SESSION_MAX_AGE,
-  });
-  out.cookies.set(MARKER_COOKIE, "1", {
-    httpOnly: false,
-    secure,
-    sameSite: "lax",
-    path: "/",
-    maxAge: SESSION_MAX_AGE,
-  });
+
+  // Both cookies get the SAME lifetime. A persistent marker beside a session-scoped credential would
+  // leave the client believing it is signed in after the browser dropped the token, which renders
+  // the authenticated shell and then 401s on its first request.
+  out.cookies.set(SESSION_COOKIE, data.token, sessionCookieOptions(remember, true));
+  out.cookies.set(MARKER_COOKIE, "1", sessionCookieOptions(remember, false));
+
   return out;
 }
 
@@ -119,7 +123,7 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
   }
 
   const out = new NextResponse(null, { status: 204 });
-  out.cookies.set(SESSION_COOKIE, "", { httpOnly: true, secure, sameSite: "lax", path: "/", maxAge: 0 });
-  out.cookies.set(MARKER_COOKIE, "", { httpOnly: false, secure, sameSite: "lax", path: "/", maxAge: 0 });
+  out.cookies.set(SESSION_COOKIE, "", clearedCookieOptions(true));
+  out.cookies.set(MARKER_COOKIE, "", clearedCookieOptions(false));
   return out;
 }

@@ -11,7 +11,7 @@ import { ProductModes } from "@/components/landing/product-modes";
 import { FinalCta } from "@/components/landing/final-cta";
 import {
   ProofBand,
-  WhyHelbaron,
+  WhyUs,
   LearningExperience,
   LearningJourney,
   Testimonials,
@@ -26,6 +26,10 @@ export type BrandSectionKey =
   | "proof_band"
   | "trusted_by"
   | "product_modes"
+  | "why_us"
+  // Accepted for compatibility: instances whose database has not yet run the
+  // rename-why_helbaron migration still send the old key, and a bundle that rejected it would
+  // render nothing at all for that section.
   | "why_helbaron"
   | "learning_experience"
   | "learning_journey"
@@ -51,8 +55,9 @@ export function BrandSectionBlock({ section }: { section: HomepageSection }) {
       return <TrustedBy />;
     case "product_modes":
       return <ProductModes />;
+    case "why_us":
     case "why_helbaron":
-      return <WhyHelbaron />;
+      return <WhyUs />;
     case "learning_experience":
       return <LearningExperience />;
     case "learning_journey":

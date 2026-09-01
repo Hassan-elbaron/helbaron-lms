@@ -22,8 +22,12 @@ class HealthController extends Controller
     {
         return response()->json([
             'status' => 'ok',
-            'service' => 'helbaron-api',
-            'version' => (string) config('app.version', '1.0.0-rc.1'),
+            // Neutral service identifier: this string reaches uptime dashboards and alert payloads on
+            // every customer instance.
+            'service' => 'lms-api',
+            // Resolved from config/app.php (build-time ARG). The literal fallback that used to sit
+            // here reported '1.0.0-rc.1' on every instance forever, because the key did not exist.
+            'version' => (string) config('app.version'),
             'time' => now()->toIso8601String(),
         ]);
     }

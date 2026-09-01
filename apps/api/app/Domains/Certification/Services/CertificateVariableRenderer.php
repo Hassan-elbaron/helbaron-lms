@@ -5,6 +5,7 @@ namespace App\Domains\Certification\Services;
 use App\Domains\Certification\Models\Certificate;
 use App\Domains\Certification\Models\CertificateSetting;
 use App\Platform\Identity\Contracts\UserLookupPort;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 use App\Platform\Shared\Helpers\Uuid;
 use App\Platform\Shared\Media\Contracts\MediaPickerPort;
 use App\Platform\Shared\Services\BaseService;
@@ -31,7 +32,34 @@ class CertificateVariableRenderer extends BaseService
         private readonly QrCodeService $qr,
         private readonly VerificationUrlService $urls,
         private readonly UserLookupPort $users,
+        private readonly BrandProfilePort $brand,
     ) {}
+
+    /**
+     * PRECEDENCE for every visual value: per-template `design` -> instance branding -> built-in
+     * default.
+     *
+     * The middle step did not exist. `BrandSetting.certificate` (background, logo, signature, stamp,
+     * QR position, font, colours, margins) is admin-editable and was read by ZERO production code, so
+     * an academy could configure its certificate in the branding screen and every certificate it
+     * issued would ignore all of it.
+     *
+     * The template still wins wherever a designer set something explicitly — a template built for one
+     * programme should not be repainted by an unrelated branding change — but anything the template
+     * leaves blank now falls through to the academy's own brand instead of to nothing.
+     */
+    private function designOrBrand(mixed $designValue, string $brandValue): mixed
+    {
+        $hasDesignValue = is_string($designValue)
+            ? trim($designValue) !== ''
+            : $designValue !== null;
+
+        if ($hasDesignValue) {
+            return $designValue;
+        }
+
+        return $brandValue !== '' ? $brandValue : null;
+    }
 
     /**
      * Fill a template body with a real certificate's values.
@@ -79,6 +107,7 @@ class CertificateVariableRenderer extends BaseService
     {
         $certificate->loadMissing(['course']);
         $settings = CertificateSetting::current();
+        $brand = $this->brand->certificate();
         $verifyUrl = $this->urls->forCertificate($certificate);
 
         /** @var array<string, mixed> $metadata */
@@ -100,17 +129,38 @@ class CertificateVariableRenderer extends BaseService
             'instructor_names' => $this->names($metadata['instructor_names'] ?? null),
             'signature_2_name' => $this->scalar($design['signature_2_name'] ?? null),
             'signature_2_title' => $this->scalar($design['signature_2_title'] ?? null),
+            // The instance's own certificate styling, exposed so a template can lay itself out in
+            // the academy's colours and typeface instead of hardcoding the vendor's.
+            'brand_font' => $brand->font,
+            'brand_text_color' => $brand->textColor,
+            'brand_accent_color' => $brand->accentColor,
+            'brand_qr_position' => $brand->qrPosition,
         ];
 
         $markup = [
             'qr_svg' => $this->qr->svgFor($verifyUrl),
-            'company_logo' => $this->imageMarkup($design['company_logo'] ?? null, 'Logo'),
-            'background_image' => $this->imageMarkup($design['background_image'] ?? null, ''),
+            'company_logo' => $this->imageMarkup(
+                $this->designOrBrand($design['company_logo'] ?? null, $brand->logoUrl),
+                'Logo',
+            ),
+            'background_image' => $this->imageMarkup(
+                $this->designOrBrand($design['background_image'] ?? null, $brand->backgroundUrl),
+                '',
+            ),
+            // The per-certificate signature outranks branding: it is the person who actually signed
+            // this award, not the academy's default signatory.
             'signature_image' => $this->imageMarkup(
-                $design['signature_image'] ?? $settings->signature_image_path,
+                $this->designOrBrand(
+                    $design['signature_image'] ?? $settings->signature_image_path,
+                    $brand->signatureUrl,
+                ),
                 'Signature',
             ),
             'signature_2_image' => $this->imageMarkup($design['signature_2_image'] ?? null, 'Signature'),
+            'stamp_image' => $this->imageMarkup(
+                $this->designOrBrand($design['stamp_image'] ?? null, $brand->stampUrl),
+                'Stamp',
+            ),
         ];
 
         return $this->assemble($text, $markup);
@@ -123,6 +173,7 @@ class CertificateVariableRenderer extends BaseService
     private function resolveSample(array $design): array
     {
         $verifyUrl = $this->urls->forCode('SAMPLE-VERIFY-CODE');
+        $brand = $this->brand->certificate();
 
         $text = [
             'holder_name' => 'Sample Learner',
@@ -138,14 +189,33 @@ class CertificateVariableRenderer extends BaseService
             'instructor_names' => 'Jane Instructor, John Trainer',
             'signature_2_name' => $this->scalar($design['signature_2_name'] ?? 'Second Signatory'),
             'signature_2_title' => $this->scalar($design['signature_2_title'] ?? 'Head of Program'),
+            'brand_font' => $brand->font,
+            'brand_text_color' => $brand->textColor,
+            'brand_accent_color' => $brand->accentColor,
+            'brand_qr_position' => $brand->qrPosition,
         ];
 
+        // The preview resolves branding exactly as a real render does, so a designer sees the
+        // academy's own logo and colours rather than a blank where branding would appear.
         $markup = [
             'qr_svg' => $this->qr->svgFor($verifyUrl),
-            'company_logo' => $this->imageMarkup($design['company_logo'] ?? null, 'Logo'),
-            'background_image' => $this->imageMarkup($design['background_image'] ?? null, ''),
-            'signature_image' => $this->imageMarkup($design['signature_image'] ?? null, 'Signature'),
+            'company_logo' => $this->imageMarkup(
+                $this->designOrBrand($design['company_logo'] ?? null, $brand->logoUrl),
+                'Logo',
+            ),
+            'background_image' => $this->imageMarkup(
+                $this->designOrBrand($design['background_image'] ?? null, $brand->backgroundUrl),
+                '',
+            ),
+            'signature_image' => $this->imageMarkup(
+                $this->designOrBrand($design['signature_image'] ?? null, $brand->signatureUrl),
+                'Signature',
+            ),
             'signature_2_image' => $this->imageMarkup($design['signature_2_image'] ?? null, 'Signature'),
+            'stamp_image' => $this->imageMarkup(
+                $this->designOrBrand($design['stamp_image'] ?? null, $brand->stampUrl),
+                'Stamp',
+            ),
         ];
 
         return $this->assemble($text, $markup);

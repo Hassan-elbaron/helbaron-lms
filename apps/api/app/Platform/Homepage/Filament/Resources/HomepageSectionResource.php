@@ -379,7 +379,13 @@ class HomepageSectionResource extends Resource
             'proof_band' => 'Proof band',
             'trusted_by' => 'Trusted by (logos)',
             'product_modes' => 'Product modes',
-            'why_helbaron' => 'Why HElbaron',
+            // Both keys map to the same heading: an instance whose database has not yet run the
+            // rename migration must still show a label rather than a raw key. Written as two
+            // entries, NOT `'why_us', 'why_helbaron' => …` — that is match-arm syntax, and in an
+            // array literal it silently produces a numeric key plus a single mapping, leaving
+            // `why_us` with no label at all.
+            'why_us' => 'Why us',
+            'why_helbaron' => 'Why us',
             'learning_experience' => 'Learning experience',
             'learning_journey' => 'Learning journey',
             'featured_courses' => 'Featured courses',

@@ -1,19 +1,35 @@
 /**
- * HElbaron brand + landing configuration ("frontend config layer").
+ * Brand + landing configuration ("frontend config layer").
  * Single source of truth for the visual identity and marketing content so the brand can later be
  * edited from an admin/dashboard settings screen. Colors here are display values (hex) mirroring
  * the CSS tokens in globals.css. Localized strings are { en, ar } pairs; pick with pickLocale().
  */
 
+import { interpolate } from "@/lib/i18n/interpolate";
+
 export type Localized = { en: string; ar: string };
 export type Locale = "en" | "ar";
-export const pickLocale = (v: Localized, locale: Locale): string => v[locale] ?? v.en;
+/**
+ * Pick a locale from a { en, ar } pair AND resolve any `{brand}` token in it.
+ *
+ * The marketing copy in this file is a BUILD-TIME constant, so a brand name written into it is
+ * frozen into the bundle and identical on every instance — which is wrong for a product deployed
+ * once per academy. Brand-bearing strings therefore carry a `{brand}` token instead.
+ *
+ * `brand` is optional so no existing call site breaks: omitting it renders the GENERIC fallback,
+ * never a vendor name. Surfaces that should show the real academy pass it from `useBranding()`.
+ */
+export const pickLocale = (v: Localized, locale: Locale, brand?: string): string =>
+  interpolate(v[locale] ?? v.en, { brand: brand && brand !== "" ? brand : GENERIC_BRAND });
+
+/** Last-resort brand word. Deliberately not any real academy's name. */
+export const GENERIC_BRAND = "Academy";
 export type LinkItem = { label: Localized; href: string };
 export type Surface = "light" | "teal" | "copper";
 export type Swatch = "teal" | "copper" | "gold" | "red";
 
 export const brandTheme = {
-  name: "HElbaron",
+  name: "{brand}",
   tagline: { en: "Master the core. Lead the future.", ar: "أتقن الأساس. قُد المستقبل." } as Localized,
   logo: null as string | null,
 
@@ -33,8 +49,8 @@ export const brandTheme = {
   buttonStyle: "solid" as "solid" | "outline" | "soft",
 
   announcement: {
-    en: "INTERACTIVE ACADEMY  ·  HElbaron — the premium business academy for MENA",
-    ar: "أكاديمية تفاعلية  ·  HElbaron — أكاديمية الأعمال المتميّزة للمنطقة",
+    en: "INTERACTIVE ACADEMY  ·  {brand} — the premium business academy for MENA",
+    ar: "أكاديمية تفاعلية  ·  {brand} — أكاديمية الأعمال المتميّزة للمنطقة",
   } as Localized,
 
   nav: [
@@ -57,7 +73,7 @@ export const brandTheme = {
       ar: "اثنتا عشرة تخصصًا. أكاديمية واحدة. مصمّمة لمحترفي وروّاد ومؤسسات المنطقة. دورات وأفواج وورش وتدريب مؤسسي واستشارات — تحت سقف واحد.",
     } as Localized,
     primaryCta: { label: { en: "Explore courses", ar: "استكشف الدورات" }, href: "/courses" } as LinkItem,
-    secondaryCta: { label: { en: "HElbaron Advisory", ar: "استشارات HElbaron" }, href: "/advisory" } as LinkItem,
+    secondaryCta: { label: { en: "{brand} Advisory", ar: "استشارات {brand}" }, href: "/advisory" } as LinkItem,
     rating: {
       value: "4.8",
       text: { en: "Trusted by 25,000+ learners and 75 enterprises across MENA", ar: "موثوق من أكثر من 25,000 متعلّم و75 مؤسسة في المنطقة" } as Localized,
@@ -66,7 +82,7 @@ export const brandTheme = {
       { eyebrow: { en: "12 CATEGORIES", ar: "12 تصنيفًا" }, body: { en: "100+ courses across PM, AI, Leadership, Finance, and more", ar: "أكثر من 100 دورة في إدارة المشاريع والذكاء الاصطناعي والقيادة والمالية والمزيد" }, variant: "light" as Surface },
       { eyebrow: { en: "LIVE COHORTS", ar: "أفواج مباشرة" }, body: { en: "19 cohort programs · 65% completion rate", ar: "19 برنامج فوج · معدل إتمام 65%" }, variant: "teal" as Surface },
       { eyebrow: { en: "B2B / B2G TRAINING", ar: "تدريب المؤسسات والحكومات" }, body: { en: "75 enterprise customers · custom programs", ar: "75 عميلًا مؤسسيًا · برامج مخصّصة" }, variant: "copper" as Surface },
-      { eyebrow: { en: "HELBARON ADVISORY", ar: "استشارات HElbaron" }, body: { en: "Strategy, ops, BD consulting", ar: "استشارات في الاستراتيجية والعمليات وتطوير الأعمال" }, variant: "light" as Surface },
+      { eyebrow: { en: "{brand} ADVISORY", ar: "استشارات {brand}" }, body: { en: "Strategy, ops, BD consulting", ar: "استشارات في الاستراتيجية والعمليات وتطوير الأعمال" }, variant: "light" as Surface },
     ],
   },
 
@@ -84,7 +100,7 @@ export const brandTheme = {
     { no: "02", icon: "cohorts", fill: "light" as Surface, name: { en: "Live Cohorts", ar: "الأفواج المباشرة" }, desc: { en: "19 cohort programs. 8–12 week intensives with MENA practitioners. $200–700.", ar: "19 برنامج فوج. مكثّفات من 8–12 أسبوعًا مع ممارسين من المنطقة. 200–700$." }, cta: { en: "View cohorts", ar: "عرض الأفواج" }, href: "/cohorts" },
     { no: "03", icon: "workshops", fill: "light" as Surface, name: { en: "In-person Workshops", ar: "ورش حضورية" }, desc: { en: "1–2 day intensives in Cairo, Dubai, Riyadh. $85–680. Small groups, hands-on.", ar: "مكثّفات ليوم أو يومين في القاهرة ودبي والرياض. 85–680$. مجموعات صغيرة وعملية." }, cta: { en: "Find workshops", ar: "ابحث عن الورش" }, href: "/workshops" },
     { no: "04", icon: "enterprise", fill: "teal" as Surface, name: { en: "B2B / B2G Training", ar: "تدريب المؤسسات والحكومات" }, desc: { en: "Enterprise & government custom programs. $8K–$2M. SSO, SCORM, dedicated CSM.", ar: "برامج مخصّصة للمؤسسات والحكومات. من 8 آلاف إلى 2 مليون$. SSO وSCORM ومدير نجاح مخصّص." }, cta: { en: "Book a demo", ar: "احجز عرضًا" }, href: "/enterprise" },
-    { no: "05", icon: "advisory", fill: "copper" as Surface, name: { en: "HElbaron Advisory", ar: "استشارات HElbaron" }, desc: { en: "Business + BD consulting. Strategy, ops, partnerships. $8K–$2M engagements.", ar: "استشارات أعمال وتطوير أعمال. استراتيجية وعمليات وشراكات. مشاريع من 8 آلاف إلى 2 مليون$." }, cta: { en: "Talk to advisory", ar: "تحدّث مع الاستشارات" }, href: "/advisory" },
+    { no: "05", icon: "advisory", fill: "copper" as Surface, name: { en: "{brand} Advisory", ar: "استشارات {brand}" }, desc: { en: "Business + BD consulting. Strategy, ops, partnerships. $8K–$2M engagements.", ar: "استشارات أعمال وتطوير أعمال. استراتيجية وعمليات وشراكات. مشاريع من 8 آلاف إلى 2 مليون$." }, cta: { en: "Talk to advisory", ar: "تحدّث مع الاستشارات" }, href: "/advisory" },
   ],
 
   verticalsHeading: {
@@ -161,7 +177,7 @@ export const brandTheme = {
         title: { en: "For Business", ar: "للأعمال" } as Localized,
         links: [
           { label: { en: "B2B / B2G Training", ar: "تدريب المؤسسات" }, href: "/enterprise" },
-          { label: { en: "HElbaron Advisory", ar: "استشارات HElbaron" }, href: "/advisory" },
+          { label: { en: "{brand} Advisory", ar: "استشارات {brand}" }, href: "/advisory" },
           { label: { en: "Government partnerships", ar: "شراكات حكومية" }, href: "/enterprise" },
           { label: { en: "Case studies", ar: "دراسات حالة" }, href: "/enterprise" },
         ],
@@ -254,7 +270,7 @@ export const brandTheme = {
       ],
     },
     advisory: {
-      eyebrow: { en: "HELBARON ADVISORY", ar: "استشارات HElbaron" },
+      eyebrow: { en: "{brand} ADVISORY", ar: "استشارات {brand}" },
       title: { en: "Strategy that", ar: "استراتيجية" },
       emphasis: { en: "ships.", ar: "تُنفَّذ فعلًا." },
       subtitle: { en: "Business and BD consulting for MENA. Strategy, operations, partnerships, and go-to-market - hands-on, not slideware.", ar: "استشارات أعمال وتطوير أعمال للمنطقة. استراتيجية وعمليات وشراكات ودخول للسوق — تطبيق عملي لا شرائح." },

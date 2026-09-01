@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  * Catalogue cover art. When a real image is supplied (a published MediaAsset resolved server-side
  * by PublicAssetUrlResolver, or a legacy URL) it renders that image.
  *
- * Otherwise it draws the same editorial field the HElbaron course covers use: a deep family
+ * Otherwise it draws the same editorial field the the academy course covers use: a deep family
  * gradient, the deterministic technical artwork seeded from the title, and the gold hairline that
  * marks the brand. The earlier fallback set a single huge initial across the frame, which read as
  * a placeholder waiting for a real picture — twelve of them in a grid looked like an unfinished
@@ -64,7 +64,7 @@ export function CatalogMedia({
       {/* Depth: light gathers at the top corner, the base settles into shadow. */}
       <span className="absolute inset-0 bg-[radial-gradient(120%_90%_at_82%_-10%,rgba(255,255,255,0.16),transparent_58%)]" />
       <span className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/35 to-transparent" />
-      {/* The gold rule is the brand signature every HElbaron cover carries. */}
+      {/* The gold rule is the brand signature every cover carries. */}
       <span className="absolute bottom-4 start-5 h-[3px] w-10 rounded-full bg-[var(--gold)] opacity-90" />
     </div>
   );

@@ -4,7 +4,7 @@ import { cache } from "react";
 import { getEvent, type EventDetail } from "@/lib/events/api";
 import { getSeo } from "@/lib/seo/api";
 import { resolveLocale } from "@/lib/seo/locale";
-import { buildMetadata, seoJsonLd } from "@/lib/seo/metadata";
+import { buildBrandedMetadata, seoJsonLd } from "@/lib/seo/metadata";
 import { EventDetailsClient } from "./event-details-client";
 import { jsonLdScript } from "@/lib/seo/json-ld";
 
@@ -22,10 +22,10 @@ type Params = { params: Promise<{ public_id: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { public_id } = await params;
   const event = await loadEvent(public_id);
-  if (!event) return { title: "Event", description: "Event details on HElbaron." };
+  if (!event) return { title: "Event", description: "Event details on {brand}." };
 
   // Current derived metadata is the fallback; a managed SEO override (if any) wins via the shared helper.
-  const description = event.description?.slice(0, 160) ?? `Join ${event.title} — a live event at HElbaron.`;
+  const description = event.description?.slice(0, 160) ?? `Join ${event.title} — a live event at {brand}.`;
   const fallback: Metadata = {
     title: event.title,
     description,
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 
   const [seo, locale] = await Promise.all([getSeo("event", event.id), resolveLocale()]);
-  return buildMetadata(seo, fallback, locale);
+  return buildBrandedMetadata(seo, fallback, locale);
 }
 
 /** Build the schema.org Event JSON-LD from the backend-provided SEO fields. */
@@ -48,7 +48,7 @@ function eventJsonLd(event: EventDetail) {
     eventStatus: event.seo.eventStatus,
     eventAttendanceMode: event.seo.eventAttendanceMode,
     location: { "@type": "VirtualLocation", name: event.seo.location },
-    organizer: { "@type": "Organization", name: "HElbaron" },
+    organizer: { "@type": "Organization", name: "{brand}" },
     ...(event.description ? { description: event.description } : {}),
   };
 }

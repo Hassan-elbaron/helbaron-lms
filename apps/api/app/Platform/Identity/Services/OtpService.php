@@ -20,7 +20,12 @@ use Illuminate\Support\Facades\Log;
  */
 class OtpService extends BaseService
 {
-    /** Generate, persist (hashed) and dispatch an OTP for the given channel. */
+    /**
+     * Generate, persist (hashed) and dispatch an OTP for the given channel.
+     *
+     * Issuing a code invalidates any earlier unconsumed code for the same channel and destination —
+     * exactly one code is live at a time. See the note inside the transaction for why.
+     */
     public function send(User $user, OtpChannel $channel, string $destination): void
     {
         $config = (array) config($channel->configKey());
@@ -29,6 +34,21 @@ class OtpService extends BaseService
         $code = $this->generateCode((int) $config['length']);
 
         $this->transaction(function () use ($user, $channel, $destination, $code, $config): void {
+            // Issuing a new code RETIRES every outstanding one for this channel/destination.
+            //
+            // Without this, resending left the old code live and verify() simply took the newest row
+            // (orderByDesc('id')). Two things followed: a user who resent and then typed the FIRST
+            // code — the one still sitting in their inbox — was told it was invalid AND burned an
+            // attempt against the new code; and because each resend started a fresh row with
+            // attempts = 0, resending repeatedly reset the per-code guess ceiling, so the brute-force
+            // guard could be rewound at will.
+            UserOtp::query()
+                ->where('user_id', $user->id)
+                ->where('channel', $channel->value)
+                ->where('destination', $destination)
+                ->whereNull('consumed_at')
+                ->update(['consumed_at' => now()]);
+
             UserOtp::create([
                 'user_id' => $user->id,
                 'channel' => $channel->value,

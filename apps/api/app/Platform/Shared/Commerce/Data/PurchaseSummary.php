@@ -8,6 +8,19 @@ namespace App\Platform\Shared\Commerce\Data;
  * Lives in Shared because Catalog renders it on the course endpoints while Commerce is the only
  * thing that can build it — the DTO is what crosses the boundary, never a Product model. Every
  * identifier here is a public id.
+ *
+ * `purchasable` and `free` are DELIBERATELY NOT complements. There are three states, not two:
+ *
+ *   purchasable=true,  free=false — an active product sells it; the buyer checks out.
+ *   purchasable=false, free=true  — no product of ANY status grants it; payment-free enrolment is
+ *                                   the supported path.
+ *   purchasable=false, free=false — a product grants it but is not active (draft or archived), so
+ *                                   it is not on sale YET and must not be given away either.
+ *
+ * The third state is the whole reason `free` exists. Freeness used to be inferred from
+ * `purchasable === false`, which collapsed it into the second state: an admin moving a live product
+ * to Draft for five minutes to edit its price turned every course that product sells into a
+ * one-click free lifetime enrolment. Callers must branch on `free`, never on `! $purchasable`.
  */
 final class PurchaseSummary
 {
@@ -16,6 +29,7 @@ final class PurchaseSummary
      */
     public function __construct(
         public readonly bool $purchasable,
+        public readonly bool $free = false,
         public readonly ?string $productId = null,
         public readonly ?string $productType = null,
         public readonly ?string $currency = null,
@@ -32,10 +46,21 @@ final class PurchaseSummary
         public readonly array $includedInBundleIds = [],
     ) {}
 
-    /** A course nothing currently sells. */
-    public static function notPurchasable(): self
+    /**
+     * A course nothing sells at any status — the only shape that authorises payment-free enrolment.
+     */
+    public static function free(): self
     {
-        return new self(purchasable: false);
+        return new self(purchasable: false, free: true);
+    }
+
+    /**
+     * A course a product grants but does not currently sell (the product is draft or archived).
+     * Not buyable and not free: the surface should say "not available yet".
+     */
+    public static function notAvailable(): self
+    {
+        return new self(purchasable: false, free: false);
     }
 
     /**
@@ -44,11 +69,13 @@ final class PurchaseSummary
     public function toArray(): array
     {
         if (! $this->purchasable) {
-            return ['purchasable' => false];
+            return ['purchasable' => false, 'free' => $this->free];
         }
 
         return [
             'purchasable' => true,
+            // Always present so a client can branch on one key without first checking purchasable.
+            'free' => false,
             'product_id' => $this->productId,
             'product_type' => $this->productType,
             'price' => [

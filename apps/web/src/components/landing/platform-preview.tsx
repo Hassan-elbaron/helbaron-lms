@@ -40,7 +40,7 @@ export function PlatformPreview({ className }: { className?: string }) {
             <span className="size-2.5 rounded-full bg-success/70" />
           </span>
           <span className="ms-2 truncate text-[0.7rem] font-medium text-muted-foreground">
-            app.helbaron.academy / learn
+            app.example.com / learn
           </span>
         </div>
 

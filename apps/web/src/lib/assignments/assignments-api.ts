@@ -1,5 +1,5 @@
 /**
- * Assignments — typed API client (W04, HELBARON LMS).
+ * Assignments — typed API client (W04, the academy LMS).
  *
  * Wraps the frozen Assessment/assignment endpoints reached through the same-origin BFF proxy
  * (`@/lib/api/client`). Mirrors `lib/authoring/versioning-api.ts`: every call hits the real backend

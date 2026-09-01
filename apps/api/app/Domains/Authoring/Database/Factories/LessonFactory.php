@@ -35,9 +35,25 @@ class LessonFactory extends Factory
         ];
     }
 
+    /**
+     * A published lesson — WITH content, because a published lesson without any is invalid by
+     * construction.
+     *
+     * Same reasoning as the `type` default above. Once `lesson.empty_content` became a publish
+     * BLOCKER, `published()` on its own produced a lesson that could never be published: the
+     * definition's `content` default is `[]`, which is genuinely empty. Every test that built a
+     * course and published it then failed on a fixture problem rather than on the behaviour it was
+     * written to check.
+     *
+     * A test that wants a published-but-empty lesson passes `'content' => null` explicitly, which
+     * overrides this state — several do, and they still work.
+     */
     public function published(): static
     {
-        return $this->state(fn () => ['publish_state' => PublishState::Published->value]);
+        return $this->state(fn () => [
+            'publish_state' => PublishState::Published->value,
+            'content' => ['html' => '<p>Lesson body.</p>'],
+        ]);
     }
 
     public function preview(): static

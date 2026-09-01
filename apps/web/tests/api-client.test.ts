@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { apiFetch, ApiRequestError, hasSession, sessionLogin, sessionLogout } from "@/lib/api/client";
+import { MARKER_COOKIE } from "@/lib/auth/session-cookies";
 
 function mockFetch(status: number, body: unknown) {
   return vi.fn().mockResolvedValue({
@@ -11,7 +12,7 @@ function mockFetch(status: number, body: unknown) {
 }
 
 function clearMarkerCookie() {
-  document.cookie = "helbaron_authed=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  document.cookie = `${MARKER_COOKIE}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 }
 
 afterEach(() => {
@@ -70,7 +71,7 @@ describe("apiFetch", () => {
 describe("session helpers", () => {
   it("hasSession reflects the marker cookie only", () => {
     expect(hasSession()).toBe(false);
-    document.cookie = "helbaron_authed=1; path=/";
+    document.cookie = `${MARKER_COOKIE}=1; path=/`;
     expect(hasSession()).toBe(true);
   });
 

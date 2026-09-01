@@ -26,7 +26,24 @@ final class PublicCourseDetailsService extends BaseService
             return null;
         }
 
-        $course->setRelation('related', $this->related->for($course));
+        $related = $this->related->for($course);
+
+        // Related cards render from the same purchase summary as the main panel, so without one they
+        // fall through to the fail-closed default and every cross-sell card reads "Not available
+        // yet" — including courses that are perfectly buyable. Resolved in ONE batched call rather
+        // than per card.
+        $summaries = $this->purchases->forCourseIds(
+            $related->map(fn (Course $c): int => (int) $c->getKey())->all(),
+        );
+
+        foreach ($related as $relatedCourse) {
+            $relatedCourse->setAttribute(
+                'purchase_summary',
+                $summaries[(int) $relatedCourse->getKey()] ?? null,
+            );
+        }
+
+        $course->setRelation('related', $related);
         $course->setAttribute('purchase_summary', $this->purchases->forCourse((int) $course->id));
 
         return $course;

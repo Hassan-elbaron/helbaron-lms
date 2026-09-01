@@ -10,6 +10,16 @@ use App\Platform\Shared\Services\BaseService;
 /**
  * Evaluates active event-triggered automation rules for a given trigger key and executes their
  * send-notification actions (conditions matched against the payload).
+ *
+ * NOT WIRED, and the distinction matters. `handleEventForUserId()` has zero callers. Automation
+ * itself is NOT dead — `Crm\...\AutomationRunner` is subscribed and does run rules for its two lead
+ * events — so "all automation is inert" (as the plan document has it) overstates the problem. What
+ * is dead is this per-user entry point and the SCHEDULED trigger type: `AutomationTriggerType`
+ * declares Scheduled, the `scheduled_automations` table exists, `ScheduledAutomation` is referenced
+ * by nothing, and AutomationRunner hard-filters `trigger_type = 'event'`.
+ *
+ * Left in place rather than deleted: the evaluation logic is correct and is the reusable half. But
+ * nothing should read the presence of this class as evidence that scheduled automations run.
  */
 class WorkflowEngine extends BaseService
 {

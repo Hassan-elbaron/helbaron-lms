@@ -5,7 +5,95 @@ semantic versioning; pre-release builds use `-rc.N` suffixes.
 
 ## [Unreleased] — 2026-08-24
 
+### Added
+- `POST /api/v1/auth/resend-email-otp` reissues the email verification code for an authenticated
+  account. Reachable while unverified (the verification gate allows it explicitly), throttled per
+  minute and bounded by the existing `identity.otp.email.max_per_hour` budget, and answering
+  generically so it never confirms whether an address is still pending. Closes a total lockout: the
+  code expires after ten minutes and nothing anywhere could reissue one.
+- The verify-email screen now offers a "Resend code" control with a cooldown.
+- `CoursePublishGuard::blockerCodes()` exposes the stable codes behind a refused publish, so the
+  scheduled-publish command can report which rules blocked a course rather than only counting it.
+- `courses.is_free` — an admin-controlled "Free course" flag on the course form. Freeness is now a
+  stated intent rather than an inference from product rows. Reversible migration; existing courses
+  are backfilled to `is_free = true` wherever no product grants them, so behaviour is unchanged at
+  the moment it runs.
+- Readiness **warning** `course.not_acquirable` when a published course is neither free nor sold by
+  an active product, so an author cannot silently ship a course nobody can enroll in.
+- `php artisan commerce:report-free-grants` — a **read-only** audit listing payment-free enrollments
+  on courses a product sells, flagging each with the holder's current entitlement and whether it has
+  lapsed. Revokes nothing; `--csv` exports the full set.
+- `EnrollmentSource::Subscription`, so subscription-derived access can be recorded and revoked as
+  what it is.
+- `EntitlementPort::courseEntitlement()` returns an entitlement's kind and window, not just a boolean.
+- `config/branding.php` resolves the `BRAND_*` keys, and `Platform\Shared\Support\Env` provides
+  environment reads whose defaults survive a present-but-empty key.
+
+### Changed
+- ~~**A course is now advertised and granted as free only when no product of any status sells it.**~~
+  *(Superseded within this release by the declared-freeness entry below — the no-product-row rule was
+  itself a one-way door.)*
+  Freeness was previously inferred from the absence of an *active* product, so a course whose
+  product was Draft or Archived was shown as "Free" and granted a lifetime enrollment through the
+  payment-free endpoint — an admin moving a live product to Draft to edit its pricing opened a free
+  front door on every course that product sold. The purchase summary now carries an explicit `free`
+  flag, `EnrollInCourseAction` refuses any course a product row sells regardless of status (buyers
+  holding an entitlement are unaffected), and the UI renders "Not available yet" for the in-between
+  state. Deleting a product still returns the course to the free path.
+  *Operator note:* enrollments already granted during a draft-product window are not revoked by this
+  change; auditing them is a separate decision.
+- The `lesson.empty_content` publish blocker now recognises embedded media (`iframe`, `img`,
+  `video`, `audio`, `embed`, `object`, `source`) and structured media references as lesson content,
+  and no longer counts presentation-only payloads such as `{"type": "text"}`. Previously
+  `strip_tags()` reduced an embed-only lesson to the empty string, so the most common authoring
+  shape in the product could not be published.
+
+- **Freeness is now declared, not inferred.** A course is free when its author says so and no active
+  product sells it. Previously the absence of a product row decided it, which made a single
+  `product_courses` row a one-way door: an "All Access" bundle that included a free intro course, or
+  a draft product created by mistake, un-freed that course permanently — and the documented escape
+  hatch (deleting the product) does not exist in the admin panel.
+- **An entitlement is no longer re-recorded as a perpetual free grant.** Enrolling with an existing
+  entitlement now writes that entitlement's own source and window. A subscriber or seated employee
+  previously received `source = free, expires_at = NULL` — permanent access to the whole bundled
+  catalogue that no lapse, refund or seat revocation could reclaim, because access is decided by the
+  enrollment row alone.
+- Releasing an organization seat now withdraws the enrollments that seat produced, instead of leaving
+  access in place until the billing period elapsed.
+- Issuing an email OTP now retires any earlier unconsumed code, so exactly one code is live at a time.
+  Previously a resent code left the old one working, and each resend reset the per-code guess ceiling.
+- The empty-lesson publish blocker now decodes HTML entities and Unicode whitespace before deciding a
+  lesson is empty, so `<p>&nbsp;</p>` — what every rich-text editor emits for an empty paragraph — is
+  correctly empty. `oembed`, `svg`, `canvas`, `picture` and `track` count as embedded media.
+- `courses:publish-scheduled` now catches any failure per course rather than only readiness blocks,
+  so one failing course no longer aborts the run and stalls every course scheduled behind it. It exits
+  non-zero when something unexpected failed; a readiness block alone still exits zero.
+
 ### Fixed
+- **`BRAND_*` and `SEED_ADMIN_*` environment keys were ignored when present but empty**, because
+  `env('KEY', $default)` returns the default only for an ABSENT key and `.env.example` shipped them
+  as `KEY=`. A fresh instance received a blank Arabic brand name, a blank company name (which also
+  feeds the certificate issuer) and blank email footers; the local development admin was created with
+  an empty password nobody could log in with. The optional keys are now commented out rather than
+  shipped empty.
+- **`BRAND_*` keys were ignored entirely in production.** `scripts/deploy.sh` runs `config:cache`, and
+  Laravel does not read `.env` once the config is cached — so `env()` outside a config file returns
+  null. Branding defaults now resolve in `config/branding.php`, which is evaluated while the cache is
+  built, so an operator's values survive the deploy.
+- The email-verification refusal (`403 EMAIL_VERIFICATION_REQUIRED`) is now readable by the client
+  and routes the learner to `/verify-email` instead of surfacing a generic error. Handled centrally
+  in the shared query client, so every authenticated surface behaves the same way rather than only
+  the course purchase panel.
+- The "Resend code" cooldown now starts only on a real rate limit, not on any failure — a dropped
+  connection no longer locks the control for a minute.
+- Related-course cards carry their own purchase summary. Without one they fell through to the
+  fail-closed default and every cross-sell card read "Not available yet".
+- The verify-email screen honours its `?redirect=` parameter (validated as a same-origin relative
+  path) instead of always sending the learner to `/` or `/dashboard`, so the destination that
+  triggered verification survives it.
+- `courses:publish-scheduled` logs the course public id, the blocker codes and the reason at warning
+  level when a scheduled publish is refused. It previously swallowed the exception and reported only
+  a count, so a course could miss its launch date silently and be retried every minute forever.
 - Product creation now generates and validates a unique slug from the translated English title,
   preventing the admin `products.slug` null-constraint failure.
 - Unverified accounts are restricted to reading their profile, verifying their email, or logging
@@ -17,8 +105,9 @@ semantic versioning; pre-release builds use `-rc.N` suffixes.
 - Course publishing is blocked when a published non-quiz lesson has no meaningful legacy content,
   published content block, or media.
 - Public course details resolve by stable slug as well as UUID; catalog cards now link to slugs.
-- Courses without an active product expose the supported free-enrollment journey instead of an
-  unavailable purchase button.
+- Courses that no product sells expose the supported free-enrollment journey instead of an
+  unavailable purchase button. (Originally written as "without an active product"; superseded by
+  the Changed entry above — an inactive product is no longer treated as no product.)
 - Added a cacheable branded `/favicon.ico` response and corrected the production environment
   template's media, notification, and AI safety settings.
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useBranding } from "@/lib/branding/context";
 import DOMPurify from "isomorphic-dompurify";
 import { Clock } from "lucide-react";
 import { useI18n } from "@/lib/i18n/i18n-context";
@@ -26,6 +27,7 @@ function sanitizeBodyHtml(dirty: string): string {
 }
 
 export function BlogPostView({ post }: { post: BlogPost }) {
+  const brandName = useBranding().identity.brand_name.en;
   const { locale } = useI18n();
 
   const title = pickLocale(post.title as Localized, locale);
@@ -50,7 +52,7 @@ export function BlogPostView({ post }: { post: BlogPost }) {
       {category ? (
         <p className="text-xs font-semibold uppercase tracking-[0.22em] text-copper">{category}</p>
       ) : (
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-copper">HElbaron</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-copper">{brandName}</p>
       )}
       <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
       {excerpt ? <p className="mt-4 text-muted-foreground sm:text-lg">{excerpt}</p> : null}

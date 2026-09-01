@@ -125,6 +125,15 @@ class ProductionConfigValidator
             $e[] = 'MEDIA_INGESTION_PROVIDER=fake is a dev/test stub and must not run in production.';
         }
 
+        // Playback is a SEPARATE selector from ingestion and was previously unchecked: an instance
+        // could be configured with real S3/Mux ingestion, boot clean, and still hand every learner a
+        // FakePlaybackSigner URL that streams nothing. Guard it the same way, with the same kind of
+        // explicit escape hatch for a deliberate content-only preview environment.
+        if ((string) config('learning.playback.provider', '') === 'fake'
+            && (bool) config('learning.playback.allow_fake_provider', false) !== true) {
+            $e[] = 'LEARNING_PLAYBACK_PROVIDER=fake is a dev/test stub and must not run in production — learners would receive signed URLs that play nothing (set LEARNING_PLAYBACK_ALLOW_FAKE=true only for a deliberate content-only environment).';
+        }
+
         // Notification transports must not be the fake stubs in production (they never actually deliver
         // mail/SMS/push). Allow an explicit escape hatch for a deliberate non-delivery environment.
         if ((bool) config('notifications.allow_fake_providers', false) !== true) {
@@ -157,6 +166,19 @@ class ProductionConfigValidator
             && (string) config('commerce.einvoicing.provider') === 'fake'
             && (bool) config('commerce.einvoicing.allow_fake_provider', false) !== true) {
             $e[] = 'COMMERCE_EINVOICING_PROVIDER=fake is not allowed in production (set COMMERCE_EINVOICING_ALLOW_FAKE=true only for a deliberate non-fiscal environment).';
+        }
+
+        // Certificate PDF rendering. `browsershot` is a STUB that throws unconditionally: the class
+        // exists, the config option is documented, and spatie/browsershot is not a dependency and
+        // Chromium is not in the image. Selecting it in production today produced a 500 on every
+        // certificate download — discovered by a learner, at the moment they had earned something.
+        //
+        // Checked by asking whether the package is actually installed, rather than by hardcoding
+        // "browsershot is broken": the day somebody adds the dependency and the browser, this stops
+        // objecting on its own and needs no edit here.
+        if ((string) config('certification.pdf.provider', 'fake') === 'browsershot'
+            && ! class_exists('Spatie\Browsershot\Browsershot')) {
+            $e[] = 'CERTIFICATION_PDF_PROVIDER=browsershot is selected but spatie/browsershot is not installed — every certificate download would fail. Install the package and Chromium, or use the default provider.';
         }
 
         // Trusted proxies must be explicit (fail-closed W07 default trusts nothing, defeating rate limits).

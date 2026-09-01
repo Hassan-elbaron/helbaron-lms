@@ -14,7 +14,7 @@ const loadPage = cache(async (): Promise<StaticPage | null> => getStaticPage(SLU
 /** Built-in metadata used when the CMS record is absent/unreachable (URL never breaks). */
 const fallbackMetadata: Metadata = {
   title: "Privacy Policy",
-  description: "How HElbaron collects, uses, and protects your information across our academy and services.",
+  description: "How {brand} collects, uses, and protects your information across our academy and services.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -28,7 +28,7 @@ function PrivacyFallback() {
   return (
     <LegalPage
       title={{ en: "Privacy Policy", ar: "سياسة الخصوصية" }}
-      intro={{ en: "How HElbaron collects, uses, and protects your information across our academy and services.", ar: "كيف تجمع HElbaron معلوماتك وتستخدمها وتحميها عبر أكاديميتنا وخدماتنا." }}
+      intro={{ en: "How {brand} collects, uses, and protects your information across our academy and services.", ar: "كيف تجمع {brand} معلوماتك وتستخدمها وتحميها عبر أكاديميتنا وخدماتنا." }}
       sections={[
         { h: { en: "Information we collect", ar: "المعلومات التي نجمعها" }, p: { en: "Account details, learning progress, and usage data needed to deliver courses, cohorts, and enterprise programs.", ar: "بيانات الحساب وتقدّم التعلّم وبيانات الاستخدام اللازمة لتقديم الدورات والأفواج وبرامج المؤسسات." } },
         { h: { en: "How we use it", ar: "كيف نستخدمها" }, p: { en: "To personalize learning, issue certificates, provide support, and improve the platform. We do not sell your data.", ar: "لتخصيص التعلّم وإصدار الشهادات وتقديم الدعم وتحسين المنصة. لا نبيع بياناتك." } },

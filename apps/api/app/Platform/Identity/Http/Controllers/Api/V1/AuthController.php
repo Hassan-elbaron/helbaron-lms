@@ -9,6 +9,7 @@ use App\Platform\Identity\Actions\Auth\RegisterUserAction;
 use App\Platform\Identity\Actions\Auth\ResetPasswordAction;
 use App\Platform\Identity\Actions\Auth\VerifyEmailAction;
 use App\Platform\Identity\Actions\Auth\VerifyPhoneAction;
+use App\Platform\Identity\Enums\OtpChannel;
 use App\Platform\Identity\Http\Requests\ForgotPasswordRequest;
 use App\Platform\Identity\Http\Requests\LoginRequest;
 use App\Platform\Identity\Http\Requests\RegisterRequest;
@@ -16,6 +17,7 @@ use App\Platform\Identity\Http\Requests\ResetPasswordRequest;
 use App\Platform\Identity\Http\Requests\VerifyEmailRequest;
 use App\Platform\Identity\Http\Requests\VerifyPhoneRequest;
 use App\Platform\Identity\Http\Resources\UserResource;
+use App\Platform\Identity\Services\OtpService;
 use App\Platform\Shared\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -91,5 +93,38 @@ class AuthController extends Controller
         $action->execute($request->user(), $request->validated()['code']);
 
         return ApiResponse::success(null, 'Phone verified.');
+    }
+
+    /**
+     * Reissue the email verification OTP for the authenticated account.
+     *
+     * This closes a total lockout. RequireVerifiedEmail gates the entire api group and lets an
+     * unverified account reach only profile/verify-email/logout, while the email OTP lives for ten
+     * minutes — so a code that expired or landed in spam left the user with no way back in and no
+     * self-service recovery anywhere in the product.
+     *
+     * The response is deliberately identical whether or not a code was actually sent. An already
+     * verified caller gets the same body as an unverified one, so the endpoint never confirms the
+     * state of an account (or the deliverability of its address) to anyone holding a token.
+     *
+     * Rate limiting is two-layer and neither layer is bypassable from here: throttle:
+     * identity-otp-resend caps the burst, and OtpService enforces identity.otp.email.max_per_hour
+     * against the persisted codes — the same budget registration issues against, reusing the same
+     * issuing service rather than a second one that could drift from it.
+     */
+    public function resendEmailOtp(Request $request, OtpService $otp): JsonResponse
+    {
+        $user = $request->user();
+
+        // Nothing to reissue for a verified account — but say so in the same words as the success
+        // path, so the reply is not an oracle for whether an address is still pending.
+        if ($user->getAttribute('email_verified_at') === null) {
+            // OtpRateLimitedException (429) is allowed to propagate: the caller is authenticated as
+            // themselves, so telling them they have exhausted their own hourly budget reveals
+            // nothing, and swallowing it would leave the UI claiming a code was sent that was not.
+            $otp->send($user, OtpChannel::Email, $user->email);
+        }
+
+        return ApiResponse::success(null, 'If the address still needs verifying, a new code has been sent.');
     }
 }

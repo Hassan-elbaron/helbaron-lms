@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cache } from "react";
+import { getBranding } from "@/lib/branding/api";
 import { ContentPage } from "@/components/marketing/content-page";
 import { CmsPage } from "@/components/marketing/cms-page";
 import { getStaticPage, type StaticPage } from "@/lib/pages/api";
@@ -12,14 +13,14 @@ const SLUG = "contact";
 const loadPage = cache(async (): Promise<StaticPage | null> => getStaticPage(SLUG));
 
 const description =
-  "Get in touch with HElbaron — reach out about enterprise and government training, advisory engagements, or general questions.";
+  "Get in touch with {brand} — reach out about enterprise and government training, advisory engagements, or general questions.";
 
 /** Built-in metadata used when the CMS record is absent/unreachable (URL never breaks). */
 const fallbackMetadata: Metadata = {
   title: "Contact",
   description,
   alternates: { canonical: "/contact" },
-  openGraph: { title: "Contact HElbaron", description, url: "/contact" },
+  openGraph: { title: "Contact {brand}", description, url: "/contact" },
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,7 +29,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /** The original hardcoded Contact content — preserved verbatim as the fallback. */
-function ContactFallback() {
+async function ContactFallback() {
+  // The academy's own support address, from the branding record — this page previously
+  // printed the vendor's inbox on every instance.
+  const supportEmail =
+    (await getBranding()).identity.support_email || "";
+
   return (
     <ContentPage
       eyebrow={{ en: "CONTACT", ar: "تواصل معنا" }}
@@ -57,8 +63,8 @@ function ContactFallback() {
           icon: "Compass",
           title: { en: "Advisory & consulting", ar: "الاستشارات" },
           body: {
-            en: "For strategy, operations, partnerships, and go-to-market engagements, reach HElbaron Advisory.",
-            ar: "للاستراتيجية والعمليات والشراكات ودخول السوق، تواصل مع استشارات HElbaron.",
+            en: "For strategy, operations, partnerships, and go-to-market engagements, reach {brand} Advisory.",
+            ar: "للاستراتيجية والعمليات والشراكات ودخول السوق، تواصل مع استشارات {brand}.",
           },
           cta: { label: { en: "Go to advisory", ar: "إلى الاستشارات" }, href: "/advisory" },
         },
@@ -69,8 +75,8 @@ function ContactFallback() {
             en: "For anything else — courses, certificates, or partnerships — send us an email and we'll point you to the right place.",
             ar: "لأي شيء آخر — الدورات أو الشهادات أو الشراكات — راسلنا وسنوجّهك إلى المكان الصحيح.",
           },
-          meta: { en: "hello@helbaron.academy", ar: "hello@helbaron.academy" },
-          cta: { label: { en: "Email us", ar: "راسلنا" }, href: "mailto:hello@helbaron.academy" },
+          meta: { en: supportEmail, ar: supportEmail },
+          cta: { label: { en: "Email us", ar: "راسلنا" }, href: `mailto:${supportEmail}` },
         },
       ]}
       sections={[
@@ -78,8 +84,8 @@ function ContactFallback() {
           h: { en: "Where we are", ar: "أين نحن" },
           body: [
             {
-              en: "HElbaron works across the region, with hubs in Cairo, Dubai, and Riyadh. Wherever you are, our courses and cohorts are available online in Arabic and English.",
-              ar: "تعمل HElbaron عبر المنطقة، بمراكز في القاهرة ودبي والرياض. أينما كنت، دوراتنا وأفواجنا متاحة عبر الإنترنت بالعربية والإنجليزية.",
+              en: "{brand} works across the region, with hubs in Cairo, Dubai, and Riyadh. Wherever you are, our courses and cohorts are available online in Arabic and English.",
+              ar: "تعمل {brand} عبر المنطقة، بمراكز في القاهرة ودبي والرياض. أينما كنت، دوراتنا وأفواجنا متاحة عبر الإنترنت بالعربية والإنجليزية.",
             },
           ],
         },

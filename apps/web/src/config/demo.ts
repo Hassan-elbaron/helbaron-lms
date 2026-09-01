@@ -43,8 +43,8 @@ export const featuredHeading = {
   title1: { en: "Real courses.", ar: "دورات حقيقية." } as Localized,
   title2: { en: "Watch a preview.", ar: "شاهد المعاينة." } as Localized,
   subtitle: {
-    en: "A taste of what's inside HElbaron — hands-on programs built for MENA business.",
-    ar: "لمحة عمّا في HElbaron — برامج عملية مبنية لأعمال المنطقة.",
+    en: "A taste of what's inside {brand} — hands-on programs built for MENA business.",
+    ar: "لمحة عمّا في {brand} — برامج عملية مبنية لأعمال المنطقة.",
   } as Localized,
   cta: { en: "Browse all courses", ar: "تصفّح كل الدورات" } as Localized,
 };

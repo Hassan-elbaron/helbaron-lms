@@ -19,9 +19,12 @@ import { CourseMedia } from "./course-media";
 export function CourseCard({ course }: { course: CourseListItem }) {
   const { t, locale } = useI18n();
   const price = coursePurchasePrice(course.purchase, locale);
-  // `purchase` is absent on payloads that never attached a summary; only an explicit
-  // `purchasable: false` means the course is genuinely not for sale.
-  const free = course.purchase?.purchasable === false;
+  // `purchase` is absent on payloads that never attached a summary. Only an explicit `free: true`
+  // means the course is genuinely free — a course whose product exists but is draft or archived
+  // also reports `purchasable: false`, and labelling THAT "Free" advertised paid courses at no
+  // charge. Absent/legacy payloads fall through to neither label, which fails closed.
+  const free = course.purchase?.free === true;
+  const unavailable = course.purchase?.purchasable === false && course.purchase.free === false;
 
   return (
     <Link
@@ -59,6 +62,10 @@ export function CourseCard({ course }: { course: CourseListItem }) {
             <PriceTag price={price} size="sm" />
           ) : free ? (
             <span className="text-sm font-semibold text-primary">{t("catalog.course.free")}</span>
+          ) : unavailable ? (
+            <span className="text-sm font-medium text-muted-foreground">
+              {t("catalog.course.notAvailable")}
+            </span>
           ) : (
             <span aria-hidden />
           )}

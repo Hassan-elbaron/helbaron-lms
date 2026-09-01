@@ -27,7 +27,7 @@ function expiringCompanyPurchase(int $days, array $offsets = [30, 7]): array
         'seat_mode' => SeatMode::Fixed->value,
         'default_seat_count' => 5,
         'reminder_offsets_days' => $offsets,
-        'company_certificate_branding' => CompanyCertificateBranding::HelbaronOnly->value,
+        'company_certificate_branding' => CompanyCertificateBranding::PlatformOnly->value,
     ]);
 
     $org = Organization::factory()->create(['name' => 'Lapsing Ltd']);

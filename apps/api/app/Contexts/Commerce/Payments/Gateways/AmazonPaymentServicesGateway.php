@@ -49,7 +49,9 @@ class AmazonPaymentServicesGateway implements PaymentGateway
             'language' => $this->str('language') ?: 'en',
             'customer_email' => is_string($request->metadata['email'] ?? null)
                 ? $request->metadata['email']
-                : 'noreply@helbaron.test',
+                // The instance's own support address, never a vendor domain: this value is sent to
+                // the payment provider and can end up on the customer's receipt.
+                : (string) (config('branding.support_email') ?: config('mail.from.address', '')),
             'return_url' => $this->str('return_url'),
         ];
 

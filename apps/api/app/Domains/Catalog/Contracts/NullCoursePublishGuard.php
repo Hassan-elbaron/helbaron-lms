@@ -23,6 +23,16 @@ class NullCoursePublishGuard implements CoursePublishGuard
     }
 
     /**
+     * Never blocks, so there is never a blocker to name.
+     *
+     * @return list<string>
+     */
+    public function blockerCodes(): array
+    {
+        return [];
+    }
+
+    /**
      * An empty report, which scores 100 — consistent with a guard that permits everything. It is
      * NOT a report claiming checks passed: Catalog alone knows of no checks to run, and inventing
      * passed entries here would misrepresent an unevaluated course as a vetted one.

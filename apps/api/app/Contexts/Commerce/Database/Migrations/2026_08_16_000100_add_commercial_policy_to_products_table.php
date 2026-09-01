@@ -3,7 +3,6 @@
 use App\Contexts\Commerce\Enums\AccessDurationType;
 use App\Contexts\Commerce\Enums\CertificateExpiryType;
 use App\Contexts\Commerce\Enums\CertificateRefundPolicy;
-use App\Contexts\Commerce\Enums\CompanyCertificateBranding;
 use App\Contexts\Commerce\Enums\ProductAudience;
 use App\Contexts\Commerce\Enums\RefundAccessPolicy;
 use App\Contexts\Commerce\Enums\SeatMode;
@@ -54,7 +53,11 @@ return new class extends Migration
             $table->unsignedInteger('default_seat_count')->nullable();
             $table->string('seat_reassignment_policy')->default(SeatReassignmentPolicy::BeforeStart->value);
             $table->unsignedTinyInteger('reassignment_progress_threshold')->nullable();
-            $table->string('company_certificate_branding')->default(CompanyCertificateBranding::HelbaronOnly->value);
+            // Literal, NOT CompanyCertificateBranding::…->value. An applied migration must not depend on
+            // a mutable application enum: renaming a case would change what this historical
+            // migration does on a fresh install, or stop it resolving at all. The rename to
+            // 'platform_only' is applied forward by 2026_08_30_000300_rename_company_certificate_branding_values.
+            $table->string('company_certificate_branding')->default('helbaron_only');
 
             // Employee access normally dies with the company's purchase; kept as an explicit,
             // admin-visible flag rather than an implicit rule.

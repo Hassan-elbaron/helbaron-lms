@@ -1,8 +1,8 @@
 {
-    "name": "helbaron/api",
+    "name": "lms/api",
     "type": "project",
     "description": "HElbaron API — Laravel 12 modular monolith (scaffold).",
-    "keywords": ["laravel", "lms", "helbaron"],
+    "keywords": ["laravel", "lms", "education"],
     "license": "proprietary",
     "require": {
         "php": "^8.3",

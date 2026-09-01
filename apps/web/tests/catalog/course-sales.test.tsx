@@ -33,6 +33,7 @@ import { CourseDetailsClient } from "@/app/(marketing)/(site)/courses/[public_id
 
 const purchasable = {
   purchasable: true as const,
+  free: false as const,
   product_id: "prod-1",
   product_type: "course" as const,
   price: { currency: "SAR", amount_minor: 49900, effective_minor: 29900, on_sale: true },
@@ -117,8 +118,8 @@ describe("Course detail sales panel", () => {
     expect(push).toHaveBeenCalledWith("/login?redirect=/courses/course-1");
   });
 
-  it("offers free enrollment when no active product sells the course", async () => {
-    useCourse.mockReturnValue(course({ purchasable: false }));
+  it("offers free enrollment only when nothing sells the course at any status", async () => {
+    useCourse.mockReturnValue(course({ purchasable: false, free: true }));
 
 // The course/lesson pages now embed the courseware panels (files + Q&A). Those are react-query
 // backed, and this suite renders without a QueryClientProvider, so their hooks are stubbed the same
@@ -143,6 +144,34 @@ vi.mock("@/lib/courseware/hooks", () => ({
     await userEvent.click(cta);
 
     expect(enrollMutate).toHaveBeenCalledWith("course-1", expect.anything());
+    expect(addMutate).not.toHaveBeenCalled();
+  });
+
+  /*
+   * The revenue-loss regression, at the surface it was reachable from.
+   *
+   * A course whose product exists but is Draft or Archived reports `purchasable: false` — exactly
+   * like a genuinely free course. The panel used to derive freeness from that and rendered a
+   * one-click "Enroll for free" button, which the API then honoured as a LIFETIME grant. An admin
+   * moving a live product to Draft to edit its pricing was enough to open it.
+   */
+  it("shows not-available and no free-enrol button for a draft-product course", () => {
+    useCourse.mockReturnValue(course({ purchasable: false, free: false }));
+    renderWithI18n(<CourseDetailsClient />);
+
+    expect(screen.queryByRole("button", { name: /Enroll for free/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Sign in to enroll/i })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Not available yet/i })[0]).toBeDisabled();
+  });
+
+  it("never calls the enrol endpoint for a draft-product course", async () => {
+    useCourse.mockReturnValue(course({ purchasable: false, free: false }));
+    renderWithI18n(<CourseDetailsClient />);
+
+    const cta = screen.getAllByRole("button", { name: /Not available yet/i })[0];
+    await userEvent.click(cta).catch(() => undefined);
+
+    expect(enrollMutate).not.toHaveBeenCalled();
     expect(addMutate).not.toHaveBeenCalled();
   });
 });

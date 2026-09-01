@@ -40,12 +40,35 @@ RUN composer dump-autoload --optimize --no-dev --classmap-authoritative \
 COPY infra/php/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
 COPY infra/php/php.ini /usr/local/etc/php/conf.d/zz-helbaron.ini
 
-# Simple FPM ping healthcheck.
-HEALTHCHECK --interval=15s --timeout=5s --retries=3 \
-    CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1
+# Build identity. Supplied by CI (--build-arg APP_BUILD_SHA=$GITHUB_SHA) and surfaced by
+# GET /api/v1/version, so an operator can tell which commit an instance is actually running instead
+# of trusting the image tag. Unset in a local build, which is reported honestly as "unknown".
+ARG APP_BUILD_SHA=""
+ARG APP_RELEASE=""
+ENV APP_BUILD_SHA=${APP_BUILD_SHA} \
+    APP_RELEASE=${APP_RELEASE}
+
+# Warms config/route/event caches from THIS container's environment before handing off to the given
+# command (php-fpm, horizon, schedule:work). See the script for why it cannot be done at deploy time.
+COPY --chmod=0755 infra/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+# Container healthcheck that asks the APPLICATION, not just the socket. See the script.
+COPY --chmod=0755 infra/php/fpm-healthcheck.sh /usr/local/bin/fpm-healthcheck.sh
+
+# Created here, with the right owner, so the named volume mounted over it inherits that ownership on
+# first use. Docker creates a fresh volume's directory as root otherwise, and the entrypoint runs as
+# www-data — it would be unable to publish anything into its own asset volume.
+RUN mkdir -p /srv/filament-assets && chown www-data:www-data /srv/filament-assets
+
+# Asks the app's liveness route through FPM and checks the BODY. The previous probe requested /ping,
+# which is a php-fpm POOL setting enabled nowhere in this repository, so cgi-fcgi received
+# "Primary script unknown" and still exited 0 — reporting a wedged worker pool as healthy.
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
+    CMD /usr/local/bin/fpm-healthcheck.sh
 
 EXPOSE 9000
 
 # Run the FPM master as www-data (storage/ and bootstrap/cache are chowned above).
 USER www-data
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["php-fpm"]

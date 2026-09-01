@@ -2,11 +2,15 @@
 
 namespace App\Platform\Branding\Providers;
 
+use App\Platform\Branding\Adapters\BrandInstallerAdapter;
+use App\Platform\Branding\Adapters\BrandProfileAdapter;
 use App\Platform\Branding\Adapters\TenantBrandingAdapter;
 use App\Platform\Branding\Models\CustomDomain;
 use App\Platform\Branding\Models\OrganizationBrandSetting;
 use App\Platform\Branding\Policies\CustomDomainPolicy;
 use App\Platform\Branding\Policies\OrganizationBrandPolicy;
+use App\Platform\Shared\Branding\Contracts\BrandInstallerPort;
+use App\Platform\Shared\Branding\Contracts\BrandProfilePort;
 use App\Platform\Shared\Providers\BaseDomainServiceProvider;
 use App\Platform\Shared\Tenancy\Contracts\TenantBrandingProvider;
 
@@ -39,5 +43,15 @@ class BrandingServiceProvider extends BaseDomainServiceProvider
         // modules use to render a company's marks — a company-branded certificate being the first
         // real consumer. The port had been declared with no implementation until now.
         $this->app->bind(TenantBrandingProvider::class, TenantBrandingAdapter::class);
+
+        // The GLOBAL instance brand, for every outbound surface that must carry this academy's
+        // identity: transactional mail, notification templates and certificates. Singleton because
+        // the adapter memoises per locale and a fan-out renders many notifications per process.
+        $this->app->singleton(BrandProfilePort::class, BrandProfileAdapter::class);
+
+        // The WRITE side, kept as a separate port so the read adapter above stays literally
+        // read-only on the queued-mail and certificate paths. One consumer: `install:academy`.
+        // Bound, not singleton — it holds no state and runs once.
+        $this->app->bind(BrandInstallerPort::class, BrandInstallerAdapter::class);
     }
 }

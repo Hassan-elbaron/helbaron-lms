@@ -42,6 +42,7 @@ deptrac:
     - name: Identity
       collectors:
         - { type: directory, value: app/Platform/Identity/Actions/.* }
+        - { type: directory, value: app/Platform/Identity/Console/.* }
         - { type: directory, value: app/Platform/Identity/Database/.* }
         - { type: directory, value: app/Platform/Identity/Enums/.* }
         - { type: directory, value: app/Platform/Identity/Events/.* }

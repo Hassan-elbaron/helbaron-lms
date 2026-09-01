@@ -102,23 +102,35 @@ export type Branding = {
 };
 
 /**
- * Built-in branding defaults — the Editorial Academy identity. Colours mirror apps/web globals.css
- * (light + `.dark`) so injecting them is a visual no-op; the site looks identical when branding is
- * empty or unreachable. This is the fallback that guarantees the site never breaks.
+ * OFFLINE FALLBACK ONLY — deliberately generic, and deliberately not a second copy of any real
+ * academy's identity.
+ *
+ * The real values come from the branding API (`GET /api/v1/branding`), which is the only source that
+ * can differ per instance at runtime. This object exists so the site still renders when that call
+ * fails; it is not a place to describe a brand.
+ *
+ * It used to hold the vendor's own identity — name, company, `Cairo · Dubai · Riyadh`,
+ * `support@helbaron.com` — which meant a customer instance fell back to ANOTHER COMPANY'S BRAND the
+ * moment the API hiccupped, and gave the codebase a second set of brand values that drifted from the
+ * backend's (three different support addresses existed across the repo).
+ *
+ * The THEME colours stay: they mirror apps/web globals.css so the fallback is a visual no-op, and
+ * they are the design system's defaults rather than anyone's brand identity.
  */
 export const defaultBranding: Branding = {
   identity: {
-    brand_name: { en: "HElbaron", ar: "إلبارون" },
-    short_name: "HElbaron",
-    company_name: "HElbaron Academy",
+    brand_name: { en: "Academy", ar: "الأكاديمية" },
+    short_name: "Academy",
+    company_name: "Academy",
     copyright: { en: "All rights reserved.", ar: "جميع الحقوق محفوظة." },
-    address: { en: "Cairo · Dubai · Riyadh", ar: "القاهرة · دبي · الرياض" },
-    support_email: "support@helbaron.com",
+    // No invented location: an academy that has configured none should show none.
+    address: { en: "", ar: "" },
+    support_email: "",
     support_phone: "",
     social_links: { twitter: "", linkedin: "", facebook: "", instagram: "", youtube: "" },
     default_language: "en",
-    timezone: "Asia/Riyadh",
-    currency: "SAR",
+    timezone: "UTC",
+    currency: "USD",
     date_format: "d M Y",
     time_format: "H:i",
   },
@@ -169,16 +181,13 @@ export const defaultBranding: Branding = {
       header: "oklch(0.21 0.022 190)",
       footer: "oklch(0.25 0.026 190)",
     },
-    preset: "helbaron",
+    preset: "default",
   },
   email: {
     header: { en: "", ar: "" },
-    footer: {
-      en: "HElbaron Academy — Master the core. Lead the future.",
-      ar: "أكاديمية إلبارون — أتقن الأساس. قُد المستقبل.",
-    },
+    footer: { en: "", ar: "" },
     colors: { background: "#F7F1E3", text: "#21302E", button: "#134E4A" },
-    signature: { en: "The HElbaron Team", ar: "فريق إلبارون" },
+    signature: { en: "", ar: "" },
     social_links: { twitter: "", linkedin: "", facebook: "", instagram: "", youtube: "" },
   },
   certificate: {

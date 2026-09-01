@@ -34,7 +34,9 @@ return [
         'base_url' => env('MAILGUN_BASE_URL', 'https://api.mailgun.net'),
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
-        'from' => env('MAILGUN_FROM', env('MAIL_FROM_ADDRESS', 'no-reply@helbaron.test')),
+        // No vendor fallback: a wrong From address is better caught as a config error than
+        // silently sent as someone else's domain. `?:` so an empty key falls through.
+        'from' => env('MAILGUN_FROM') ?: env('MAIL_FROM_ADDRESS'),
     ],
 
     'twilio' => [
